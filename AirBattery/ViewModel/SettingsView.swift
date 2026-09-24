@@ -132,6 +132,7 @@ struct GeneralView: View {
 }
 
 struct NearbilityView: View {
+    @ObservedObject private var bleScanner = bleBattery
     @AppStorage("ideviceOverBLE") var ideviceOverBLE = false
     @AppStorage("readBTDevice") var readBTDevice = true
     @AppStorage("readBLEDevice") var readBLEDevice = false
@@ -140,13 +141,29 @@ struct NearbilityView: View {
     @AppStorage("readBTHID") var readBTHID = true
     @AppStorage("updateInterval") var updateInterval = 1
     @AppStorage("twsMerge") var twsMerge = 5
+    @State private var showIOSBluetoothDevices = false
     
     var body: some View {
         SForm {
             SGroupBox(label: "Scanner") {
                 SToggle("Discover iOS devices via Network", isOn: $readIDevice, tips: "Scan your iPhone / iPad / Apple Watch / VisionPro and other iDevices in your local network.")
                 Divider().opacity(0.5)
-                SToggle("Discover iOS devices via Bluetooth", isOn: $ideviceOverBLE, tips: "Scan your iPhone and iPad (Cellular) via Bluetooth.")
+                SToggle("Discover iOS devices via Bluetooth", isOn: $ideviceOverBLE, tips: "Scan only the iPhone and iPad that you explicitly authorize via Bluetooth.")
+                    .onChange(of: ideviceOverBLE) { newValue in
+                        if newValue {
+                            showIOSBluetoothDevices = bleScanner.authorizedIOSDevices.isEmpty
+                            bleScanner.refreshIOSDevices()
+                        } else {
+                            bleScanner.cancelIOSConnections()
+                        }
+                    }
+                if ideviceOverBLE {
+                    Divider().opacity(0.5)
+                    SButton("Authorized iOS Bluetooth Devices", buttonTitle: "Manage") {
+                        showIOSBluetoothDevices = true
+                        bleScanner.refreshIOSDevices()
+                    }
+                }
                 Divider().opacity(0.5)
                 SToggle("Discover BT and BLE devices", isOn: $readBTDevice, tips: "Get the battery usage of some Bluetooth peripherals like mouse, keyboard, headphone or etc.\n\nIf some of your device is not shown, try enabling \"Discover more BT devices\" or \"Discover more BLE devices\"")
                 Divider().opacity(0.5)
@@ -179,6 +196,108 @@ struct NearbilityView: View {
                 SSteper("Earbud Merging Threshold", value: $twsMerge, min: 1, max: 99, tips: "If the difference in battery usage between the left and right earbuds is less than this value, AirBattery will show them as one device.")
             }
         }
+        .sheet(isPresented: $showIOSBluetoothDevices) {
+            IOSBluetoothDevicesView()
+        }
+    }
+}
+
+struct IOSBluetoothDevicesView: View {
+    @ObservedObject private var scanner = bleBattery
+    @Environment(\.presentationMode) private var presentationMode
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("iOS Bluetooth Devices")
+                .font(.headline)
+            Text("AirBattery will only connect to devices authorized here. Pair only an iPhone or iPad you own; it may show a one-time system pairing request.")
+                .font(.footnote)
+                .foregroundColor(.secondary)
+
+            GroupBox(label: Text("Authorized Devices")) {
+                VStack(spacing: 8) {
+                    if scanner.authorizedIOSDevices.isEmpty {
+                        Text("No authorized devices")
+                            .foregroundColor(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    } else {
+                        ForEach(scanner.authorizedIOSDevices.keys.sorted(), id: \.self) { identifier in
+                            HStack {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(scanner.authorizedIOSDevices[identifier] ?? "iPhone / iPad")
+                                    Text(shortIdentifier(identifier))
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                Button("Forget") {
+                                    if let uuid = UUID(uuidString: identifier) {
+                                        scanner.forgetIOSDevice(uuid)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                .padding(5)
+            }
+
+            GroupBox(label: Text("Nearby Devices")) {
+                ScrollView {
+                    VStack(spacing: 8) {
+                        if scanner.nearbyIOSDevices.isEmpty {
+                            HStack(spacing: 8) {
+                                ProgressView().scaleEffect(0.7)
+                                Text("Scanning nearby iOS devices…")
+                                    .foregroundColor(.secondary)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        } else {
+                            ForEach(scanner.nearbyIOSDevices) { device in
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(device.name)
+                                        Text("\(shortIdentifier(device.id.uuidString)) · \(device.rssi) dBm")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    Spacer()
+                                    if scanner.isIOSDeviceAuthorized(device.id) {
+                                        Text("Authorized")
+                                            .foregroundColor(.secondary)
+                                    } else {
+                                        Button(scanner.pendingIOSDeviceIDs.contains(device.id) ? "Pairing…" : "Pair…") {
+                                            scanner.authorizeIOSDevice(device.id)
+                                        }
+                                        .disabled(scanner.pendingIOSDeviceIDs.contains(device.id))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .padding(5)
+                }
+                .frame(height: 145)
+            }
+
+            Text("Tip: open Personal Hotspot on your device and move it close to the Mac; a stronger signal is closer to 0 dBm.")
+                .font(.caption)
+                .foregroundColor(.secondary)
+
+            HStack {
+                Button("Scan Again") { scanner.refreshIOSDevices() }
+                Spacer()
+                Button("Done") { presentationMode.wrappedValue.dismiss() }
+                    .keyboardShortcut(.defaultAction)
+            }
+        }
+        .padding()
+        .frame(width: 460)
+        .onAppear { scanner.refreshIOSDevices() }
+    }
+
+    private func shortIdentifier(_ identifier: String) -> String {
+        String(identifier.suffix(8))
     }
 }
 
