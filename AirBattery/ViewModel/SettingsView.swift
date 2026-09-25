@@ -213,6 +213,7 @@ struct IOSBluetoothDevicesView: View {
             Text("AirBattery will only connect to devices authorized here. Pair only an iPhone or iPad you own; it may show a one-time system pairing request.")
                 .font(.footnote)
                 .foregroundColor(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
 
             GroupBox(label: Text("Authorized Devices")) {
                 VStack(spacing: 8) {
