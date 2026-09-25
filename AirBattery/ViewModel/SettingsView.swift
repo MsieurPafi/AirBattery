@@ -243,13 +243,13 @@ struct IOSBluetoothDevicesView: View {
                 .padding(5)
             }
 
-            GroupBox(label: Text("Nearby Devices")) {
+            GroupBox(label: Text("Nearby Apple Devices (type unverified)")) {
                 ScrollView {
                     VStack(spacing: 8) {
                         if scanner.nearbyIOSDevices.isEmpty {
                             HStack(spacing: 8) {
                                 ProgressView().scaleEffect(0.7)
-                                Text("Scanning nearby iOS devices…")
+                                Text("Scanning nearby Apple devices…")
                                     .foregroundColor(.secondary)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -267,7 +267,7 @@ struct IOSBluetoothDevicesView: View {
                                         Text("Authorized")
                                             .foregroundColor(.secondary)
                                     } else {
-                                        Button(scanner.pendingIOSDeviceIDs.contains(device.id) ? "Pairing…" : "Pair…") {
+                                        Button(scanner.pendingIOSDeviceIDs.contains(device.id) ? "Connecting…".local : "Pair…".local) {
                                             scanner.authorizeIOSDevice(device.id)
                                         }
                                         .disabled(scanner.pendingIOSDeviceIDs.contains(device.id))
@@ -281,7 +281,7 @@ struct IOSBluetoothDevicesView: View {
                 .frame(height: 105)
             }
 
-            Text("Tip: open Personal Hotspot on your device and move it close to the Mac; a stronger signal is closer to 0 dBm.")
+            Text("Nearby Apple devices may include Macs and Apple Watches. Select only your iPhone or iPad. Open Personal Hotspot and move it close to the Mac before connecting.")
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -296,6 +296,9 @@ struct IOSBluetoothDevicesView: View {
         .padding()
         .frame(width: 460)
         .onAppear { scanner.refreshIOSDevices() }
+        .alert(item: $scanner.iosConnectionFailure) { failure in
+            Alert(title: Text("Bluetooth connection failed"), message: Text(failure.message), dismissButton: .default(Text("OK")))
+        }
     }
 
     private func shortIdentifier(_ identifier: String) -> String {

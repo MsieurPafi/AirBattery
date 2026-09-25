@@ -171,3 +171,17 @@
 "Tip: open Personal Hotspot on your device and move it close to the Mac; a stronger signal is closer to 0 dBm." = "提示：在裝置上開啟「個人熱點」頁面並靠近 Mac；訊號越強，數值越接近 0 dBm。";
 "Scan Again" = "重新掃描";
 "Done" = "完成";
+"Enable Bluetooth and iOS discovery before trying again." = "請先開啟藍牙和 iOS 裝置探索，再重試。";
+"Device is no longer available. Scan again and retry." = "裝置已無法使用，請重新掃描後重試。";
+"The previous connection is still closing. Wait a moment and retry." = "上一次連線尚未中斷，請稍等片刻後重試。";
+"This device is not supported by iPhone / iPad Bluetooth discovery." = "iPhone / iPad 藍牙探索不支援此裝置。";
+"Bluetooth connection failed. Move the device closer and retry." = "藍牙連線失敗，請將裝置靠近後重試。";
+"The device disconnected before its battery could be read." = "讀取電量前裝置已中斷連線。";
+"Apple Watch is not supported by iPhone / iPad Bluetooth discovery." = "iPhone / iPad 藍牙探索不支援 Apple Watch。";
+"Connection timed out. Move the device closer, unlock it and open Personal Hotspot, then retry." = "連線逾時。請將裝置靠近、解鎖並開啟「個人熱點」頁面後重試。";
+"Could not read the battery. The device may not support this feature or may have denied access." = "無法讀取電量：裝置可能不支援此功能，或拒絕了存取。";
+"Nearby Apple Devices (type unverified)" = "附近的 Apple 裝置（類型未確認）";
+"Scanning nearby Apple devices…" = "正在掃描附近的 Apple 裝置…";
+"Connecting…" = "正在連線…";
+"Nearby Apple devices may include Macs and Apple Watches. Select only your iPhone or iPad. Open Personal Hotspot and move it close to the Mac before connecting." = "附近裝置可能包含 Mac 和 Apple Watch，請僅選擇自己的 iPhone 或 iPad。連線前請開啟「個人熱點」頁面並靠近 Mac。";
+"Bluetooth connection failed" = "藍牙連線失敗";

@@ -168,6 +168,11 @@ struct IOSBLEDevice: Identifiable, Equatable {
     var lastSeen: Date
 }
 
+struct IOSBLEFailure: Identifiable {
+    let id = UUID()
+    let message: String
+}
+
 class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     private static let authorizedIOSDevicesKey = "authorizedIOSBLEDevices"
 
@@ -182,6 +187,8 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
     @Published private(set) var nearbyIOSDevices: [IOSBLEDevice] = []
     @Published private(set) var authorizedIOSDevices: [String: String]
     @Published private(set) var pendingIOSDeviceIDs: Set<UUID> = []
+    @Published var iosConnectionFailure: IOSBLEFailure?
+    private var iosAttemptTokens: [UUID: UUID] = [:]
 
     var peripherals: [CBPeripheral?] = []
     var otherAppleDevices: Set<UUID> = []
@@ -247,7 +254,27 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
     }
 
     func authorizeIOSDevice(_ identifier: UUID) {
-        guard ideviceOverBLE, let peripheral = discoveredIOSPeripherals[identifier] else { return }
+        guard !iosConnectionPolicy.connectingIDs.contains(identifier) else { return }
+        guard ideviceOverBLE, centralManager.state == .poweredOn else {
+            reportIOSFailure("Enable Bluetooth and iOS discovery before trying again.")
+            return
+        }
+        guard let peripheral = discoveredIOSPeripherals[identifier] else {
+            reportIOSFailure("Device is no longer available. Scan again and retry.")
+            return
+        }
+        // Do not publish a pending authorization unless a request can start.
+        // Cancellation is asynchronous: the previous peripheral may still be
+        // disconnecting when the user retries.
+        guard peripheral.state == .disconnected else {
+            reportIOSFailure("The previous connection is still closing. Wait a moment and retry.")
+            return
+        }
+        guard !otherAppleDevices.contains(identifier) else {
+            reportIOSFailure("This device is not supported by iPhone / iPad Bluetooth discovery.")
+            return
+        }
+        iosConnectionFailure = nil
         iosConnectionPolicy.requestAuthorization(identifier)
         pendingIOSDeviceIDs = iosConnectionPolicy.pendingAuthorizationIDs
         connectIOSPeripheral(peripheral)
@@ -268,10 +295,12 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
 
     func forgetIOSDevice(_ identifier: UUID) {
         iosConnectionPolicy.forget(identifier)
+        clearIOSConnectionState(identifier)
         pendingIOSDeviceIDs = iosConnectionPolicy.pendingAuthorizationIDs
         authorizedIOSDevices.removeValue(forKey: identifier.uuidString)
         saveAuthorizedIOSDevices()
-        if let peripheral = discoveredIOSPeripherals[identifier], peripheral.state != .disconnected {
+        if let peripheral = discoveredIOSPeripherals[identifier]
+            ?? peripherals.compactMap({ $0 }).first(where: { $0.identifier == identifier }), peripheral.state != .disconnected {
             centralManager.cancelPeripheralConnection(peripheral)
         }
     }
@@ -286,14 +315,14 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
     }
 
     func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
-        failIOSConnection(peripheral)
+        failIOSConnection(peripheral, message: error?.localizedDescription ?? "Bluetooth connection failed. Move the device closer and retry.".local)
         releasePeripheral(peripheral)
     }
 
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         let identifier = peripheral.identifier
         if error != nil || iosConnectionPolicy.connectingIDs.contains(identifier) {
-            failIOSConnection(peripheral)
+            failIOSConnection(peripheral, message: error?.localizedDescription ?? "The device disconnected before its battery could be read.".local)
         } else {
             iosConnectionPolicy.markDisconnected(identifier)
         }
@@ -447,6 +476,13 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
         
         //设备型号
         if error == nil && characteristic.uuid == CBUUID(string: "2A24") {
+            if isIOSConnection, let model = characteristic.value?.ascii(), model.contains("Watch") {
+                otherAppleDevices.insert(identifier)
+                failIOSConnection(peripheral, message: "Apple Watch is not supported by iPhone / iPad Bluetooth discovery.".local)
+                nearbyIOSDevices.removeAll { $0.id == identifier }
+                centralManager.cancelPeripheralConnection(peripheral)
+                return
+            }
             if let data = characteristic.value, let model = data.ascii(), let deviceName = peripheral.name, let vendor = bleDevicesVendor[deviceName] {
                 if vendor == "Apple Inc." && model.contains("Watch") { otherAppleDevices.insert(identifier) }
                 if var device = AirBatteryModel.getByName(deviceName), device.deviceModel != model{
@@ -494,6 +530,8 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
         guard iosConnectionPolicy.markConnectionStarted(identifier) else { return }
         pendingIOSDeviceIDs = iosConnectionPolicy.pendingAuthorizationIDs
         retainPeripheral(peripheral)
+        let attemptToken = UUID()
+        iosAttemptTokens[identifier] = attemptToken
         centralManager.connect(peripheral, options: nil)
 
         // CoreBluetooth does not guarantee a timely failure callback. Keep a
@@ -501,8 +539,9 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
         // immediate retry loops.
         DispatchQueue.main.asyncAfter(deadline: .now() + 30) { [weak self, weak peripheral] in
             guard let self = self, let peripheral = peripheral else { return }
+            guard self.iosAttemptTokens[identifier] == attemptToken else { return }
             guard self.iosConnectionPolicy.connectingIDs.contains(identifier) else { return }
-            self.failIOSConnection(peripheral)
+            self.failIOSConnection(peripheral, message: "Connection timed out. Move the device closer, unlock it and open Personal Hotspot, then retry.".local)
             self.centralManager.cancelPeripheralConnection(peripheral)
         }
     }
@@ -517,6 +556,9 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
 
         let failed = iosConnectionsWithErrors.contains(identifier) || !iosBatteryReadSucceeded.contains(identifier)
         if failed {
+            if iosConnectionPolicy.isAuthorizationPending(identifier) {
+                reportIOSFailure("Could not read the battery. The device may not support this feature or may have denied access.")
+            }
             iosConnectionPolicy.markConnectionFailed(identifier)
         } else {
             let newlyAuthorized = iosConnectionPolicy.markConnectionSucceeded(identifier)
@@ -539,9 +581,16 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
         finishIOSConnectionIfReady(peripheral)
     }
 
-    private func failIOSConnection(_ peripheral: CBPeripheral) {
+    private func reportIOSFailure(_ message: String) {
+        iosConnectionFailure = IOSBLEFailure(message: message.local)
+    }
+
+    private func failIOSConnection(_ peripheral: CBPeripheral, message: String = "Bluetooth connection failed. Move the device closer and retry.".local) {
         let identifier = peripheral.identifier
         guard isIOSConnection(identifier) else { return }
+        if iosConnectionPolicy.isAuthorizationPending(identifier) {
+            reportIOSFailure(message)
+        }
         iosConnectionPolicy.markConnectionFailed(identifier)
         pendingIOSDeviceIDs = iosConnectionPolicy.pendingAuthorizationIDs
         clearIOSConnectionState(identifier)
@@ -554,6 +603,7 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
     }
 
     private func clearIOSConnectionState(_ identifier: UUID) {
+        iosAttemptTokens.removeValue(forKey: identifier)
         iosServicesRemaining.removeValue(forKey: identifier)
         iosReadsRemaining.removeValue(forKey: identifier)
         iosConnectionsWithErrors.remove(identifier)
