@@ -207,7 +207,7 @@ struct IOSBluetoothDevicesView: View {
     @Environment(\.presentationMode) private var presentationMode
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 10) {
             Text("iOS Bluetooth Devices")
                 .font(.headline)
             Text("AirBattery will only connect to devices authorized here. Pair only an iPhone or iPad you own; it may show a one-time system pairing request.")
@@ -278,12 +278,13 @@ struct IOSBluetoothDevicesView: View {
                     }
                     .padding(5)
                 }
-                .frame(height: 145)
+                .frame(height: 105)
             }
 
             Text("Tip: open Personal Hotspot on your device and move it close to the Mac; a stronger signal is closer to 0 dBm.")
                 .font(.caption)
                 .foregroundColor(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
 
             HStack {
                 Button("Scan Again") { scanner.refreshIOSDevices() }
