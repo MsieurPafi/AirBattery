@@ -335,10 +335,15 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
                     if AirBatteryModel.checkIfBlocked(name: name) { return }
                     //if let prefix = getFirstNCharacters(of: macAdd, count: 8) {
                         print("ℹ️ \(name) (\(macAdd)) connected")
+                        // Read everything from the IOBluetoothDevice here on the main thread.
+                        // Capturing the device in the background closure crashed with
+                        // "pointer being freed was not allocated" when the closure released it
+                        // (e.g. devices reconnecting after wake from sleep).
+                        let isAppleDevice = device.isAppleDevice
                         DispatchQueue.global(qos: .background).async {
                             usleep(2500000)
                             //if !appleMacPrefix.contains(prefix) {
-                            if !device.isAppleDevice {
+                            if !isAppleDevice {
                                 SPBluetoothDataModel.shared.refeshData { _ in
                                     LogReader.shared.run(.connect)
                                     MagicBattery.shared.getIOBTBattery()
