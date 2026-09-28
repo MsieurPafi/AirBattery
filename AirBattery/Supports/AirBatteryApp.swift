@@ -26,6 +26,9 @@ let bleBattery = BLEBattery()
 let btdBattery = BTDBattery()
 var updateDelay = 1
 var keepAliveActivity: NSObjectProtocol? = nil
+// Serial queue: after wake many Bluetooth devices reconnect at once; handling them in
+// parallel ran several system_profiler scans and data updates concurrently.
+let btConnectQueue = DispatchQueue(label: "com.lihaoyun6.AirBattery.btconnect", qos: .background)
 
 @main
 struct AirBatteryApp: App {
@@ -340,7 +343,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
                         // "pointer being freed was not allocated" when the closure released it
                         // (e.g. devices reconnecting after wake from sleep).
                         let isAppleDevice = device.isAppleDevice
-                        DispatchQueue.global(qos: .background).async {
+                        btConnectQueue.async {
                             usleep(2500000)
                             //if !appleMacPrefix.contains(prefix) {
                             if !isAppleDevice {
