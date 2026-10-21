@@ -63,13 +63,13 @@ Binaire non audité : ne pas l'exécuter.
 | 3 | Niveaux AirPods bornés à 100 (#76) | 1 | **porté** `7dd363b` |
 | 4 | Fabricant Apple avant découpe boîtier/G/D (#106) | 1 | **porté** `f64e3bc` (dans `MagicBattery.getAirpods()`, fonction non appelée) |
 | 5 | Force-casts `logReader.sh` / IOKit | 1 | **porté** `f64e3bc` |
-| 6 | Minuteur indépendant iPhone/iPad/Watch (#91) | 2 | à vérifier (le rafraîchissement dépend de `onReceive(dockTimer)` dans une vue) |
-| 7 | Alertes de batterie jamais envoyées (#78) | 2 | à faire |
-| 8 | Appareils BT tiers connectés après le lancement (#91, Bose) | 2 | à faire |
-| 9 | Pas de reconnexion en boucle aux BLE sans batterie (#132), déconnexion après lecture (#178) | 4 | à faire |
-| 10 | AirPods nommés « iPhone » sur macOS 26 (#172) | 4 | à faire |
-| 11 | `logReader.sh` : nom sans PID (#137), catégorie `CBPowerSource`, MAC par le nom | 4 | à faire (vérifier sur les logs de Côme) |
-| 12 | Batterie du Mac : % avec limite de charge, santé (unités), cycles imbriqués (#152) | 3 | à faire (sur le Mac de Côme, `MaxCapacity` = 100, un pourcentage) |
+| 6 | Minuteur indépendant iPhone/iPad/Watch (#91) | 2 | **porté autrement** `b7757d0` : **non reproduit** sur macOS 27.0.1 (la vue du Dock tourne même sans icône), mais le scan lançait `idevice_id` ×2 **toutes les 5 s** → minuteur propre de 15 s |
+| 7 | Alertes de batterie jamais envoyées (#78) | 2 | **porté** `d069d4e` (`return` → `continue`) ; partie « minuteur » non reproduite (même raison que 6) |
+| 8 | Appareils BT tiers connectés après le lancement (#91, Bose) | 2 | **non repris** : `deviceIsConnected` relance déjà `LogReader.run(.connect)` à chaque connexion ; sa solution relisait les logs à chaque cycle (coût CPU, #59/#163) |
+| 9 | Pas de reconnexion en boucle aux BLE sans batterie (#132), déconnexion après lecture (#178) | 4 | **porté** `2d29f99`, testé (voir JOURNAL) |
+| 10 | AirPods nommés « iPhone » sur macOS 26 (#172) | 4 | **porté** `985e256` (non reproductible ici : AirPods correctement nommés) |
+| 11 | `logReader.sh` : nom sans PID (#137), catégorie `CBPowerSource`, MAC par le nom | 4 | **non repris** : 0 ligne `Battery M` en 12 h chez Côme ; les lignes `CBPowerSource` ont un autre format (`… Battery -85%`, sans `M` ni `BDA`) que le script ne sait pas lire, donc ajouter la catégorie n'aurait aucun effet (voir IDEAS.md) |
+| 12 | Batterie du Mac : % avec limite de charge, santé (unités), cycles imbriqués (#152) | 3 | % : **porté** `020bf44` (`IOPowerSources`), cas « limite de charge » non vérifié ; santé et cycles **non repris** (non affichés ; `AppleRawMaxCapacity` absent sur macOS 27) |
 | 13 | Icônes AirPods 4 ANC (#166), AirPods Max (#204/#205), MacBook Neo (#195) | 5 | à faire |
 | 14 | Survol Nearcast (#159), icône épinglée figée, texte de survol écrasé | 5 | à faire |
 | 15 | `autosaveName` des icônes de barre des menus (#182) | 5 | à faire |
