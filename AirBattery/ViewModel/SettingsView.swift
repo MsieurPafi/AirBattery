@@ -102,9 +102,13 @@ struct GeneralView: View {
                     }
                 }.onAppear { cltInstalled = CommandLineTool.isInstalled() }
             }.padding(.top, -20)
-            SGroupBox(label: "Update") { UpdaterSettingsView(updater: updaterController.updater) }
+            if updatesEnabled {
+                SGroupBox(label: "Update") { UpdaterSettingsView(updater: updaterController.updater) }
+            }
             VStack(spacing: 8) {
-                CheckForUpdatesView(updater: updaterController.updater)
+                if updatesEnabled {
+                    CheckForUpdatesView(updater: updaterController.updater)
+                }
                 if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
                     Text("AirBattery v\(appVersion)")
                         .font(.subheadline)
