@@ -207,3 +207,23 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Décisions :** D-010.
 **Testé sur appareil réel :** non (mesures passives seulement).
 **Prochaine étape :** choix de Côme entre #210 (avec ces améliorations) et la souris MX Anywhere 3 (bug qu'il constate lui-même).
+
+---
+
+## 2026-10-21 (suite 9) — Batterie de la souris Logitech MX Anywhere 3 (BLE)
+
+**Contexte :** macOS 27.0.1 (26A434), branche `fix/ble-hid-battery` depuis `main` @ `ecf31cb`.
+**Objectif :** afficher la batterie de la souris de Côme (BLE HID, `0x046D:0xB025`), absente jusqu'ici (COMPAT note 1).
+
+**Fait :**
+- `BLEBattery.readConnectedPeripherals()`, appelée à chaque `scan()` : `retrieveConnectedPeripherals(withServices: [180F])`, puis `connect` (première fois) ou `readValue(2A19)` (connexion logique déjà ouverte). Le traitement existant de `2A19` crée l'appareil, avec le type `Mouse` tiré de `system_profiler`.
+- Test de Côme : la MX Anywhere 3 apparaît, avec l'icône souris et **le même pourcentage** que Réglages › Bluetooth ; aucun popup ; aucun appareil disparu.
+- **Coût mesuré** (fork PID 18254, réglages par défaut, intervalle 1 min), via `log show` sur `bluetoothd`, session `AirBattery-central-18254`, sur 2 min en régime établi :
+  - 4 `RetrieveConnectedPeripheralsWithServices` : l'ajout, 1 appel par cycle de 29 s, un simple message XPC ;
+  - la souris n'est **pas** reconnectée à chaque fois : seulement une lecture `2A19` (1 octet) par minute au plus. Les 4 `ConnectPeripheral` / `CancelPeripheralConnection` observés sont ceux de l'iPhone autorisé (PR #214), vérifiés dans les journaux `bluetoothd` (`peerType iPhone`) ;
+  - processus entier : 2,60 s de CPU en 4 min 11 s, démarrage compris (~1 %).
+- Constat au passage : le gros de l'activité Bluetooth vient du scan BLE actif existant (4 scans + 168 `RetrieveAddressForPeripheral` en 2 min). Consigné dans `IDEAS.md` (piste #178/#207).
+
+**Échecs :** —
+**Testé sur appareil réel :** oui, par Côme (MX Anywhere 3).
+**Prochaine étape :** PR sur le fork, à faire relire par Côme.
