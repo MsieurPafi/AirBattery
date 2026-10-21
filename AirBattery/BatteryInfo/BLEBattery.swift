@@ -235,6 +235,7 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
     }
 
     @objc func scan(longScan: Bool = false) {
+        readConnectedPeripherals()
         if centralManager.state == .poweredOn && !centralManager.isScanning {
             centralManager.scanForPeripherals(withServices: nil, options: nil)
             DispatchQueue.main.asyncAfter(deadline: .now() + (longScan ? 15.0 : 5.0)) {
@@ -245,6 +246,41 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
 
     func stopScan() {
         centralManager.stopScan()
+    }
+
+    /// BLE peripherals that macOS keeps connected (HID mice and keyboards such as the
+    /// Logitech MX series) stop advertising, so `didDiscover` never sees them, and
+    /// system_profiler does not report their battery. Read the standard Battery Service
+    /// (0x180F / 0x2A19) of those peripherals directly. They are already bonded to the
+    /// Mac, so this cannot trigger a pairing request.
+    func readConnectedPeripherals() {
+        guard readBTDevice, centralManager.state == .poweredOn else { return }
+        let now = Date().timeIntervalSince1970
+        let batteryService = CBUUID(string: "180F")
+        for peripheral in centralManager.retrieveConnectedPeripherals(withServices: [batteryService]) {
+            let identifier = peripheral.identifier
+            guard let name = peripheral.name, !AirBatteryModel.checkIfBlocked(name: name) else { continue }
+            if isIOSConnection(identifier) || otherAppleDevices.contains(identifier) { continue }
+            if let device = AirBatteryModel.getByName(name) {
+                // Another source (IOKit, system_profiler, logs) already reports this device.
+                if device.deviceID != identifier.uuidString { continue }
+                if now - device.lastUpdate < Double(60 * updateInterval) { continue }
+            }
+            retainPeripheral(peripheral)
+            if peripheral.state == .connected {
+                // Still connected from a previous read: just read the level again.
+                let level = peripheral.services?
+                    .first(where: { $0.uuid == batteryService })?
+                    .characteristics?.first(where: { $0.uuid == CBUUID(string: "2A19") })
+                if let level = level {
+                    peripheral.readValue(for: level)
+                } else {
+                    peripheral.discoverServices([batteryService])
+                }
+            } else if peripheral.state == .disconnected {
+                centralManager.connect(peripheral, options: nil)
+            }
+        }
     }
 
     func refreshIOSDevices() {
