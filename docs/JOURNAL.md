@@ -293,3 +293,26 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Testé sur appareil réel :** oui, par Côme (captures, mode clair et sombre).
 **Pistes ouvertes :** fenêtre « Dock » (`fromDock`) et alertes (`BatteryAlertView`) pas revues ; décalage de 7 pt non vérifié sur une barre de 24 pt.
 **Prochaine étape :** PR sur le fork, fusion demandée par Côme.
+
+---
+
+## 2026-10-21 (suite 13) — Release 1.7.0 (pre-release)
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, branche `release/1.7.0` depuis `main` @ `5c166c4`.
+**Objectif :** première release du fork, demandée par Côme.
+
+**Fait :**
+- Configuration Release vérifiée : compile, binaire universel (`x86_64 arm64`), signé `PCH7VR8GPS`, hardened runtime, sans `SUFeedURL`.
+- Choix de Côme (D-013) : 1.7.0, DMG, pre-release, `AirBattery Plus.app`.
+- `d9cb557` : `MARKETING_VERSION` 1.6.3 → 1.7.0, `CURRENT_PROJECT_VERSION` 163 → 170 (app et widget ; le helper garde sa propre version).
+- `900e8f5` : encart « fork » dans le README (AGPL, lien vers l'original, macOS 12+, téléchargements depuis le fork) et `CHANGELOG.md` en anglais, avec crédits aux PR upstream #216 (son auteur), #214 (Moyuin-aka), #161, #162, #163, #177. `9925e69` : mention du nom de fichier.
+- Build Release propre (`clean build`, `build/DerivedData-release`). DMG avec `hdiutil create -format UDZO` (app + raccourci Applications), vérifié avec `hdiutil verify` et monté pour un `codesign --verify --deep --strict`. SHA-256 `980cea67bdefff8a73a0766134d88b346041b4950d34f90a663219a21007f45e`.
+- Premier DMG refait : l'app s'appelait `AirBattery.app` et aurait écrasé l'officielle dans Applications.
+- Test de Côme : installation depuis le DMG dans Applications, menu, widget et version 1.7.0 OK.
+- Tag annoté `v1.7.0` sur `9925e69`, poussé. Pre-release publiée : https://github.com/MsieurPafi/AirBattery/releases/tag/v1.7.0 (DMG + `.sha256`). DMG retéléchargé avec `gh release download` : même SHA-256.
+
+**Échecs :** —
+**Décisions :** D-013.
+**Testé sur appareil réel :** oui, par Côme (DMG installé dans Applications). Gatekeeper non testé sur un DMG *téléchargé* (pas de quarantaine sur un fichier créé localement).
+**Pistes ouvertes :** la copie de développement (`build/DerivedData`) et l'app installée ont le même bundle ID ; ne lancer que l'une des deux.
+**Prochaine étape :** correctifs de la 1.6.5 de callieskye.

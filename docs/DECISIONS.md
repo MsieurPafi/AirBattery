@@ -98,3 +98,11 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 **Pourquoi :** vérifié sur capture au-dessus d'un fond coloré, le `NSPopover` compilé avec le SDK 27 est **déjà** en Liquid Glass ; il ne manquait que la géométrie. B aurait obligé à réimplémenter la fermeture au clic extérieur, le positionnement, etc. A est écartée (voir UPSTREAM.md).
 **Conséquences :** les valeurs sont mesurées sur l'écran à encoche de Côme : un changement de rayon du popover dans une future version de macOS demandera de les réajuster. Le décalage de 7 pt n'est pas vérifié sur une barre des menus de 24 pt (écran externe).
 **Validée par Côme :** oui (2026-10-21, captures avant/après ; il choisit de ne pas reprendre les autres écarts avec Parcel/BetterDisplay pour l'instant)
+
+## D-013 — Première release : 1.7.0, DMG, pre-release, fichier « AirBattery Plus.app »   (2026-10-21, statut : acceptée)
+**Contexte :** Côme veut une première release avec le travail de la Phase 0 et du début de Phase 1, avant d'attaquer les correctifs de callieskye.
+**Options envisagées :** version 1.7.0 / 2.0.0 / 0.1.0 ; ZIP / DMG ; pre-release / release normale ; nom de fichier `AirBattery Plus.app` / `AirBattery.app`.
+**Décision :** **1.7.0** (build 170), en **DMG**, publiée en **pre-release** ; l'app s'y appelle **`AirBattery Plus.app`** (seul le nom du fichier ; le nom affiché reste « AirBattery » jusqu'à la tâche d'identité).
+**Pourquoi :** 1.7.0 suit la 1.6.3 officielle sans entrer en collision avec les « 1.6.4/1.6.5 » communautaires de callieskye. Pre-release car le build n'est pas notarisé, il est signé avec un certificat de développement et n'a été testé que sur un Mac. Le nom de fichier distinct évite qu'un glisser-déposer dans Applications **remplace** l'app officielle, qui porte le même nom.
+**Conséquences :** le tag `v1.7.0` pointe sur `9925e69`. Le DMG a été compilé depuis `900e8f5` (seule la doc diffère). Les notes de version écrivent les numéros upstream en police de code (`` `#215` ``) pour ne pas créer de lien automatique, ni vers des issues inexistantes du fork ni vers le dépôt de l'auteur. Le README porte désormais l'encart « fork modifié, AGPL-3.0 » exigé pour distribuer un binaire.
+**Validée par Côme :** oui (2026-10-21 : choix via questionnaire, puis test du DMG installé dans Applications)
