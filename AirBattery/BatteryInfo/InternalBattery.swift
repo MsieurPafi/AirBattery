@@ -112,7 +112,10 @@ class InternalFinder {
     }
 
     fileprivate func close() {
-        IOServiceClose(self.serviceInternal)
+        // serviceInternal comes from IOServiceGetMatchingService and is never opened with
+        // IOServiceOpen, so it must only be released. Calling IOServiceClose on it raised a
+        // Mach port EXC_GUARD (type=0x1 flavor=0x200, invalid name) on every read, i.e.
+        // twice per second while the menu bar icon refreshes (upstream #207).
         IOObjectRelease(self.serviceInternal)
 
         self.serviceInternal = 0
