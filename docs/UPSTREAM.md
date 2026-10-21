@@ -70,9 +70,9 @@ Binaire non audité : ne pas l'exécuter.
 | 10 | AirPods nommés « iPhone » sur macOS 26 (#172) | 4 | **porté** `985e256` (non reproductible ici : AirPods correctement nommés) |
 | 11 | `logReader.sh` : nom sans PID (#137), catégorie `CBPowerSource`, MAC par le nom | 4 | **non repris** : 0 ligne `Battery M` en 12 h chez Côme ; les lignes `CBPowerSource` ont un autre format (`… Battery -85%`, sans `M` ni `BDA`) que le script ne sait pas lire, donc ajouter la catégorie n'aurait aucun effet (voir IDEAS.md) |
 | 12 | Batterie du Mac : % avec limite de charge, santé (unités), cycles imbriqués (#152) | 3 | % : **porté** `020bf44` (`IOPowerSources`), cas « limite de charge » non vérifié ; santé et cycles **non repris** (non affichés ; `AppleRawMaxCapacity` absent sur macOS 27) |
-| 13 | Icônes AirPods 4 ANC (#166), AirPods Max (#204/#205), MacBook Neo (#195) | 5 | à faire |
-| 14 | Survol Nearcast (#159), icône épinglée figée, texte de survol écrasé | 5 | à faire |
-| 15 | `autosaveName` des icônes de barre des menus (#182) | 5 | à faire |
+| 13 | Icônes AirPods 4 ANC (#166), AirPods Max (#204/#205), MacBook Neo (#195) | 5 | **porté** `d17f054` ; correspondance « airpods max » au lieu de « max » (évite « Maxime ») ; non repris : icône Pro par défaut (pari), Siri Remote (image `appletvremote.gen1` absente des ressources → plantage) |
+| 14 | Survol Nearcast (#159), icône épinglée figée, texte de survol écrasé | 5 | #159 **porté** `6db2a6a` ; icône épinglée **portée** `27f28da` (sans le `!`, avec un cache vidé au désépinglage) ; texte écrasé **non repris** (causé par les 2 boutons qu'elle avait ajoutés ; sa solution supprimait « il y a X min ») |
+| 15 | `autosaveName` des icônes de barre des menus (#182) | 5 | **porté** `27f28da` ; effet sur Thaw non démontré (voir COMPAT note 7) |
 
 **Fonctions (au choix de Côme)** : tri de la liste (#56, et #188 du brief), sourdine des alertes par appareil (#135), alerte batterie faible avec seuil, bascule du mode économie d'énergie (#117/#129), écouteurs toujours séparés (#116), copier l'ID (#108), fond blanc du widget (#119), barre de batterie pour les épinglés (#100), astuce Watch/Pencil (#95/#136), Siri Remote (#85, non vérifiée par l'autrice).
 
