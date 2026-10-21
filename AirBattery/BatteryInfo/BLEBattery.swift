@@ -719,25 +719,27 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
             var model = (messageType == "open" ? getHeadphoneModel(String(format: "%02x%02x", data[6], data[5])) : "Airpods Pro 2")
             if let Case = AirBatteryModel.getByName(deviceName + " (Case)".local) { model = Case.deviceModel ?? model }
             
+            // Bit 7 is the charging flag. A stray byte between 101 and 127 has it unset and
+            // went through unchanged (AirPods shown at 125%, upstream #76): clamp to 100.
             var caseLevel = data[messageType == "open" ? 16 : 12]
             var caseCharging = 0
             if caseLevel != 255 {
                 caseCharging = caseLevel > 100 ? 1 : 0
-                caseLevel = (caseLevel ^ 128) & caseLevel
+                caseLevel = min((caseLevel ^ 128) & caseLevel, 100)
             }else{ caseLevel = getLevel(deviceName, "Case") }
             
             var leftLevel = data[messageType == "open" ? (flip ? 15 : 14) : 13]
             var leftCharging = 0
             if leftLevel != 255 {
                 leftCharging = leftLevel > 100 ? 1 : 0
-                leftLevel = (leftLevel ^ 128) & leftLevel
+                leftLevel = min((leftLevel ^ 128) & leftLevel, 100)
             }else{ leftLevel = getLevel(deviceName, "Left") }
             
             var rightLevel = data[messageType == "open" ? (flip ? 14 : 15) : 14]
             var rightCharging = 0
             if rightLevel != 255 {
                 rightCharging = rightLevel > 100 ? 1 : 0
-                rightLevel = (rightLevel ^ 128) & rightLevel
+                rightLevel = min((rightLevel ^ 128) & rightLevel, 100)
             }else{ rightLevel = getLevel(deviceName, "Right") }
             
             if !["Airpods Max", "Beats Solo Pro", "Beats Solo 3", "Beats Studio Pro"].contains(model) {
