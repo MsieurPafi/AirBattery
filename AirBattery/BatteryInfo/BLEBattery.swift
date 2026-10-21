@@ -236,6 +236,10 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
 
     @objc func scan(longScan: Bool = false) {
         readConnectedPeripherals()
+        // The active scan only feeds AirPods/Beats advertisements (readBTDevice), iOS
+        // devices over BLE (ideviceOverBLE) and generic BLE devices (readBLEDevice).
+        // Don't keep the radio busy when none of them is enabled.
+        guard readBTDevice || ideviceOverBLE || readBLEDevice else { return }
         if centralManager.state == .poweredOn && !centralManager.isScanning {
             centralManager.scanForPeripherals(withServices: nil, options: nil)
             DispatchQueue.main.asyncAfter(deadline: .now() + (longScan ? 15.0 : 5.0)) {
