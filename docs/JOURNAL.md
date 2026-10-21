@@ -270,3 +270,26 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Décisions :** D-011.
 **Testé sur appareil réel :** oui, par Côme (AirPods Pro) ; mesures par Claude.
 **Prochaine étape :** PR sur le fork.
+
+---
+
+## 2026-10-21 (suite 12) — Interface Liquid Glass
+
+**Contexte :** macOS 27.0.1 (26A434), branche `ui/liquid-glass` depuis `main` @ `21aa862`.
+**Objectif :** soucis d'UI signalés par Côme : « ce n'est pas du Liquid Glass », coins mal arrondis.
+
+**Fait :**
+- Lecture du code : le menu est un `NSPopover` système (`togglePopover`, ancre masquée par `shouldHideAnchor`) qui contient la vue SwiftUI `popover`. La liste est entourée d'un cadre gris à coins de 4 pt, les lignes ont des coins de 2,9 pt. Pas d'option de compatibilité de design ; `DTSDKName` = `macosx27.0`.
+- PR upstream #200 lue : non reprise (UPSTREAM.md, D-012).
+- SDK 27 : `ConcentricRectangle`, `containerShape`, `glassEffect` et `GlassEffectContainer` sont disponibles (macOS 26+). Finalement non utilisés : un rayon mesuré suffit et reste lisible.
+- Itérations sur captures de Côme, mesurées en recadrant/agrandissant avec `sips` (Retina ×2) :
+  1. rayon du popover ≈ 18 pt ; liste en retrait de 5,5 pt → carte remplie à 13 pt de rayon, lignes à 12 pt (`68c4b83`) ;
+  2. capture au-dessus d'un fond coloré : le popover **est** en Liquid Glass (fond flouté visible) ; boutons à 4,5/7,5 pt du bord, donc dans la courbe → recentrés sur l'arc (≈ 18 pt des bords), marge du bas égalisée ;
+  3. comparaison avec BetterDisplay et Parcel : écart barre des menus → popover de 9,5 pt chez nous contre 2,5–3 pt chez eux → popover remonté de 7 pt sur macOS 26+ (`8604193`).
+- Côme valide le rendu, et préfère ne pas reprendre les autres écarts relevés (icônes, taille du texte, séparateurs, carte), consignés dans `IDEAS.md`.
+
+**Échecs :** —
+**Décisions :** D-012.
+**Testé sur appareil réel :** oui, par Côme (captures, mode clair et sombre).
+**Pistes ouvertes :** fenêtre « Dock » (`fromDock`) et alertes (`BatteryAlertView`) pas revues ; décalage de 7 pt non vérifié sur une barre de 24 pt.
+**Prochaine étape :** PR sur le fork, fusion demandée par Côme.

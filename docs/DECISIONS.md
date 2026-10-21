@@ -90,3 +90,11 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 **Pourquoi :** divise par deux le temps de radio en scan actif sans retirer de fonction.
 **Conséquences :** les AirPods dépendent **uniquement** de ce scan (le lecteur `system_profiler` de `MagicBattery.getAirpods()` n'est plus appelé depuis le commit upstream `5991915`, 2024). À l'ouverture du boîtier, ils apparaissent en 45 à 60 s au lieu de 30 s au plus. Le gain sur #178 n'est pas vérifiable chez Côme. Pour revenir en arrière : `startScan()` dans `BLEBattery.swift`.
 **Validée par Côme :** oui (2026-10-21, après test : AirPods visibles en 45–60 s boîtier ouvert, stables en utilisation)
+
+## D-012 — Interface Liquid Glass : popover système + géométrie concentrique   (2026-10-21, statut : acceptée)
+**Contexte :** sur macOS 26/27, le popover de la barre des menus avait des coins de ~18 pt, mais la liste intérieure gardait un cadre gris à coins de 4 pt, les boutons de la barre d'outils empiétaient sur l'arrondi, et le popover était ~7 pt plus bas que dans les autres apps Liquid Glass (BetterDisplay, Parcel). Côme pensait que le verre manquait.
+**Options envisagées :** A. reprendre la PR upstream #200 / B. remplacer le `NSPopover` par une fenêtre maison avec `glassEffect` / C. garder le `NSPopover` système (qui fournit déjà le verre) et corriger la géométrie du contenu.
+**Décision :** C. Tout se règle dans `ListMetrics` (`ContentView.swift`) : rayon du popover 18 pt (mesuré), liste en retrait de 5 pt avec un rayon de 13 pt, boutons centrés sur l'arc du coin, popover remonté de 7 pt. Le rendu d'avant macOS 26 est conservé.
+**Pourquoi :** vérifié sur capture au-dessus d'un fond coloré, le `NSPopover` compilé avec le SDK 27 est **déjà** en Liquid Glass ; il ne manquait que la géométrie. B aurait obligé à réimplémenter la fermeture au clic extérieur, le positionnement, etc. A est écartée (voir UPSTREAM.md).
+**Conséquences :** les valeurs sont mesurées sur l'écran à encoche de Côme : un changement de rayon du popover dans une future version de macOS demandera de les réajuster. Le décalage de 7 pt n'est pas vérifié sur une barre des menus de 24 pt (écran externe).
+**Validée par Côme :** oui (2026-10-21, captures avant/après ; il choisit de ne pas reprendre les autres écarts avec Parcel/BetterDisplay pour l'instant)
