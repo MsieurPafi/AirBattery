@@ -11,7 +11,7 @@ class HelperAppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         let runningApps = NSWorkspace.shared.runningApplications
         let isRunning = runningApps.contains {
-            $0.bundleIdentifier == "com.lihaoyun6.AirBattery"
+            $0.bundleIdentifier == AppIdentifiers.app
         }
         
         if !isRunning {

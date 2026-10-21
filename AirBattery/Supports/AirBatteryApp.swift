@@ -171,6 +171,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
     }
     
     func applicationWillFinishLaunching(_ notification: Notification) {
+        // AppIdentifiers.prefix must match the APP_ID_PREFIX build setting,
+        // otherwise the widget container path and the helper checks break silently.
+        assert(Bundle.main.bundleIdentifier == AppIdentifiers.app,
+               "AppIdentifiers.prefix is out of sync with APP_ID_PREFIX")
         // default defaults (used if not set)
         ud.register(
             defaults: [
@@ -226,7 +230,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
         IOBluetoothDevice.register(forConnectNotifications: self, selector: #selector(deviceIsConnected(notification:fromDevice:)))
         NSAppleEventManager.shared().setEventHandler(self, andSelector: #selector(handleURLEvent(_:replyEvent:)), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
         //if let window = NSApplication.shared.windows.first { window.close() }
-        launchAtLogin = NSWorkspace.shared.runningApplications.contains { $0.bundleIdentifier == "com.lihaoyun6.AirBatteryHelper" }
+        launchAtLogin = NSWorkspace.shared.runningApplications.contains { $0.bundleIdentifier == AppIdentifiers.helper }
         print("⚙️ Launch AirBattery at login = \(launchAtLogin)")
         print("⚙️ Icon mode = \(showOn)")
         if ncGroupID != "" { if nearCast { netcastService.resume() } }
@@ -401,7 +405,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
     @objc func handleURLEvent(_ event: NSAppleEventDescriptor, replyEvent: NSAppleEventDescriptor) {
         if let urlString = event.paramDescriptor(forKeyword: AEKeyword(keyDirectObject))?.stringValue,
            let url = URL(string: urlString) {
-            if url.scheme == "airbattery"{
+            if url.scheme == AppIdentifiers.urlScheme {
                 switch url.host {
                 case "writedata" :
                     print("Writing data to disk...")
@@ -516,7 +520,7 @@ func refeshPinnedBar(unpin: String? = nil) {
 
 @discardableResult
 func ensureLoginItem(enabled: Bool) -> Bool {
-    let helperBundleIdentifier = "com.lihaoyun6.AirBatteryHelper"
+    let helperBundleIdentifier = AppIdentifiers.helper
     if #available(macOS 13.0, *) {
         do {
             if enabled {

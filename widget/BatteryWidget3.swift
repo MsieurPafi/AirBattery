@@ -25,7 +25,7 @@ struct batteryWidgetEntryView3 : View {
             @unknown default:
                 EmptyView()
             }
-        }.widgetURL(URL(string: "airbattery://reloadwingets"))
+        }.widgetURL(AppIdentifiers.url("reloadwingets"))
     }
 }
 

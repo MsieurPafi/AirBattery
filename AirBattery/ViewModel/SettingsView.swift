@@ -60,7 +60,7 @@ struct GeneralView: View {
             SGroupBox(label: "Startup") {
                 SToggle("Launch at Login", isOn: $launchAtLogin)
                     .onChange(of: launchAtLogin) { newValue in
-                        SMLoginItemSetEnabled("com.lihaoyun6.AirBatteryHelper" as CFString, newValue)
+                        SMLoginItemSetEnabled(AppIdentifiers.helper as CFString, newValue)
                     }
                 Divider().opacity(0.5)
                 SPicker("Show AirBattery", selection: $showOn) {

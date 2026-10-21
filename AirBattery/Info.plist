@@ -6,10 +6,10 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>com.lihaoyun6.AirBattery</string>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>airbattery</string>
+				<string>airbattery-plus</string>
 			</array>
 		</dict>
 	</array>

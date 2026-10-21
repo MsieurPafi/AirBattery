@@ -10,7 +10,7 @@ import ArgumentParser
 
 let fd = FileManager.default
 let ud = UserDefaults.standard
-let key = "com.lihaoyun6.AirBattery.widget"
+let key = AppIdentifiers.widget
 let ncFolder = fd.urls(for: .libraryDirectory, in: .userDomainMask).first!.appendingPathComponent("Containers/\(AirBatteryModel.key)/Data/Documents/NearcastData")
 
 extension Device {
@@ -63,7 +63,7 @@ struct airbattery: ParsableCommand {
     }
 
     mutating func run() throws {
-        if let url = URL(string: "airbattery://writedata") {
+        if let url = AppIdentifiers.url("writedata") {
             let config = NSWorkspace.OpenConfiguration()
             config.activates = false
             NSWorkspace.shared.open(url, configuration: config)

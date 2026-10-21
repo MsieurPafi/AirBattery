@@ -21,7 +21,7 @@ struct ViewSizeTimelineProviderNew: AppIntentTimelineProvider {
     func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> SimpleEntry {
         var mainApp = false
         let apps = NSWorkspace.shared.runningApplications
-        for app in apps as [NSRunningApplication] { if app.bundleIdentifier == "com.lihaoyun6.AirBattery" { mainApp = true } }
+        for app in apps as [NSRunningApplication] { if app.bundleIdentifier == AppIdentifiers.app { mainApp = true } }
         var data = AirBatteryModel.readData()
         let ncFiles = getFiles(withExtension: "json", in: ncFolder)
         for ncFile in ncFiles {
@@ -39,7 +39,7 @@ struct ViewSizeTimelineProviderNew: AppIntentTimelineProvider {
     func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry> {
         var mainApp = false
         let apps = NSWorkspace.shared.runningApplications
-        for app in apps as [NSRunningApplication] { if app.bundleIdentifier == "com.lihaoyun6.AirBattery" { mainApp = true } }
+        for app in apps as [NSRunningApplication] { if app.bundleIdentifier == AppIdentifiers.app { mainApp = true } }
         var data = AirBatteryModel.readData()
         let ncFiles = getFiles(withExtension: "json", in: ncFolder)
         for ncFile in ncFiles {
@@ -66,7 +66,7 @@ struct ViewSizeTimelineProvider: TimelineProvider {
     func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> Void) {
         var mainApp = false
         let apps = NSWorkspace.shared.runningApplications
-        for app in apps as [NSRunningApplication] { if app.bundleIdentifier == "com.lihaoyun6.AirBattery" { mainApp = true } }
+        for app in apps as [NSRunningApplication] { if app.bundleIdentifier == AppIdentifiers.app { mainApp = true } }
         var data = AirBatteryModel.readData()
         let ncFiles = getFiles(withExtension: "json", in: ncFolder)
         for ncFile in ncFiles {
@@ -86,7 +86,7 @@ struct ViewSizeTimelineProvider: TimelineProvider {
     func getTimeline(in context: Context, completion: @escaping (Timeline<SimpleEntry>) -> Void) {
         var mainApp = false
         let apps = NSWorkspace.shared.runningApplications
-        for app in apps as [NSRunningApplication] { if app.bundleIdentifier == "com.lihaoyun6.AirBattery" { mainApp = true } }
+        for app in apps as [NSRunningApplication] { if app.bundleIdentifier == AppIdentifiers.app { mainApp = true } }
         var data = AirBatteryModel.readData()
         let ncFiles = getFiles(withExtension: "json", in: ncFolder)
         for ncFile in ncFiles {
@@ -132,7 +132,7 @@ struct batteryWidgetEntryView : View {
             @unknown default:
                 EmptyView()
             }
-        }.widgetURL(URL(string: "airbattery://reloadwingets"))
+        }.widgetURL(AppIdentifiers.url("reloadwingets"))
     }
 }
 
