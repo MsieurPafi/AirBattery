@@ -149,3 +149,22 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Testé sur appareil réel :** en cours (checklist veille/réveil donnée à Côme).
 **Pistes ouvertes :** correctifs de callieskye à porter un par un (liste dans `UPSTREAM.md`).
 **Prochaine étape :** si le test de Côme est concluant, fusionner `fix/215-concurrency` dans `main` ; ensuite, PR #214 (popups d'appairage), à valider avec Côme.
+
+---
+
+## 2026-10-21 (suite 6) — PR #216 fusionnée, évaluation de la PR #214
+
+**Contexte :** macOS 27.0.1 (26A434), commit de départ `3aca53b`.
+
+**Fait :**
+- Retour de Côme : « l'app a l'air de tenir ». Vérifié de mon côté à 17:36 : fork (PID 13065) en vie depuis 30 min, 0 % CPU, 88 Mo ; au moins une veille capot fermé (`Clamshell Sleep` 17:29:33) et plusieurs réveils dans `build/logs/run-2026-10-21-1705-pr216-sleepwake.log` ; **aucun rapport de crash** (AirBattery, comptest, ideviceinfo, wificonnection) depuis le 21/10. Erreurs du fork limitées au bruit CoreBluetooth (`No name or address`, `handlePeerDisconnectionCompleted: <private> not found`).
+- `fix/215-concurrency` fusionnée en fast-forward dans `main`.
+- PR #214 : description et diff lus ; essai sur la branche `fix/89-ios-ble-allowlist` (cherry-pick `-x` de `3f2a6eb`, `781f750`, `ceaede7`, `c9f9505` → `814b1fe`, `58d6905`, `7f7eb03`, `8d2ee1c` ; `aa85210`, l'import, est sauté). Aucun conflit ; build OK dans `build/DerivedData-trial` (pour ne pas écraser l'app en cours d'exécution), sans nouveau warning. **Non fusionnée** : en attente de la décision de Côme.
+- Réglages du fork (`defaults read io.github.msieurpafi.AirBattery`) : aucune des clés `ideviceOverBLE`, `readBLEDevice`, `readBTDevice`, `readBTHID` n'est définie, donc toutes à leur valeur par défaut. En particulier, la découverte d'iPhone par Bluetooth est **désactivée** : Côme n'est pas exposé aux popups d'appairage (#169/#158) avec le fork tel quel.
+
+**Échecs :**
+- La sortie standard de l'app, redirigée vers un fichier par `open --stdout`, reste vide : `print()` est mis en tampon complet quand stdout n'est pas un terminal, et ne se vide qu'à la sortie. On ne peut donc pas prouver que `deviceIsConnected` a tourné après les réveils. Piste : `os.Logger` (consigné dans `IDEAS.md`).
+
+**Décisions :** —
+**Testé sur appareil réel :** oui, veille/réveil par Côme (PR #216). Observation à poursuivre quelques jours.
+**Prochaine étape :** décision de Côme sur #214.

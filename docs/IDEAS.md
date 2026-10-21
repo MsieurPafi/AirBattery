@@ -14,3 +14,4 @@ Pistes **non engagées**. Rien ici ne s'implémente sans le feu vert de Côme.
 | Tri du widget par batterie la plus faible | upstream #188 | |
 | Batterie des périphériques BLE HID déjà connectés (`retrieveConnectedPeripherals` + `180F`/`2A19`) | Côme (MX Anywhere 3), 2026-10-21 | Plutôt un correctif qu'une feature ; voir COMPAT note 1 |
 | `abt` : lire les données hors du container sandboxé du widget | Claude, 2026-10-21 | Voir COMPAT note 2 |
+| Remplacer `print()` par `os.Logger` (sous-système `io.github.msieurpafi.AirBattery`) | Claude, 2026-10-21 | Logs visibles dans `log stream`, filtrables, et non perdus dans un tampon stdout |

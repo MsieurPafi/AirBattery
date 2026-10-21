@@ -15,7 +15,7 @@ Les têtes de PR de l'archive locale sont disponibles dans `archive/pr/<N>` (`gi
 | #163 | CPU du parsing de logs | dans la base | non publié, à valider |
 | #177 | Correctif popup (#176) | dans la base | |
 | #216 | Concurrence / crash au réveil | **repris** (branche `fix/215-concurrency`, en test) | D-008. `a8614c4` → `7b06120`, `befadc9` → `d4af77a` (cherry-pick `-x`, auteur conservé ; conflit sur `AirBatteryModel.key` résolu en gardant `AppIdentifiers.widget`). `0ca1233` (import) non repris : déjà fait dans `774c380`. Libellé de la file renommé (`59a054d`). |
-| #214 | Plus de connexion BT auto aux iOS | à évaluer | change le comportement, valider avec Côme. Ne recoupe #216 que sur l'import `ServiceManagement` (D-008). |
+| #214 | Plus de connexion BT auto aux iOS | essai sur `fix/89-ios-ble-allowlist` (non fusionné) | s'applique sans conflit sur `main`, compile. Change le comportement : décision de Côme attendue. Ne recoupe #216 que sur l'import `ServiceManagement` (D-008). |
 | #210 | Wi-Fi privée iOS (`syncmac`) | à évaluer | recompiler le binaire, ne pas l'intégrer tel quel |
 | #211 | Mode d'énergie | hors périmètre | cf. IDEAS.md |
 | #200 | Liquid Glass | à évaluer | |
