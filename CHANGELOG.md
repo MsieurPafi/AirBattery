@@ -8,7 +8,7 @@ First release of the fork, based on the official 1.6.3 plus the upstream commits
 
 ### Fork identity
 
-- Own bundle IDs (`io.github.msieurpafi.AirBattery`, `.widget`, `AirBatteryHelper`) and URL scheme (`airbattery-plus://`). The fork never shares settings, widget data or login items with the official app, and both can be installed side by side.
+- Own bundle IDs (`io.github.msieurpafi.AirBattery`, `.widget`, `AirBatteryHelper`) and URL scheme (`airbattery-plus://`). The fork never shares settings, widget data or login items with the official app, and both can be installed side by side. The app file is named `AirBattery Plus.app` so that it doesn't overwrite the official `AirBattery.app` in Applications; inside, the app is still called AirBattery for now.
 - Automatic updates (Sparkle) are disabled: the official update feed could otherwise replace the fork with the official app.
 - Minimum macOS version raised from 11.0 to 12.0, the lowest that Xcode 27 can target.
 
