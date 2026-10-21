@@ -416,3 +416,22 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Échecs :** ajout de `CFBundleName` dans `AirBattery/Info.plist` → sans effet (valeur générée depuis `PRODUCT_NAME` prioritaire), retiré.
 **Testé sur appareil réel :** tri oui (Côme) ; nom affiché à vérifier dans la galerie une fois installé dans Applications (la galerie suit la copie enregistrée par PlugInKit, ici `/Applications/AirBattery Plus.app`).
 **Prochaine étape :** fusion des deux PR, puis 1.7.2 (DMG testé par Côme avant publication).
+
+---
+
+## 2026-10-21 (suite 19) — Release 1.7.2 : tri des appareils et nom « AirBattery Plus »
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1. PR #15 (tri) et #16 (nom affiché) fusionnées par Claude avec l'accord de Côme (`main` @ `96f35b9`). Branche `release/1.7.2`.
+
+**Fait :**
+- `9ad27ee` : version 1.7.2 (172) et changelog.
+- Premier DMG : la galerie montrait toujours deux « AirBattery ». LaunchServices nommait pourtant le fork « AirBattery Plus » (nom d'affichage et nom de fichier). Diagnostic : la galerie lit `CFBundleName`. Essais sans effet : clé `CFBundleName` dans `Info.plist` (écrasée par la valeur générée), réglage `INFOPLIST_KEY_CFBundleName` (ignoré).
+- `58d70e4` (D-015) : `PRODUCT_NAME = "AirBattery Plus"` pour la cible app, `PRODUCT_MODULE_NAME = AirBattery`. Vérifié dans le binaire : classes AppleScript `_TtC10AirBattery7listAll`… inchangées.
+- Deuxième DMG : le widget du fork **disparaît** de la galerie. Cause : PlugInKit avait choisi l'extension de la copie de **compilation** (`build/DerivedData-release/…/AirBattery Plus.app`, enregistrée au build) ; NotificationCenter journalise alors « Remove widgets belonging to extension … from storage ». Correctif : `pluginkit -r` + `lsregister -u` sur les copies de `build/`, `pluginkit -a` + `lsregister -f` sur `/Applications/AirBattery Plus.app`, suppression de `build/DerivedData-release` et de `build/dist/stage`. Le widget revient, avec la description « … from AirBattery Plus ».
+- Barre latérale encore sur « AirBattery » : nom gardé en mémoire par NotificationCenter (lancé à 14:47). `killall NotificationCenter` avec l'accord de Côme → relancé automatiquement → « **AirBattery Plus** » affiché (confirmé par Côme).
+- Tag `v1.7.2` sur `80b4142` (le DMG vient de `58d70e4` ; seule la doc diffère). Pre-release publiée : https://github.com/MsieurPafi/AirBattery/releases/tag/v1.7.2. SHA-256 `bbdc35ce41687a19265e5d1ff4d118ac0e38f285c7cd99b41bd01ac61b56d91d`, identique après retéléchargement. Les notes conseillent de se déconnecter si la galerie garde l'ancien nom.
+
+**Échecs :** voir ci-dessus (deux tentatives sur `CFBundleName`, puis l'extension choisie dans la copie de build).
+**À retenir :** une copie compilée dans `build/` (Debug ou Release) est enregistrée par LaunchServices et PlugInKit, et peut **prendre la place** de l'app installée pour le widget. Après un build Release, la désenregistrer ou supprimer le dossier ; ne pas laisser traîner de `build/dist/stage`.
+**Testé sur appareil réel :** oui, par Côme (galerie, widget, tri).
+**Prochaine étape :** autres fonctions de callieskye au choix de Côme ; reste de la tâche identité ; mises à jour GitHub / CI.
