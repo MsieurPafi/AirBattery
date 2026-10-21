@@ -98,3 +98,32 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Décisions :** —
 **Testé sur appareil réel :** non (app pas encore lancée).
 **Prochaine étape :** étape 7, premier lancement avec Côme (checklist donnée en session).
+
+---
+
+## 2026-10-21 (suite 4) — Étape 7 : premier lancement
+
+**Contexte :** macOS 27.0.1 (26A434), build Debug signé (`PCH7VR8GPS`) @ `51cf3a0`. App officielle arrêtée (seule son extension widget tournait). Lancement : `open --stdout … --stderr … build/DerivedData/Build/Products/Debug/AirBattery.app`, logs capturés avec `/usr/bin/log stream` dans `build/logs/run-2026-10-21-1646.log`.
+**Objectif :** Phase 0, étape 7 : vérifier source par source avec Côme.
+
+**Fait (testé par Côme, sur ses appareils) :**
+- Autorisations Bluetooth et réseau local demandées et accordées.
+- Icône dans la barre des menus, batterie interne OK.
+- AirPods Pro : écouteurs + boîtier OK.
+- Réglages : la fenêtre s'ouvre, section « Update » absente.
+- Widget du fork ajouté : affichage OK. Vérifié côté système : c'est bien `…/DerivedData/…/AirBatteryWidgetExtension.appex` (PID 11596) qui le sert. **Un widget WidgetKit fonctionne avec une signature d'Apple ID gratuit.**
+- iPhone 17 en USB + Apple Watch associée : OK.
+- Après 12 min : 0,4 % CPU, 114 Mo de mémoire résidente, aucun crash.
+
+**Échecs :**
+- Souris Logitech MX Anywhere 3 (BLE) absente. Diagnostic dans `COMPAT.md`, note 1.
+- `abt` depuis le shell → `Operation not permitted` sur `data.json` (`COMPAT.md`, note 2).
+- Côté outillage, deux pièges à retenir : `timeout` n'existe pas sur macOS (exit 127), et **sous zsh, `log` est une commande interne** qui masque `/usr/bin/log` (`log: too many arguments`, et un `log show` qui ne renvoie rien sans erreur). Toujours écrire `/usr/bin/log`.
+
+**Découverte :** 4 crashs de l'app **officielle** 1.6.3 sur ce Mac entre le 14 et le 19/10, tous dans `AppDelegate.deviceIsConnected` (`samples/2026-10-21_26A434_official-1.6.3-crashes.md`). Ça confirme upstream #215/#206 sur macOS 27 et place la PR #216 en tête de la Phase 1.
+
+**Contournements :** aucun.
+**Décisions :** —
+**Testé sur appareil réel :** oui, par Côme : Mac, AirPods Pro, iPhone 17, Apple Watch, souris MX Anywhere 3, widget.
+**Pistes ouvertes :** souris BLE HID (`retrieveConnectedPeripherals`), accès de `abt` aux données, faute SwiftUI des cases vides du widget.
+**Prochaine étape :** Phase 0 terminée. Phase 1 : intégrer la PR #216 (concurrence), en tenant compte des recouvrements avec #214 et la 1.6.4 communautaire.
