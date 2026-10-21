@@ -74,6 +74,6 @@ Binaire non audité : ne pas l'exécuter.
 | 14 | Survol Nearcast (#159), icône épinglée figée, texte de survol écrasé | 5 | #159 **porté** `6db2a6a` ; icône épinglée **portée** `27f28da` (sans le `!`, avec un cache vidé au désépinglage) ; texte écrasé **non repris** (causé par les 2 boutons qu'elle avait ajoutés ; sa solution supprimait « il y a X min ») |
 | 15 | `autosaveName` des icônes de barre des menus (#182) | 5 | **porté** `27f28da` ; effet sur Thaw non démontré (voir COMPAT note 7) |
 
-**Fonctions (au choix de Côme)** : tri de la liste (#56, et #188 du brief), sourdine des alertes par appareil (#135), alerte batterie faible avec seuil, bascule du mode économie d'énergie (#117/#129), écouteurs toujours séparés (#116), copier l'ID (#108), fond blanc du widget (#119), barre de batterie pour les épinglés (#100), astuce Watch/Pencil (#95/#136), Siri Remote (#85, non vérifiée par l'autrice).
+**Fonctions (au choix de Côme)** : tri de la liste (#56, et #188 du brief) — **réimplémenté** `63fdc33` (Réglages › Menu Bar & Dock, menu + Dock + widget, groupes conservés) ; restent : sourdine des alertes par appareil (#135), alerte batterie faible avec seuil, bascule du mode économie d'énergie (#117/#129), écouteurs toujours séparés (#116), copier l'ID (#108), fond blanc du widget (#119), barre de batterie pour les épinglés (#100), astuce Watch/Pencil (#95/#136), Siri Remote (#85, non vérifiée par l'autrice).
 
 Pour la concurrence, voir D-008 : son code ne corrige pas la capture de `device` dans `deviceIsConnected`.
