@@ -28,7 +28,7 @@ var updateDelay = 1
 var keepAliveActivity: NSObjectProtocol? = nil
 // Serial queue: after wake many Bluetooth devices reconnect at once; handling them in
 // parallel ran several system_profiler scans and data updates concurrently.
-let btConnectQueue = DispatchQueue(label: "com.lihaoyun6.AirBattery.btconnect", qos: .background)
+let btConnectQueue = DispatchQueue(label: "\(AppIdentifiers.app).btconnect", qos: .background)
 
 @main
 struct AirBatteryApp: App {
