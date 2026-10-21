@@ -55,3 +55,14 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 **Pourquoi :** c'est la plus petite marche qui débloque le build ; le fork est perso, mais rien ne justifie encore d'exclure des versions.
 **Conséquences :** l'app, le widget, le helper et `abt` exigent macOS 12 (Monterey) ou plus. Appliqué dans `138b433` ; W-001 retiré. Pour revenir en arrière : impossible avec Xcode ≥ 27, sauf à garder un Xcode plus ancien.
 **Validée par Côme :** oui (2026-10-21)
+
+## D-008 — Concurrence : la PR upstream #216 comme implémentation de référence   (2026-10-21, statut : acceptée)
+**Contexte :** le faux verrou `AirBatteryModel.lock` (un `Bool`) et la capture d'un `IOBluetoothDevice` dans une closure en arrière-plan provoquent les crashs de `deviceIsConnected` (upstream #215, #206). Sur le Mac de Côme, l'app officielle 1.6.3 a planté 4 fois du 14 au 19/10/2026 exactement à cet endroit (`samples/2026-10-21_26A434_official-1.6.3-crashes.md`). Trois candidats : PR #216, PR #214, la « 1.6.4/1.6.5 Community Patch » de callieskye (sources trouvées : `github.com/callieskye/Air-Battery`, AGPL-3.0).
+**Options envisagées :**
+- A. PR #216 (3 commits, ~60 lignes) : `isAppleDevice` lu sur le fil principal (la closure ne capture plus l'`IOBluetoothDevice`), `NSLock` sur `AirBatteryModel.Devices` et `SPBluetoothDataModel.data`, file série pour les connexions.
+- B. Code de callieskye : `NSLock` équivalents, file série, mais la closure de `deviceIsConnected` **capture toujours `device`**, donc le crash de nos rapports n'est pas traité. Import en un seul commit sans historique commun, mêlé à une vingtaine de features : rien n'est cherry-pickable.
+- C. PR #214 : ne touche pas à la concurrence (le brief le supposait) ; son seul recouvrement avec #216 est l'import `ServiceManagement`, déjà dans `main` (`774c380`).
+**Décision :** A, intégrée par `git cherry-pick -x` (auteur conservé). Le code de callieskye sert de **catalogue de correctifs diagnostiqués**, à porter un par un avec crédit. #214 sera rebasée sur ce résultat.
+**Pourquoi :** c'est le seul candidat qui traite la pile exacte de nos crashs ; diff minimal et lisible ; historique propre.
+**Conséquences :** les connexions BT sont traitées en série (2,5 s + un `system_profiler` par appareil) : après un réveil avec beaucoup d'appareils, les mises à jour arrivent plus lentement (effet signalé par l'auteur de #216). Les accès en lecture-modification-écriture via `Devices[i].x = …` restent non atomiques (perte de mise à jour possible, plus de corruption mémoire), mais seul `AirBatteryModel` y accède et il passe par `_devices` sous verrou.
+**Validée par Côme :** oui (feu vert pour démarrer la Phase 1 par la PR #216, 2026-10-21)
