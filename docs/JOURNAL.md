@@ -399,3 +399,20 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Testé sur appareil réel :** oui, par Côme.
 **Note :** la bascule du mode économie d'énergie de callieskye (#117/#129) passe par `pmset -a lowpowermode`, qui exige les droits administrateur ; elle est déconseillée à Côme (refus silencieux sans privilèges).
 **Prochaine étape :** première fonction choisie par Côme : tri de la liste par batterie (#56, #188).
+
+---
+
+## 2026-10-21 (suite 18) — Tri des appareils, nom affiché « AirBattery Plus »
+
+**Contexte :** macOS 27.0.1 (26A434). Branches `feat/sort-devices` et `feat/display-name`, toutes deux depuis `main` @ `4349726`.
+
+**Fait :**
+- Vérification de début de session : aucun crash d'AirBattery ; **3 crashs de `comptest`** aujourd'hui (19:56, 20:06, 20:37), même pile qu'en COMPAT note 5. C'est plus fréquent que « une fois par jour » (#198), pendant des tests qui relançaient souvent le scan.
+- **Tri** (`63fdc33`, choisi par Côme ; réglage dans Réglages › Menu Bar & Dock, appliqué au menu, au Dock et au widget) : `AirBatteryModel.sortForDisplay()`. Testé : les 4 ordres via `abt --csv` (qui lit le fichier écrit par `writeData()`, donc le tri du widget) ; regroupements testés isolément sur le code extrait (Watch avec iPhone, écouteurs avec boîtier, périphériques du Mac triés à part, parent absent, sans batterie en dernier). Côme : « le tri fonctionne bien ». Il a signalé « iPhone avant MacBook » comme un problème de casse : c'est en fait l'ordre alphabétique correct (I < M), et la preuve que le tri ignore la casse (`localizedStandardCompare`).
+- Incident de test : `pkill -TERM -f "A\|B"` n'a rien arrêté (`pkill` lit `\|` comme un « | » littéral). La version de test tournait donc depuis 20:33, et son icône était sans doute masquée par Thaw ; en lançant la 1.7.1, Côme a réactivé l'instance déjà ouverte (même bundle ID). Échantillon `sample` : fil principal au repos, pas de blocage.
+- **Widget « qui ouvre l'autre app »** : `pluginkit` → seulement deux widgets, `com.lihaoyun6.AirBattery.widget` (officielle) et `io.github.msieurpafi.AirBattery.widget` (1.7.1 dans Applications). Les deux apps ont `CFBundleName` = « AirBattery », sans nom d'affichage, et la galerie montre deux « AirBattery » identiques. Ce n'était pas une erreur de Côme.
+- **Nom affiché** (`1352a0f`, D-014).
+
+**Échecs :** ajout de `CFBundleName` dans `AirBattery/Info.plist` → sans effet (valeur générée depuis `PRODUCT_NAME` prioritaire), retiré.
+**Testé sur appareil réel :** tri oui (Côme) ; nom affiché à vérifier dans la galerie une fois installé dans Applications (la galerie suit la copie enregistrée par PlugInKit, ici `/Applications/AirBattery Plus.app`).
+**Prochaine étape :** fusion des deux PR, puis 1.7.2 (DMG testé par Côme avant publication).
