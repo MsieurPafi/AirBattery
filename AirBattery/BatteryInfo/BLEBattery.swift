@@ -727,7 +727,7 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
         guard let name = peripheral.name else { return }
         if AirBatteryModel.checkIfBlocked(name: name) { return }
         
-        if let deviceName = peripheral.name{
+        if var deviceName = peripheral.name{
             //NSLog("AirPods: \(messageType) message [\(data.hexEncodedString())]")
             let now = Date().timeIntervalSince1970
             let dataHex = data.hexEncodedString()
@@ -736,6 +736,11 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
             let deviceID = peripheral.identifier.uuidString
             var model = (messageType == "open" ? getHeadphoneModel(String(format: "%02x%02x", data[6], data[5])) : "Airpods Pro 2")
             if let Case = AirBatteryModel.getByName(deviceName + " (Case)".local) { model = Case.deviceModel ?? model }
+            // On macOS 26 the advertised name of AirPods can come back as "iPhone" (upstream
+            // #172). The model decoded from this same packet is reliable: prefer it then.
+            if model != "Headphones", deviceName.lowercased().contains("iphone") || deviceName.lowercased().contains("ipad") {
+                deviceName = model
+            }
             
             // Bit 7 is the charging flag. A stray byte between 101 and 127 has it unset and
             // went through unchanged (AirPods shown at 125%, upstream #76): clamp to 100.
