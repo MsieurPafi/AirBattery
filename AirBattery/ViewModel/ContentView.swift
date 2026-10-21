@@ -205,7 +205,6 @@ struct MultiBatteryView: View {
         .onReceive(widgetViewTimer) {_ in
             if widgetInterval != -1 { WidgetCenter.shared.reloadAllTimelines() }
         }
-        .onReceive(dockTimer) {_ in IDeviceBattery.shared.scanDevices() }
         .onReceive(widgetDataTimer) {_ in
             SPBluetoothDataModel.shared.refeshData (completion: { result in
                 DispatchQueue.global(qos: .background).async {

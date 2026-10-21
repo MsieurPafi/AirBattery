@@ -222,7 +222,7 @@ func batteryAlert() {
     for device in allDevices.filter({ alertList.map({$0.name}).contains($0.deviceName) }) {
         if let alert = alertList.first(where: { $0.name == device.deviceName }) {
             if device.batteryLevel < alert.low && device.isCharging == 0 && alert.lowOn {
-                if let delay = lowPowerNoteDelay[device.deviceName], delay > now.timeIntervalSince1970 { return }
+                if let delay = lowPowerNoteDelay[device.deviceName], delay > now.timeIntervalSince1970 { continue }
                 let title = "Low Battery".local
                 let body = String(format: "\"%@\" remaining battery %d%%".local, device.deviceName, device.batteryLevel)
                 createNotification(title: title, message: body, alertSound: alert.lowSound, delay: true, info: device.deviceName)
@@ -231,7 +231,7 @@ func batteryAlert() {
                 }
             }
             if device.batteryLevel > alert.full && device.isCharging != 0 && alert.fullOn {
-                if let delay = lowPowerNoteDelay[device.deviceName], delay > now.timeIntervalSince1970 { return }
+                if let delay = lowPowerNoteDelay[device.deviceName], delay > now.timeIntervalSince1970 { continue }
                 let title = "Fully Charged".local
                 let body = String(format: "\"%@\" battery has reached %d%%".local, device.deviceName, device.batteryLevel)
                 createNotification(title: title, message: body, alertSound: alert.fullSound, delay: true, info: device.deviceName)

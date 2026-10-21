@@ -10,14 +10,19 @@ import Foundation
 class IDeviceBattery {
     static var shared: IDeviceBattery = IDeviceBattery()
     
-    //var scanTimer: Timer?
+    var scanTimer: Timer?
     @AppStorage("readPencil") var readPencil = false
     @AppStorage("readIDevice") var readIDevice = true
     @AppStorage("updateInterval") var updateInterval = 1
     
     func startScan() {
-        //let interval = TimeInterval(5.0)
-        //scanTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(scanDevices), userInfo: nil, repeats: true)
+        // Own timer, independent of any view. The scan used to be driven by a SwiftUI view's
+        // 5 s dockTimer: two idevice_id launches every 5 s, and only while that view was
+        // alive (upstream #91). Battery reads stay throttled to the refresh interval in
+        // getIDeviceBattery(); 15 s is how long a newly plugged device can take to appear.
+        scanTimer = Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { [weak self] _ in
+            self?.scanDevices()
+        }
         print("ℹ️ Start scanning iDevice devices...")
         scanDevices()
     }
