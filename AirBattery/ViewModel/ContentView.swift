@@ -240,6 +240,7 @@ struct MultiBatteryView: View {
                 
                 if !carouselMode { rollCount = 1 }
                 if ibStatus.hasBattery && showThisMac != "hidden" { list.insert(ib2ab(ibStatus), at: 0) }
+                list = AirBatteryModel.sortForDisplay(list)
                 
                 batteryList = sliceList(data: list, length: 4, count: rollCount)
                 if batteryList == []{
@@ -438,6 +439,7 @@ struct popover: View {
                                     allDevices = AirBatteryModel.getAll()
                                     let ibStatus = InternalBattery.status
                                     if ibStatus.hasBattery { allDevices.insert(ib2ab(ibStatus), at: 0) }
+                                    allDevices = AirBatteryModel.sortForDisplay(allDevices)
                                     allNearcast = getFiles(withExtension: "json", in: ncFolder)
                                 }
                             }
@@ -846,6 +848,7 @@ struct popover: View {
                 hidden2 = [Int]()
                 let ibStatus = InternalBattery.status
                 if ibStatus.hasBattery { allDevices.insert(ib2ab(ibStatus), at: 0) }
+                allDevices = AirBatteryModel.sortForDisplay(allDevices)
                 if nearCast { allNearcast = getFiles(withExtension: "json", in: ncFolder) }
             }
         }

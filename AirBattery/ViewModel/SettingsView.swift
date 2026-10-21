@@ -404,6 +404,7 @@ struct DisplayView: View {
     @AppStorage("batteryPercent") var batteryPercent = "outside"
     @AppStorage("hideLevel") var hideLevel = 90
     @AppStorage("disappearTime") var disappearTime = 20
+    @AppStorage("sortDevices") var sortDevices = "default"
     @State private var levelList = [95, 90, 80, 70, 60, 50, 40, 30, 20, 10]
     
     var body: some View {
@@ -430,6 +431,17 @@ struct DisplayView: View {
                     Text("after 20min").tag(20)
                     Text("after 40min").tag(40)
                     Text("after 60min").tag(60)
+                }
+                Divider().opacity(0.5)
+                SPicker("Sort Devices", selection: $sortDevices, tips: "Also applies to the Dock icon and the widgets. AirPods stay grouped with their case, an Apple Watch with its iPhone.") {
+                    Text("Default").tag("default")
+                    Text("By Name").tag("name")
+                    Text("Battery: Lowest First").tag("levelAsc")
+                    Text("Battery: Highest First").tag("levelDesc")
+                }
+                .onChange(of: sortDevices) { _ in
+                    AirBatteryModel.writeData()
+                    WidgetCenter.shared.reloadAllTimelines()
                 }
                 Divider().opacity(0.5)
                 SPicker("Hide percentage when above", selection: $hideLevel) {
