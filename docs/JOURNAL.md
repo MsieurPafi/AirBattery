@@ -362,3 +362,21 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Échecs :** comptage des processus par `ps`, non concluant (voir ci-dessus).
 **Testé sur appareil réel :** oui (Côme + mesures de Claude).
 **Prochaine étape :** PR des lots 2 à 4 ; lot 5 (icônes et interface).
+
+---
+
+## 2026-10-21 (suite 16) — Lots 1-4 fusionnés ; lot 5 de callieskye (icônes et interface)
+
+**Contexte :** macOS 27.0.1 (26A434). PR #9 → #12 fusionnées dans l'ordre par Claude, avec l'accord de Côme (bases de #10 à #12 repointées sur `main` avant fusion) : `main` @ `c2c8869`. Branche `port/callie-5-icons-ui`.
+
+**Fait :**
+- `d17f054` : icônes AirPods 4 ANC (#166, « 201B » → « 201b »), AirPods Max (#204/#205, nom contenant « airpods max »), MacBook Neo (#195, type `macbookneo` + `Mac17,5`).
+- `6db2a6a` : survol de la liste Nearcast (#159).
+- `27f28da` : icône d'un appareil épinglé mise à jour quand elle change (cache `pinnedIcons`, vidé au désépinglage) ; `autosaveName` stable pour l'icône principale et les épinglées (#182).
+- Non repris : icône Pro par défaut, Siri Remote (image manquante), texte de survol (UPSTREAM.md).
+- Test : Côme épingle la MX Anywhere 3 et la déplace (⌘-glisser) ; après relance, icône principale et épinglée **restées en place**. Découverte : Thaw identifiait l'icône épinglée par son texte « 85% » (COMPAT note 7).
+
+**Échecs :** —
+**Testé sur appareil réel :** oui (épinglage, position). Icônes AirPods 4/Max et MacBook Neo non testables (matériel absent).
+**État laissé :** build Debug en cours d'exécution à la place de l'app installée (1.7.0) ; option « Discover more BLE devices » encore activée depuis le test du lot 4 (réglage partagé avec l'app installée).
+**Prochaine étape :** PR du lot 5 ; choix des fonctions par Côme.
