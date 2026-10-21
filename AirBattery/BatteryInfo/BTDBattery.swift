@@ -56,13 +56,10 @@ class BTDBattery {
         for device in devices {
             if let json = try? JSONSerialization.jsonObject(with: Data(device.utf8), options: []) as? [String: Any] {
                 if let index = list.firstIndex(where: { dict in
-                    let name = dict["name"] as! String
-                    let mac = dict["mac"] as! String
-                    let type = dict["type"] as! String
-                    let nameNow = json["name"] as! String
-                    let macNow = json["mac"] as! String
-                    let typeNow = json["type"] as! String
-                    return (name == nameNow && mac == macNow && type == typeNow)
+                    // Lines come from logReader.sh: a missing field must not crash the scan.
+                    return (dict["name"] as? String) == (json["name"] as? String)
+                        && (dict["mac"] as? String) == (json["mac"] as? String)
+                        && (dict["type"] as? String) == (json["type"] as? String)
                 }) {
                     list[index] = json
                 } else {
@@ -71,12 +68,16 @@ class BTDBattery {
             }
         }
         for d in list {
-            let mac = d["mac"] as! String
-            var name = d["name"] as! String
-            let type = d["type"] as! String
-            let time = d["time"] as! String
-            let level = d["level"] as! Int
-            let status = (d["status"] as! String) == "+" ? 1 : 0
+            guard let mac = d["mac"] as? String,
+                  let type = d["type"] as? String,
+                  let time = d["time"] as? String,
+                  let level = d["level"] as? Int,
+                  let statusText = d["status"] as? String else {
+                print("⚠️ Skipping malformed Bluetooth log entry: \(d)")
+                continue
+            }
+            var name = (d["name"] as? String) ?? ""
+            let status = statusText == "+" ? 1 : 0
             if name == "" { name = "\(type) (\(mac))" }
             if connected.contains(mac) {
                 if let index = allDevices.firstIndex(of: name) { allDevices[index] = name } else { allDevices.append(name) }

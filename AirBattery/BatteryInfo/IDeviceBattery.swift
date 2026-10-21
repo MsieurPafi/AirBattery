@@ -68,6 +68,20 @@ class IDeviceBattery {
         }
     }
     
+    /// Reads "BatteryCurrentCapacity" and "BatteryIsCharging" from ideviceinfo or comptest
+    /// output. Returns nil instead of crashing when a field is missing or malformed: these
+    /// lines come from external tools whose format may change.
+    static func parseBattery(_ lines: [String]) -> (level: Int, charging: Bool)? {
+        func value(_ key: String) -> String? {
+            return lines.first(where: { $0.contains(key) })?
+                .components(separatedBy: ": ").last?
+                .trimmingCharacters(in: .whitespaces)
+        }
+        guard let levelText = value("BatteryCurrentCapacity"), let level = Int(levelText),
+              let chargingText = value("BatteryIsCharging"), let charging = Bool(chargingText) else { return nil }
+        return (min(100, max(0, level)), charging)
+    }
+
     func writeBatteryInfo(_ id: String, _ connectType: String) {
         //print("ℹ️ Getting Battery Info for \(id)")
         let lastUpdate = Date().timeIntervalSince1970
@@ -78,20 +92,23 @@ class IDeviceBattery {
                let model = i.filter({ $0.contains("ProductType") }).first?.components(separatedBy: ": ").last,
                let type = i.filter({ $0.contains("DeviceClass") }).first?.components(separatedBy: ": ").last {
                 if let batteryInfo = process(path: "\(Bundle.main.resourcePath!)/libimobiledevice/bin/ideviceinfo", arguments: [connectType, "-u", id, "-q", "com.apple.mobile.battery"]) {
-                    let b = batteryInfo.components(separatedBy: .newlines)
-                    if let level = b.filter({ $0.contains("BatteryCurrentCapacity") }).first?.components(separatedBy: ": ").last,
-                       let charging = b.filter({ $0.contains("BatteryIsCharging") }).first!.components(separatedBy: ": ").last {
-                        AirBatteryModel.updateDevice(Device(deviceID: id, deviceType: type, deviceName: deviceName, deviceModel: model, batteryLevel: Int(level)!, isCharging: Bool(charging)! ? 1 : 0, lastUpdate: lastUpdate))
-                        if let watchInfo = process(path: "\(Bundle.main.resourcePath!)/libimobiledevice/bin/comptest", arguments: [id]) {
+                    if let battery = IDeviceBattery.parseBattery(batteryInfo.components(separatedBy: .newlines)) {
+                        AirBatteryModel.updateDevice(Device(deviceID: id, deviceType: type, deviceName: deviceName, deviceModel: model, batteryLevel: battery.level, isCharging: battery.charging ? 1 : 0, lastUpdate: lastUpdate))
+                        // comptest occasionally hangs or crashes (upstream #198): don't let it
+                        // block this background thread forever.
+                        if let watchInfo = process(path: "\(Bundle.main.resourcePath!)/libimobiledevice/bin/comptest", arguments: [id], timeout: 15) {
                             let w = watchInfo.components(separatedBy: .newlines)
                             if let watchID = w.filter({ $0.contains("Checking watch") }).first?.components(separatedBy: " ").last,
                                let watchName = w.filter({ $0.contains("DeviceName") }).first?.components(separatedBy: ": ").last,
                                let watchModel = w.filter({ $0.contains("ProductType") }).first?.components(separatedBy: ": ").last,
-                               let watchLevel = w.filter({ $0.contains("BatteryCurrentCapacity") }).first?.components(separatedBy: ": ").last,
-                               let watchCharging = w.filter({ $0.contains("BatteryIsCharging") }).first?.components(separatedBy: ": ").last {
-                                AirBatteryModel.updateDevice(Device(deviceID: watchID, deviceType: "Watch", deviceName: watchName, deviceModel: watchModel, batteryLevel: Int(watchLevel)!, isCharging: Bool(watchCharging)! ? 1 : 0, parentName: deviceName, lastUpdate: lastUpdate))
+                               let watchBattery = IDeviceBattery.parseBattery(w) {
+                                AirBatteryModel.updateDevice(Device(deviceID: watchID, deviceType: "Watch", deviceName: watchName, deviceModel: watchModel, batteryLevel: watchBattery.level, isCharging: watchBattery.charging ? 1 : 0, parentName: deviceName, lastUpdate: lastUpdate))
+                            } else {
+                                print("⚠️ Could not parse Watch battery info for \(deviceName)")
                             }
                         }
+                    } else {
+                        print("⚠️ Could not parse battery info for \(deviceName)")
                     }
                 }
             }
