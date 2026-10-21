@@ -74,3 +74,11 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 **Pourquoi :** supprime la nuisance pour l'entourage sans retirer la fonction ; l'option reste désactivée par défaut ; diff isolé dans `BLEBattery.swift` et `SettingsView.swift`.
 **Conséquences :** changement de comportement : un iPhone/iPad n'est lu en Bluetooth qu'après autorisation manuelle (stockée dans `authorizedIOSBLEDevices`, UUID → nom). Les Apple Watch sont refusées avec un message explicite (elles passent par l'iPhone). Pas de traduction française des nouveaux textes (à faire avec la PR #170). Messages de commit d'origine en chinois, conservés tels quels pour garder l'auteur (`Moyuin-aka`).
 **Validée par Côme :** oui (testé le 2026-10-21 : appairage de son iPhone OK, Watch refusée avec le message « seuls les iPhone et iPad sont supportés »)
+
+## D-010 — Flux Git : une branche par sujet, PR sur le fork, fusion par Côme   (2026-10-21, statut : acceptée)
+**Contexte :** jusqu'ici, les branches de travail étaient fusionnées localement dans `main`, puis `main` était poussé avec l'accord de Côme.
+**Options envisagées :** A. push direct sur `main` avec accord par session / B. branches de sujet poussées librement + PR sur le fork, fusionnées par Côme.
+**Décision :** B. Claude pousse librement les branches de sujet sur `origin` et ouvre les PR sur `MsieurPafi/AirBattery` (jamais sur l'upstream). Côme relit et fusionne, ou autorise explicitement Claude à le faire. Pas de push direct sur `main` sans son accord.
+**Pourquoi :** Côme garde la main sur ce qui entre dans `main`, et chaque sujet a une page de relecture sur GitHub.
+**Conséquences :** `gh pr create` doit toujours passer `--repo MsieurPafi/AirBattery --base main`. Cette décision n'a pas d'effet rétroactif sur les commits déjà poussés le 2026-10-21 (Phase 0, PR #216, PR #214).
+**Validée par Côme :** oui (2026-10-21)
