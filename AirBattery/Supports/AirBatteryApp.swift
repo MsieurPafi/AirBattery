@@ -17,6 +17,8 @@ let ud = UserDefaults.standard
 var updaterController: SPUStandardUpdaterController!
 var statusBarItem: NSStatusItem!
 var pinnedItems = [NSStatusItem]()
+/// Icon name currently shown by each pinned item, keyed by device name.
+var pinnedIcons = [String: String]()
 var netcastService: MultipeerService = MultipeerService(serviceType: "airbattery-nc")
 let ncFolder = fd.urls(for: .libraryDirectory, in: .userDomainMask).first!.appendingPathComponent("Containers/\(AirBatteryModel.key)/Data/Documents/NearcastData")
 let systemUUID = getMacDeviceUUID()
@@ -258,6 +260,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
         //menu.delegate = self
         //statusMenu.delegate = self
         statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        // A stable name lets macOS and menu bar managers (Ice, Bartender…) remember the
+        // item's position across launches (upstream #182).
+        statusBarItem.autosaveName = "AirBatteryMainStatusItem"
         //statusBarItem.menu = statusMenu
         if let button = statusBarItem.button {
             button.target = self
@@ -511,14 +516,17 @@ func refeshPinnedBar(unpin: String? = nil) {
     let deviceNames = pinnedDevices.map({ $0.deviceName })
     for device in pinnedDevices {
         if let index = pinnedItems.firstIndex(where: { $0.button?.toolTip == device.deviceName }) {
-            pinnedItems[index].button?.title = "\(device.batteryLevel)\(device.isCharging != 0  ? "⚡︎" : "%")"
+            if let button = pinnedItems[index].button {
+                // The icon was only set when the item was created: a device first seen with the
+                // generic Bluetooth icon kept it forever, while the popover showed the right one.
+                setPinnedIcon(button, device: device)
+                button.title = "\(device.batteryLevel)\(device.isCharging != 0  ? "⚡︎" : "%")"
+            }
         } else {
             let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+            statusItem.autosaveName = "AirBatteryPinned.\(device.deviceName)"
             if let button = statusItem.button {
-                let icon = getDeviceIcon(device)
-                let image = NSImage(named: icon)!.resized(to: NSSize(width: 17, height: 17))
-                image.isTemplate = true
-                button.image = image
+                setPinnedIcon(button, device: device)
                 button.title = "\(device.batteryLevel)\(device.isCharging != 0  ? "⚡︎" : "%")"
                 button.toolTip = device.deviceName
             }
@@ -529,6 +537,16 @@ func refeshPinnedBar(unpin: String? = nil) {
     let expNames = expItems.map({ $0.button?.toolTip ?? "" })
     DispatchQueue.main.async { for e in expItems { NSStatusBar.system.removeStatusItem(e) } }
     pinnedItems.removeAll{ expNames.contains($0.button?.toolTip ?? "") }
+    for name in expNames { pinnedIcons.removeValue(forKey: name) }
+}
+
+func setPinnedIcon(_ button: NSStatusBarButton, device: Device) {
+    let icon = getDeviceIcon(device)
+    guard pinnedIcons[device.deviceName] != icon, let image = NSImage(named: icon) else { return }
+    let resized = image.resized(to: NSSize(width: 17, height: 17))
+    resized.isTemplate = true
+    button.image = resized
+    pinnedIcons[device.deviceName] = icon
 }
 
 @discardableResult
