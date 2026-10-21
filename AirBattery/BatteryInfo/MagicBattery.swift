@@ -96,7 +96,7 @@ class MagicBattery {
            let SPBluetoothDataType = SPBluetoothDataTypeRaw[0] as? [String: Any]{
             if let device_connected = SPBluetoothDataType["device_connected"] as? [Any]{
                 for device in device_connected{
-                    let d = device as! [String: Any]
+                    guard let d = device as? [String: Any] else { continue }
                     if let n = d.keys.first, let info = d[n] as? [String: Any] {
                         if let id = info["device_address"] as? String,
                            let type = info["device_minorType"] as? String{
@@ -115,7 +115,7 @@ class MagicBattery {
            let SPBluetoothDataType = SPBluetoothDataTypeRaw[0] as? [String: Any]{
             if let device_connected = SPBluetoothDataType["device_connected"] as? [Any]{
                 for device in device_connected{
-                    let d = device as! [String: Any]
+                    guard let d = device as? [String: Any] else { continue }
                     if let n = d.keys.first, let info = d[n] as? [String: Any] {
                         if let id = info["device_productID"] as? String,
                            let type = info["device_minorType"] as? String{
@@ -136,18 +136,21 @@ class MagicBattery {
         var productName = ""
         let lastUpdate = Date().timeIntervalSince1970
         if let productProperty = IORegistryEntryCreateCFProperty(object, "DeviceAddress" as CFString, kCFAllocatorDefault, 0) {
-            mac = productProperty.takeRetainedValue() as! String
-            mac = mac.replacingOccurrences(of:"-", with:":").uppercased()
+            if let value = productProperty.takeRetainedValue() as? String {
+                mac = value.replacingOccurrences(of:"-", with:":").uppercased()
+            }
         }
         if let percentProperty = IORegistryEntryCreateCFProperty(object, "BatteryStatusFlags" as CFString, kCFAllocatorDefault, 0) {
-            status = percentProperty.takeRetainedValue() as! Int
-            if status == 4 { status = 0 }
+            if let value = percentProperty.takeRetainedValue() as? Int {
+                status = value == 4 ? 0 : value
+            }
         }
         if let percentProperty = IORegistryEntryCreateCFProperty(object, "BatteryPercent" as CFString, kCFAllocatorDefault, 0) {
-            percent = percentProperty.takeRetainedValue() as! Int
+            percent = (percentProperty.takeRetainedValue() as? Int) ?? percent
         }
-        if let productProperty = IORegistryEntryCreateCFProperty(object, "Product" as CFString, kCFAllocatorDefault, 0) {
-            productName = productProperty.takeRetainedValue() as! String
+        if let productProperty = IORegistryEntryCreateCFProperty(object, "Product" as CFString, kCFAllocatorDefault, 0),
+           let value = productProperty.takeRetainedValue() as? String {
+            productName = value
             if productName.contains("Trackpad") { type = "Trackpad" }
             if productName.contains("Keyboard") { type = "Keyboard" }
             if productName.contains("Mouse") { type = "MMouse" }
@@ -246,8 +249,12 @@ class MagicBattery {
         let SPBluetoothDataType = SPBluetoothDataTypeRaw[0] as? [String: Any]{
             if let device_connected = SPBluetoothDataType["device_connected"] as? [Any]{
                 for device in device_connected{
-                    let d = device as! [String: Any]
+                    guard let d = device as? [String: Any] else { continue }
                     if let n = d.keys.first, let info = d[n] as? [String: Any] {
+                        // Only Apple accessories can be split into case / left / right: a
+                        // Logitech MX Anywhere 3 was shown as AirPods at 108% (upstream #106).
+                        // This function is currently not called (since upstream 5991915).
+                        guard (info["device_vendorID"] as? String) == "0x004C" else { continue }
                         var productID = "200e"
                         var mainDevice: Device?
                         var subDevices: [Device] = []
@@ -321,7 +328,7 @@ class MagicBattery {
         let SPBluetoothDataType = SPBluetoothDataTypeRaw[0] as? [String: Any]{
             if let device_connected = SPBluetoothDataType["device_connected"] as? [Any]{
                 for device in device_connected{
-                    let d = device as! [String: Any]
+                    guard let d = device as? [String: Any] else { continue }
                     if let n = d.keys.first, let info = d[n] as? [String: Any] {
                         if let level = info["device_batteryLevelMain"] as? String,
                            let id = info["device_address"] as? String,
