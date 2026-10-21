@@ -82,3 +82,11 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 **Pourquoi :** Côme garde la main sur ce qui entre dans `main`, et chaque sujet a une page de relecture sur GitHub.
 **Conséquences :** `gh pr create` doit toujours passer `--repo MsieurPafi/AirBattery --base main`. Cette décision n'a pas d'effet rétroactif sur les commits déjà poussés le 2026-10-21 (Phase 0, PR #216, PR #214).
 **Validée par Côme :** oui (2026-10-21)
+
+## D-011 — Scan BLE actif : une fois par intervalle de rafraîchissement   (2026-10-21, statut : acceptée)
+**Contexte :** le scan BLE actif tournait 5 s toutes les 29 s (environ 18 % du temps, intervalle par défaut d'1 min). Il alimente les AirPods/Beats (annonces de proximité), les iPhone/iPad autorisés en BLE (D-009) et le BLE générique. Suspect principal des saccades audio Bluetooth (upstream #178), que Côme ne constate pas lui-même.
+**Options envisagées :** A. garder le rythme actuel / B. un scan par intervalle de rafraîchissement (5 s par minute, environ 9 %) / C. raccourcir chaque scan.
+**Décision :** B, avec un seuil de relecture des appareils à « intervalle − 10 s », pour qu'un appareil lu à un scan soit relu au suivant.
+**Pourquoi :** divise par deux le temps de radio en scan actif sans retirer de fonction.
+**Conséquences :** les AirPods dépendent **uniquement** de ce scan (le lecteur `system_profiler` de `MagicBattery.getAirpods()` n'est plus appelé depuis le commit upstream `5991915`, 2024). À l'ouverture du boîtier, ils apparaissent en 45 à 60 s au lieu de 30 s au plus. Le gain sur #178 n'est pas vérifiable chez Côme. Pour revenir en arrière : `startScan()` dans `BLEBattery.swift`.
+**Validée par Côme :** oui (2026-10-21, après test : AirPods visibles en 45–60 s boîtier ouvert, stables en utilisation)

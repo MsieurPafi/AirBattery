@@ -243,3 +243,30 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Échecs :** —
 **Testé sur appareil réel :** sur le Mac de Côme, depuis un shell, par Claude. Pas encore depuis le Terminal de Côme.
 **Prochaine étape :** PR sur le fork.
+
+---
+
+## 2026-10-21 (suite 11) — Alléger le scan Bluetooth ; `EXC_GUARD` (#207) corrigé
+
+**Contexte :** macOS 27.0.1 (26A434), branche `perf/ble-scan` depuis `main` @ `58d83d6`.
+**Objectif :** réduire l'activité Bluetooth d'AirBattery, en mesurant avant et après.
+
+**Mesures avant** (fork PID 21379, réglages par défaut + iPhone autorisé en BLE), via `log show` sur `bluetoothd` :
+- scan actif : 15 s au démarrage, puis **5,25 s toutes les 29 s** (≈ 18 %) ;
+- `CBMsgIdRetrieveAddressForPeripheral` : rafales de 12 **toutes les 24 s**, sans lien avec le scan. Elles viennent du minuteur `widgetDataTimer` (`system_profiler` + `MagicBattery.scanDevices()` → `IOBluetoothDevice.pairedDevices()` + `addressString`) ;
+- `system_profiler SPBluetoothDataType -json` : 0,07 s réel, ~0,03 s CPU par appel, donc négligeable ;
+- **`EXC_GUARD` : 1 193 lignes noyau mentionnant AirBattery en 10 min**, par paires, une fois par seconde (`type=0x1 flavor=0x200`, port Mach, nom invalide). C'est upstream #207, reproduit ici.
+
+**Fait :**
+- `0b75d57` : cause de #207 trouvée et confirmée par un binaire de test isolé (voir COMPAT note 4). `InternalFinder.close()` appelait `IOServiceClose()` sur un service jamais ouvert ; l'appel est supprimé. Après : **0** `EXC_GUARD` en 2 min puis en 5 min. Batterie du Mac toujours correcte (`abt` : 100 %, en charge).
+- `eaf2b92` : plus de scan si aucune des options AirPods/BT, iOS par BLE et BLE générique n'est active.
+- `87b86c6` (D-011) : un scan par intervalle de rafraîchissement. Mesuré : scans à 18:31:07 (15,7 s, démarrage), puis 18:32:07, 18:33:07, 18:34:07, 18:35:07, de 5,0 à 5,25 s chacun, soit **≈ 9 %**. Souris, iPhone et Watch relus à chaque scan (`abt --json` : `update` ≤ 1 min).
+- Test de Côme : AirPods invisibles boîtier fermé (déjà le cas avant), **visibles en 45–60 s à l'ouverture**, stables en utilisation.
+
+**Échecs / corrections :**
+- **Correction d'une affirmation faite à Côme** : j'avais dit que les AirPods connectés au Mac étaient lus via `system_profiler`, sans le scan. C'est faux : `MagicBattery.getAirpods()` existe mais n'est plus appelé depuis le commit upstream `5991915` (2024). Les AirPods dépendent uniquement du scan BLE. Corrigé auprès de Côme avant sa décision finale.
+- Mesure de `system_profiler` : ma première commande redirigeait mal la sortie (`2>&1 >/dev/null`) et a affiché le JSON complet (adresses MAC, numéros de série) dans la session. Rien n'a été écrit dans le dépôt.
+
+**Décisions :** D-011.
+**Testé sur appareil réel :** oui, par Côme (AirPods Pro) ; mesures par Claude.
+**Prochaine étape :** PR sur le fork.

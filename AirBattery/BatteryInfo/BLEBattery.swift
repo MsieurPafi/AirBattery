@@ -225,9 +225,15 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
         }
     }
 
+    /// Age after which a device is read again. Slightly shorter than the scan period, so a
+    /// device read during one scan is due again at the next one instead of every other one.
+    private var refreshAge: Double { Double(60 * updateInterval) - 10 }
+
     func startScan() {
         // 每隔一段时间启动一次扫描
-        let interval = TimeInterval(29 * updateInterval)
+        // One scan per refresh interval (was every 29 s): halves the time the radio
+        // spends in active scanning. Devices connected to the Mac are read elsewhere.
+        let interval = TimeInterval(60 * updateInterval)
         scanTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(scan), userInfo: nil, repeats: true)
         print("ℹ️ Start scanning BLE devices...")
         // 立即启动一次扫描
@@ -236,6 +242,10 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
 
     @objc func scan(longScan: Bool = false) {
         readConnectedPeripherals()
+        // The active scan only feeds AirPods/Beats advertisements (readBTDevice), iOS
+        // devices over BLE (ideviceOverBLE) and generic BLE devices (readBLEDevice).
+        // Don't keep the radio busy when none of them is enabled.
+        guard readBTDevice || ideviceOverBLE || readBLEDevice else { return }
         if centralManager.state == .poweredOn && !centralManager.isScanning {
             centralManager.scanForPeripherals(withServices: nil, options: nil)
             DispatchQueue.main.asyncAfter(deadline: .now() + (longScan ? 15.0 : 5.0)) {
@@ -264,7 +274,7 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
             if let device = AirBatteryModel.getByName(name) {
                 // Another source (IOKit, system_profiler, logs) already reports this device.
                 if device.deviceID != identifier.uuidString { continue }
-                if now - device.lastUpdate < Double(60 * updateInterval) { continue }
+                if now - device.lastUpdate < refreshAge { continue }
             }
             retainPeripheral(peripheral)
             if peripheral.state == .connected {
@@ -376,7 +386,7 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
                     //获取非Apple的普通BLE设备数据
                     if readBLEDevice {
                         if let device = AirBatteryModel.getByName(deviceName) {
-                            if now - device.lastUpdate > Double(60 * updateInterval) { get = true } } else { get = true }
+                            if now - device.lastUpdate > refreshAge { get = true } } else { get = true }
                     }
                 } else {
                     if data.count > 2 {
@@ -385,7 +395,7 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
                             updateIOSDevice(peripheral, name: deviceName, rssi: RSSI.intValue)
                             if iosConnectionPolicy.isAuthorized(peripheral.identifier) {
                                 if let device = AirBatteryModel.getByID(peripheral.identifier.uuidString) {
-                                    if now - device.lastUpdate > Double(60 * updateInterval) { connectIOSPeripheral(peripheral) }
+                                    if now - device.lastUpdate > refreshAge { connectIOSPeripheral(peripheral) }
                                 } else {
                                     connectIOSPeripheral(peripheral)
                                 }

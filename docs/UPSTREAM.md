@@ -24,6 +24,13 @@ Les têtes de PR de l'archive locale sont disponibles dans `archive/pr/<N>` (`gi
 | #164 | CLI `supported` | à évaluer | |
 | #202 | « Update Supports.swift » | à évaluer | |
 
+## Issues upstream traitées
+
+| Issue | Statut | Notes |
+| --- | --- | --- |
+| #207 | **corrigée** (`perf/ble-scan`, `0b75d57`) | Le rapporteur soupçonnait « un port Mach mal libéré par une minuterie à 1 Hz » : c'est juste, mais ce n'est pas lié au Bluetooth. `IOServiceClose()` sur un service jamais ouvert, dans la lecture de la batterie du Mac. |
+| #178 | piste (D-011) | Scan BLE actif divisé par deux ; gain non vérifiable chez Côme (pas de saccades). |
+
 ## « 1.6.4 Community Patch » (issue #208)
 
 Binaire non audité : ne pas l'exécuter.
