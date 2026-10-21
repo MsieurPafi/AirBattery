@@ -37,5 +37,21 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 **Options envisagées :** A. garder `airbattery://` et désinstaller l'officielle / B. schéma propre au fork.
 **Décision :** B, `airbattery-plus://`.
 **Pourquoi :** permet de garder l'app officielle installée pour comparer les comportements pendant le développement.
-**Conséquences :** le schéma ne préjuge pas du nom de l'app (D-002 garde « AirBattery ») ; s'il change un jour, seuls `Info.plist` et `abt` sont concernés. Pour les mesures fines (BLE, logs, crashs), ne faire tourner qu'une seule des deux apps à la fois.
+**Conséquences :** le schéma ne préjuge pas du nom de l'app (D-002 garde « AirBattery ») ; s'il change un jour, voir D-006 pour les endroits à modifier. Pour les mesures fines (BLE, logs, crashs), ne faire tourner qu'une seule des deux apps à la fois.
 **Validée par Côme :** oui (2026-10-21, nom provisoire proposé par Côme)
+
+## D-006 — Identifiants centralisés : `APP_ID_PREFIX` + `Shared/AppIdentifiers.swift`   (2026-10-21, statut : acceptée)
+**Contexte :** l'ID de l'app, du widget et du helper était codé en dur à dix endroits (widget ×4, helper, `AirBatteryApp.swift` ×2, `SettingsView.swift`, `AirBatteryModel.swift`, `abt/main.swift`), plus le schéma d'URL à cinq endroits. Un oubli lors d'un renommage casse le widget en silence (container introuvable, ou « ouvre l'app » en permanence).
+**Options envisagées :** A. remplacer les chaînes une par une / B. clé `Info.plist` lue au runtime (impossible proprement pour `abt`, outil en ligne de commande sans `Info.plist`) / C. réglage de build unique + une constante Swift partagée.
+**Décision :** C. Réglage `APP_ID_PREFIX` au niveau projet, dont dérivent les trois `PRODUCT_BUNDLE_IDENTIFIER`. Côté Swift, un dossier synchronisé `Shared/` compilé dans les quatre targets, avec `enum AppIdentifiers` (`app`, `widget`, `helper`, `urlScheme`, `url(_:)`). `CFBundleURLName` vaut `$(PRODUCT_BUNDLE_IDENTIFIER)`.
+**Pourquoi :** fonctionne pour les quatre targets, `abt` compris. Il reste deux endroits à garder synchrones (le réglage de build et `AppIdentifiers.prefix`), mais une `assert` au lancement de l'app (Debug) détecte tout écart.
+**Conséquences :** pour renommer : `APP_ID_PREFIX` dans le projet, `AppIdentifiers.prefix`, et le schéma dans `Info.plist` + `AppIdentifiers.urlScheme`.
+**Validée par Côme :** pas nécessaire (demandé par le brief, §3 étape 5)
+
+## D-007 — `MACOSX_DEPLOYMENT_TARGET` : passer de 11.0 à 12.0   (2026-10-21, statut : proposée)
+**Contexte :** Xcode 27.1 refuse de compiler : `The macOS deployment target 'MACOSX_DEPLOYMENT_TARGET' is set to 11.0, but the range of supported deployment target versions is 12.0 to 27.0.x.` (erreur, pas warning, sur les quatre targets).
+**Options envisagées :** A. 12.0, le minimum accepté (changement minimal) / B. 13.0, ce qui permettrait de supprimer le chemin `SMLoginItemSetEnabled` au profit de `SMAppService` seul / C. plus haut (14, 15…) pour profiter d'API récentes.
+**Décision proposée :** A pour l'instant. Une montée plus haute se décidera quand une API en aura vraiment besoin.
+**Pourquoi :** c'est la plus petite marche qui débloque le build ; le fork est perso, mais rien ne justifie encore d'exclure des versions.
+**Conséquences :** en attendant la validation, le projet garde 11.0 et les builds passent `MACOSX_DEPLOYMENT_TARGET=12.0` en ligne de commande (voir W-001).
+**Validée par Côme :** non, en attente

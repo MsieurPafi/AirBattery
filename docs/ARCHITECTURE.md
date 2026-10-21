@@ -34,4 +34,14 @@ Nearcast : `Supports/Multipeer.swift` (MultipeerKit, `airbattery-nc`, AES-GCM + 
 
 ## Identifiants codés en dur
 
-_(à mettre à jour après la centralisation, cf. D-002)_
+Depuis `4737267` (D-006), plus aucun identifiant n'est codé en dur dans le code Swift :
+
+- bundle IDs : réglage de build `APP_ID_PREFIX` (niveau projet) → `$(APP_ID_PREFIX).AirBattery`, `.AirBattery.widget`, `.AirBatteryHelper` ;
+- côté Swift : `Shared/AppIdentifiers.swift` (dossier synchronisé, compilé dans les 4 targets) ;
+- schéma d'URL `airbattery-plus` : `AirBattery/Info.plist` + `AppIdentifiers.urlScheme`. Utilisé par `abt` (`writedata`) et les widgets (`reloadwingets`, sic).
+
+Les crédits (`*.lproj/Credits.rtf`) et `wificonnection.c` mentionnent toujours lihaoyun6 : c'est voulu (AGPL, auteur d'origine).
+
+## Mises à jour (Sparkle)
+
+Désactivées (D-004, `994dca4`) : flag `updatesEnabled = false` dans `Supports/Sparkle.swift`. L'updater n'est jamais démarré, l'UI est masquée, `Info.plist` n'a plus de `SUFeedURL` ni de `SUPublicEDKey`.
