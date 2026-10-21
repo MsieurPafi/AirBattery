@@ -37,6 +37,43 @@ Binaire non audité : ne pas l'exécuter.
 
 **Sources trouvées le 2026-10-21 :** `https://github.com/callieskye/Air-Battery` (« My personal fork of AirBattery », AGPL-3.0, release « V1.6.5 » du 2026-08-24). Ajouté en remote `callie` (fetch seul, push `DISABLED`). Historique : un « Initial import » (`7e9932b`) + 5 commits de README/CHANGELOG, **sans historique commun** avec l'upstream : pas de cherry-pick, portage manuel avec `Co-authored-by: callieskye`. Bundle ID `com.callieskye.AirBattery`, Sparkle retiré.
 
-Le `CHANGELOG.md` du dépôt sert de liste de bugs diagnostiqués (chaque ligne cite une issue). Correctifs à évaluer en priorité : doublons d'appareils (#127), découpe AirPods sans vérification du fabricant (#106), niveaux bornés 0–100 % (#76), clé `NSBluetoothAlwaysUsageDescription` manquante (#80), regex des logs pour appareils sans PID (#137), minuterie indépendante pour iPhone/iPad (#91), `return` au lieu de `continue` dans les alertes (#78), nombre de cycles sur certains Apple Silicon (#152), non-reconnexion aux appareils BLE sans batterie (#132).
+### Inventaire et suivi (2026-10-21)
+
+Établi en lisant le diff `134e02f..callie/main` fichier par fichier (ses commentaires citent les issues) et en vérifiant ses affirmations sur le Mac de Côme. Crédit : `Co-authored-by: callieskye <315995303+callieskye@users.noreply.github.com>`.
+
+**Couvert ou sans objet**
+
+| Élément | Statut | Pourquoi |
+| --- | --- | --- |
+| Verrous `NSLock` (#124, #128, #111) | couvert | PR #216 (D-008), qui traite en plus la capture d'`IOBluetoothDevice` |
+| `EXC_GUARD` (#207) | couvert | même cause trouvée, corrigé dans `0b75d57` |
+| Popups d'appairage (#169) | remplacé | PR #214 (D-009) ; sa version filtrait par nom d'appareil appairé |
+| Identifiant, Sparkle | couvert | D-002, D-004 |
+| `NSBluetoothAlwaysUsageDescription` (#80) | **sans objet** | déjà présent via `INFOPLIST_KEY_…` dans le projet ; vérifié dans l'app installée |
+| `grep "\d"` cassé sous BSD (commentaire dans `logReader.sh`) | **faux sur macOS 27** | `echo ", Battery M +85%" \| grep -o "\d*"` renvoie `85` |
+| Filet anti-doublons dans `getAll()` (#127, #109) | non repris | redondant : `updateDevice` ajoute/remplace sous verrou depuis D-008 |
+| macOS 14 minimum, `NavigationSplitView` | non repris | demanderait une décision sur la cible de déploiement (D-007 = 12.0) |
+
+**Correctifs (par lot)**
+
+| # | Élément | Lot | Statut |
+| --- | --- | --- | --- |
+| 1 | Force-unwraps `ideviceinfo`/`comptest` | 1 | **porté** `6ea85bb` (helper `parseBattery`) |
+| 2 | Délai maximal `comptest` (#198) | 1 | **porté** `6ea85bb` (15 s) |
+| 3 | Niveaux AirPods bornés à 100 (#76) | 1 | **porté** `7dd363b` |
+| 4 | Fabricant Apple avant découpe boîtier/G/D (#106) | 1 | **porté** `f64e3bc` (dans `MagicBattery.getAirpods()`, fonction non appelée) |
+| 5 | Force-casts `logReader.sh` / IOKit | 1 | **porté** `f64e3bc` |
+| 6 | Minuteur indépendant iPhone/iPad/Watch (#91) | 2 | à vérifier (le rafraîchissement dépend de `onReceive(dockTimer)` dans une vue) |
+| 7 | Alertes de batterie jamais envoyées (#78) | 2 | à faire |
+| 8 | Appareils BT tiers connectés après le lancement (#91, Bose) | 2 | à faire |
+| 9 | Pas de reconnexion en boucle aux BLE sans batterie (#132), déconnexion après lecture (#178) | 4 | à faire |
+| 10 | AirPods nommés « iPhone » sur macOS 26 (#172) | 4 | à faire |
+| 11 | `logReader.sh` : nom sans PID (#137), catégorie `CBPowerSource`, MAC par le nom | 4 | à faire (vérifier sur les logs de Côme) |
+| 12 | Batterie du Mac : % avec limite de charge, santé (unités), cycles imbriqués (#152) | 3 | à faire (sur le Mac de Côme, `MaxCapacity` = 100, un pourcentage) |
+| 13 | Icônes AirPods 4 ANC (#166), AirPods Max (#204/#205), MacBook Neo (#195) | 5 | à faire |
+| 14 | Survol Nearcast (#159), icône épinglée figée, texte de survol écrasé | 5 | à faire |
+| 15 | `autosaveName` des icônes de barre des menus (#182) | 5 | à faire |
+
+**Fonctions (au choix de Côme)** : tri de la liste (#56, et #188 du brief), sourdine des alertes par appareil (#135), alerte batterie faible avec seuil, bascule du mode économie d'énergie (#117/#129), écouteurs toujours séparés (#116), copier l'ID (#108), fond blanc du widget (#119), barre de batterie pour les épinglés (#100), astuce Watch/Pencil (#95/#136), Siri Remote (#85, non vérifiée par l'autrice).
 
 Pour la concurrence, voir D-008 : son code ne corrige pas la capture de `device` dans `deviceIsConnected`.

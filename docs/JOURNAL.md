@@ -316,3 +316,22 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Testé sur appareil réel :** oui, par Côme (DMG installé dans Applications). Gatekeeper non testé sur un DMG *téléchargé* (pas de quarantaine sur un fichier créé localement).
 **Pistes ouvertes :** la copie de développement (`build/DerivedData`) et l'app installée ont le même bundle ID ; ne lancer que l'une des deux.
 **Prochaine étape :** correctifs de la 1.6.5 de callieskye.
+
+---
+
+## 2026-10-21 (suite 14) — Correctifs de callieskye : inventaire et lot 1 (robustesse)
+
+**Contexte :** macOS 27.0.1 (26A434), branche `port/callie-1-robustness` depuis `main` @ `8379500`.
+**Objectif :** inventorier la 1.6.5 de callieskye, puis porter les correctifs par lots (validé par Côme).
+
+**Fait :**
+- Inventaire complet dans `UPSTREAM.md` (diff `134e02f..callie/main`, 24 fichiers, +2 230/−557). Affirmations vérifiées sur le Mac de Côme : #80 sans objet (clé déjà présente), `grep "\d"` fonctionne sur macOS 27, `MaxCapacity` = 100 dans `AppleSmartBattery` (un pourcentage), `CycleCount` = 301 au premier niveau.
+- Lot 1 :
+  - `6ea85bb` : `IDeviceBattery.parseBattery()`, plus de `Int(…)!` / `Bool(…)!` / `.first!` ; `comptest` limité à 15 s. Testé isolément (code extrait du fichier) : format documenté → `95% charging=false` ; champ manquant, valeur non numérique, sortie vide → `nil` ; espaces tolérés ; 140 → 100. L'iPhone n'était pas joignable en Wi-Fi à ce moment-là (`idevice_id -n` vide) : pas d'échantillon réel.
+  - `f64e3bc` : plus de force-casts dans `BTDBattery` (lignes de `logReader.sh`) ni dans `MagicBattery` (system_profiler, IORegistry) ; garde « fabricant Apple » dans `getAirpods()` (#106).
+  - `7dd363b` : niveaux AirPods bornés à 100 (#76).
+- Build Debug OK, sans nouveau warning.
+
+**Échecs :** —
+**Testé sur appareil réel :** non. Lot sans changement de comportement visible ; testé par analyse statique et tests isolés.
+**Prochaine étape :** lot 2 (rafraîchissement).
