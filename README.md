@@ -5,6 +5,9 @@
 <h3 align="center">Get battery usage of all devices on Mac and show them on the Dock / StatusBar / Widgets!<br><a href="./README_zh.md">[中文版本]</a><br><a href="https://lihaoyun6.github.io/airbattery/">[Landing Page]</a></h3> 
 </p>
 
+> [!NOTE]
+> **This is a maintained fork** of [lihaoyun6/AirBattery](https://github.com/lihaoyun6/AirBattery), modified since October 2026 by [MsieurPafi](https://github.com/MsieurPafi). It ships with its own bundle ID (`io.github.msieurpafi.AirBattery`) and URL scheme (`airbattery-plus://`), so it can run next to the official app. It has no automatic updates for now. Changes are listed in [CHANGELOG.md](./CHANGELOG.md). Licensed under AGPL-3.0, like the original.
+
 ## Screenshots
 <p align="center">
 <picture>
@@ -16,10 +19,12 @@
 
 ## Installation and Usage
 ### System Requirements:
-- macOS 11.0 and Later  
+- macOS 12.0 and Later  
 
 ### Installation:
-Download the latest installation file [here](../../releases/latest) or install via Homebrew:  
+Download this fork from its [releases page](../../releases). Builds are not notarized: on first launch, allow the app in System Settings › Privacy & Security.
+
+The official app (not this fork) is available from the [original repository](https://github.com/lihaoyun6/AirBattery/releases) or via Homebrew:
 
 ```bash
 brew install lihaoyun6/tap/airbattery
