@@ -129,3 +129,23 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Prochaine étape :** Phase 0 terminée. Phase 1 : intégrer la PR #216 (concurrence), en tenant compte des recouvrements avec #214 et la 1.6.4 communautaire.
 
 **Ajout (2026-10-21, fin de session) :** avec l'accord de Côme, `main` poussé sur `origin` (`MsieurPafi/AirBattery`) : `134e02f..165f557`, fast-forward. Les branches de travail (`fix/build-xcode27`, `chore/fork-identity`, `chore/disable-sparkle`, `build/deployment-target-12`) restent locales ; elles sont entièrement contenues dans `main`.
+
+---
+
+## 2026-10-21 (suite 5) — Phase 1 : intégration de la PR #216 (concurrence)
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, commit de départ `061f05b`, branche `fix/215-concurrency`.
+**Objectif :** corriger le crash de `deviceIsConnected` (upstream #215/#206), observé 4 fois sur l'app officielle chez Côme.
+
+**Fait :**
+- `git fetch upstream pull/{216,214,210}/head:upstream-pr-N`. Lecture des diffs : #216 = 3 commits ; #214 ne touche pas à la concurrence.
+- Sources de la 1.6.4/1.6.5 communautaire trouvées (`callieskye/Air-Battery`), remote `callie` en lecture seule. Comparaison dans D-008 et `UPSTREAM.md`.
+- Cherry-pick de #216 (`7b06120`, `d4af77a`), un conflit résolu, libellé de file renommé (`59a054d`). Revue : pas d'interblocage possible (aucun appel externe sous `devicesLock`), la closure ne capture plus d'`IOBluetoothDevice`.
+- Build signé OK. Fork relancé avec ce build (PID 13065) ; logs veille/réveil capturés dans `build/logs/run-*-pr216-sleepwake.log`.
+
+**Échecs :** —
+**Contournements :** —
+**Décisions :** D-008.
+**Testé sur appareil réel :** en cours (checklist veille/réveil donnée à Côme).
+**Pistes ouvertes :** correctifs de callieskye à porter un par un (liste dans `UPSTREAM.md`).
+**Prochaine étape :** si le test de Côme est concluant, fusionner `fix/215-concurrency` dans `main` ; ensuite, PR #214 (popups d'appairage), à valider avec Côme.
