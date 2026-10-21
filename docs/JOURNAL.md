@@ -127,3 +127,5 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Testé sur appareil réel :** oui, par Côme : Mac, AirPods Pro, iPhone 17, Apple Watch, souris MX Anywhere 3, widget.
 **Pistes ouvertes :** souris BLE HID (`retrieveConnectedPeripherals`), accès de `abt` aux données, faute SwiftUI des cases vides du widget.
 **Prochaine étape :** Phase 0 terminée. Phase 1 : intégrer la PR #216 (concurrence), en tenant compte des recouvrements avec #214 et la 1.6.4 communautaire.
+
+**Ajout (2026-10-21, fin de session) :** avec l'accord de Côme, `main` poussé sur `origin` (`MsieurPafi/AirBattery`) : `134e02f..165f557`, fast-forward. Les branches de travail (`fix/build-xcode27`, `chore/fork-identity`, `chore/disable-sparkle`, `build/deployment-target-12`) restent locales ; elles sont entièrement contenues dans `main`.
