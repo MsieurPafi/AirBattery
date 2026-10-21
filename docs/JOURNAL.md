@@ -55,3 +55,24 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 - Warnings `switch must be exhaustive` dans les trois widgets : sûrement un nouveau cas de `WidgetFamily` dans le SDK 27.
 - `kIOMasterPortDefault` déprécié (`Supports.swift:426`).
 **Prochaine étape :** Côme valide D-007 et crée le certificat de développement ; ensuite, build signé, puis étape 7 (premier lancement, après avoir quitté l'AirBattery officielle), en vérifiant en particulier que le widget s'enregistre avec la signature gratuite.
+
+---
+
+## 2026-10-21 (suite 2) — Cible de déploiement 12.0 (D-007)
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1 (27A9275), commit de départ `89d8521`.
+**Objectif :** appliquer D-007, validée par Côme.
+
+**Fait :**
+- `138b433` (branche `build/deployment-target-12`, fusionnée en fast-forward dans `main`) : `MACOSX_DEPLOYMENT_TARGET` passé de 11.0 à 12.0, 10 occurrences dans `project.pbxproj`.
+- Build `clean build` sans `MACOSX_DEPLOYMENT_TARGET` en ligne de commande, schémas `AirBattery` et `abt` : OK. `LSMinimumSystemVersion` = 12.0 pour l'app, le widget et le helper ; `vtool -show-build abt` → `minos 12.0`.
+- W-001 retiré. Warnings inchangés (cf. `COMPAT.md`).
+
+**Échecs :**
+- Correction de l'entrée précédente et de W-001 : j'avais compté 8 occurrences de `MACOSX_DEPLOYMENT_TARGET`, il y en a 10 (2 au niveau projet + 8 dans les targets).
+- Un `clean build` du schéma `abt` efface aussi les produits du schéma `AirBattery` (`-derivedDataPath` partagé) : refaire un `build` de l'app avant d'inspecter le `.app`.
+
+**Contournements :** W-002 reste (builds sans signature).
+**Décisions :** D-007 acceptée.
+**Testé sur appareil réel :** non.
+**Prochaine étape :** certificat de développement pour l'équipe `PCH7VR8GPS`, build signé, puis étape 7 (premier lancement).

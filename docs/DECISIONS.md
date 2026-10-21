@@ -48,10 +48,10 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 **Conséquences :** pour renommer : `APP_ID_PREFIX` dans le projet, `AppIdentifiers.prefix`, et le schéma dans `Info.plist` + `AppIdentifiers.urlScheme`.
 **Validée par Côme :** pas nécessaire (demandé par le brief, §3 étape 5)
 
-## D-007 — `MACOSX_DEPLOYMENT_TARGET` : passer de 11.0 à 12.0   (2026-10-21, statut : proposée)
+## D-007 — `MACOSX_DEPLOYMENT_TARGET` : passer de 11.0 à 12.0   (2026-10-21, statut : acceptée)
 **Contexte :** Xcode 27.1 refuse de compiler : `The macOS deployment target 'MACOSX_DEPLOYMENT_TARGET' is set to 11.0, but the range of supported deployment target versions is 12.0 to 27.0.x.` (erreur, pas warning, sur les quatre targets).
 **Options envisagées :** A. 12.0, le minimum accepté (changement minimal) / B. 13.0, ce qui permettrait de supprimer le chemin `SMLoginItemSetEnabled` au profit de `SMAppService` seul / C. plus haut (14, 15…) pour profiter d'API récentes.
-**Décision proposée :** A pour l'instant. Une montée plus haute se décidera quand une API en aura vraiment besoin.
+**Décision :** A pour l'instant. Une montée plus haute se décidera quand une API en aura vraiment besoin.
 **Pourquoi :** c'est la plus petite marche qui débloque le build ; le fork est perso, mais rien ne justifie encore d'exclure des versions.
-**Conséquences :** en attendant la validation, le projet garde 11.0 et les builds passent `MACOSX_DEPLOYMENT_TARGET=12.0` en ligne de commande (voir W-001).
-**Validée par Côme :** non, en attente
+**Conséquences :** l'app, le widget, le helper et `abt` exigent macOS 12 (Monterey) ou plus. Appliqué dans `138b433` ; W-001 retiré. Pour revenir en arrière : impossible avec Xcode ≥ 27, sauf à garder un Xcode plus ancien.
+**Validée par Côme :** oui (2026-10-21)
