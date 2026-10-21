@@ -114,3 +114,11 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 **Pourquoi :** distinguer les deux apps partout où l'utilisateur choisit (galerie, À propos), sans toucher aux identifiants techniques ni casser les traductions chinoises des textes d'aide.
 **Conséquences :** remplace D-002 sur le nom affiché ; D-002 reste valable pour les bundle IDs. Inchangés : `CFBundleName`/exécutable « AirBattery » (le titre du menu de l'app quand une fenêtre est au premier plan peut encore l'afficher), textes d'aide et astuces. Les clés de traduction modifiées perdent leur traduction chinoise (« AirBattery Plus Settings », messages des widgets). À compléter par la tâche « identité » (IDEAS.md).
 **Validée par Côme :** oui (2026-10-21)
+
+## D-015 — Nom du produit « AirBattery Plus » (complète D-014)   (2026-10-21, statut : acceptée)
+**Contexte :** avec seulement `CFBundleDisplayName` (D-014), la galerie des widgets affichait toujours « AirBattery » pour le fork (capture de Côme sur la 1.7.2), alors que LaunchServices le nommait bien « AirBattery Plus ». La galerie se sert de `CFBundleName`, généré par Xcode depuis `PRODUCT_NAME`. Testé sans effet : une clé `CFBundleName` dans `Info.plist` (écrasée), le réglage `INFOPLIST_KEY_CFBundleName` (ignoré).
+**Options envisagées :** A. script post-build qui réécrit `CFBundleName` (fragile, avant la signature) / B. `PRODUCT_NAME = "AirBattery Plus"` pour la cible app, en fixant `PRODUCT_MODULE_NAME = AirBattery`.
+**Décision :** B.
+**Pourquoi :** c'est la voie standard, et le nom de module fixé préserve le dictionnaire AppleScript (`AirBattery.listAll`…) et les noms de classes Swift (`_TtC10AirBattery…`, vérifiés dans le binaire).
+**Conséquences :** le produit s'appelle `AirBattery Plus.app`, l'exécutable `AirBattery Plus`, et le processus s'appelle « AirBattery Plus » dans `ps`, `log` et le Moniteur d'activité. Les commandes de test doivent utiliser `/usr/bin/log … process == "AirBattery Plus"` et le chemin `build/DerivedData/Build/Products/Debug/AirBattery Plus.app`. Inchangés : bundle IDs, widget, helper (il ouvre l'app par chemin), `abt`, réglages.
+**Validée par Côme :** oui (demande « AirBattery Plus » dans la galerie, 2026-10-21)
