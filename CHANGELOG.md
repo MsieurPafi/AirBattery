@@ -2,6 +2,27 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
+## 1.7.1 — 2026-10-21 (pre-release)
+
+Fixes ported from callieskye's 1.6.5 community build ([callieskye/Air-Battery](https://github.com/callieskye/Air-Battery)), each one checked on macOS 27 first. Several of her changes didn't apply here and were left out; the details are in `docs/UPSTREAM.md`.
+
+### Fixes
+
+- **No more crashes on unexpected tool output**: iPhone, iPad and Watch battery info, Bluetooth log lines and IOKit properties are now parsed safely instead of with forced unwraps.
+- **`comptest` (Apple Watch battery) can no longer hang the app**: it is stopped after 15 s. It still crashes now and then inside the bundled libimobiledevice (upstream #198), but without affecting AirBattery.
+- **AirPods levels above 100%** (for example 125%) are clamped (upstream #76).
+- **Battery alerts**: one device waiting out its notification delay no longer silences the alerts of all the others (upstream #78).
+- **Mac battery percentage** now comes from the same source as the macOS menu bar. It could differ when a charge limit is set.
+- **"Discover more BLE devices"**: connections are released after reading the battery, and devices without one are no longer retried every cycle. This kept some Macs awake (upstream #132) and is a suspected cause of audio stutter (upstream #178).
+- **AirPods reported as "iPhone"** on macOS 26 now get their model name (upstream #172).
+- **Icons**: AirPods 4 with ANC (upstream #166), AirPods Max (upstream #204, #205) and MacBook Neo (upstream #195).
+- **Pinned menu bar items** now update their icon and keep their position across launches (upstream #182).
+- **Nearcast list**: the hover highlight clears when the cursor leaves (upstream #159).
+
+### Changes
+
+- iPhone, iPad and Watch are scanned on their own 15 s timer, instead of launching two `idevice_id` processes every 5 s.
+
 ## 1.7.0 — 2026-10-21 (pre-release)
 
 First release of the fork, based on the official 1.6.3 plus the upstream commits that were merged after it but never released.
