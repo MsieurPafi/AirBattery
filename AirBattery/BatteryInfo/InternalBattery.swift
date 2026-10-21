@@ -143,18 +143,29 @@ class InternalFinder {
 
         for ps in sources {
             // Fetch the information for a given power source out of our snapshot
-            let info = IOPSGetPowerSourceDescription(snapshot, ps).takeUnretainedValue() as! Dictionary<String, Any>
+            guard let info = IOPSGetPowerSourceDescription(snapshot, ps).takeUnretainedValue() as? Dictionary<String, Any> else { continue }
 
             // Pull out the name and capacity
             battery.name = info[kIOPSNameKey] as? String
 
             battery.timeToEmpty = info[kIOPSTimeToEmptyKey] as? Int
             battery.timeToFull = info[kIOPSTimeToFullChargeKey] as? Int
+
+            // Same pair macOS uses for its own menu bar percentage. The AppleSmartBattery
+            // registry values below can differ when a charge limit is set (reported as 84-89%
+            // shown for an 80% limit in callieskye's 1.6.5), so they are only a fallback.
+            battery.currentCapacity = info[kIOPSCurrentCapacityKey] as? Int
+            battery.maxCapacity = info[kIOPSMaxCapacityKey] as? Int
         }
 
-        // Capacities
-        battery.currentCapacity = self.getIntValue("CurrentCapacity" as CFString)
-        battery.maxCapacity = self.getIntValue("MaxCapacity" as CFString)
+        // Capacities (fallback when IOPowerSources has no capacity pair)
+        if battery.currentCapacity == nil || battery.maxCapacity == nil {
+            battery.currentCapacity = self.getIntValue("CurrentCapacity" as CFString)
+            battery.maxCapacity = self.getIntValue("MaxCapacity" as CFString)
+        }
+        // Not displayed today. On Apple Silicon (macOS 27.0.1), DesignCapacity and
+        // NominalChargeCapacity (mAh) live in the "BatteryData" dictionary, not at the top
+        // level, and MaxCapacity is a percentage: see docs/COMPAT.md before using these.
         battery.designCapacity = self.getIntValue("DesignCapacity" as CFString)
 
         // Battery Cycles
