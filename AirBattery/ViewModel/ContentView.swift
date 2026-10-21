@@ -258,8 +258,56 @@ struct MultiBatteryView: View {
     }
 }
 
+/// Corner geometry of the device lists. From macOS 26 (Liquid Glass) the system popover
+/// has large rounded corners, and the lists inside must follow them concentrically:
+/// inner radius = outer radius - inset. Before macOS 26 the original look is kept.
+enum ListMetrics {
+    static var liquidGlass: Bool {
+        if #available(macOS 26.0, *) { return true }
+        return false
+    }
+    /// Corner radius of the system NSPopover on macOS 26/27, measured on screenshots.
+    static let popoverCornerRadius: CGFloat = 18
+    /// Horizontal distance between the popover edge and the list background.
+    static let listInset: CGFloat = 5
+    static var listCornerRadius: CGFloat { liquidGlass ? popoverCornerRadius - listInset : 4 }
+    /// Rows sit 1 pt inside the list background.
+    static var rowCornerRadius: CGFloat { liquidGlass ? listCornerRadius - 1 : 2.9 }
+    // Toolbar buttons (14 pt circles) are centered on the center of the popover's corner
+    // arc, 18 pt from both edges, so they follow the corner instead of poking into it.
+    // Values measured on screenshots: the popover adds ~2.5 pt above the content.
+    static var headerTopSpacing: CGFloat { liquidGlass ? 12.25 : 8.5 }
+    static var headerSidePadding: CGFloat { liquidGlass ? 11.5 : 5 }
+    /// Space under the list: same visual margin as on the sides on macOS 26+.
+    static var bottomSpacing: CGFloat { liquidGlass ? 7 : 8.5 }
+}
+
+extension View {
+    /// Background of a device list: a thin bordered box before macOS 26, a filled card
+    /// with corners concentric with the popover from macOS 26.
+    @ViewBuilder
+    func deviceListBackground() -> some View {
+        if ListMetrics.liquidGlass {
+            self.background(
+                RoundedRectangle(cornerRadius: ListMetrics.listCornerRadius, style: .continuous)
+                    .fill(Color.primary.opacity(0.05))
+                    .padding(.vertical, -1)
+                    .padding(.horizontal, ListMetrics.listInset)
+            )
+        } else {
+            self.overlay(
+                RoundedRectangle(cornerRadius: ListMetrics.listCornerRadius, style: .continuous)
+                    .strokeBorder(Color.secondary, lineWidth: 1)
+                    .padding(.vertical, -1)
+                    .padding(.horizontal, ListMetrics.listInset)
+                    .opacity(0.23)
+            )
+        }
+    }
+}
+
 struct BlurView: NSViewRepresentable {
-    
+
     private let material: NSVisualEffectView.Material
     
     init(material: NSVisualEffectView.Material) {
@@ -311,7 +359,7 @@ struct popover: View {
             VStack(spacing: 0){
                 if !fromDock {
                     Color.clear
-                        .frame(height: 8.5)
+                        .frame(height: ListMetrics.headerTopSpacing)
                         .onHover { hovering in
                             if hovering {
                                 overStack = -1
@@ -407,7 +455,7 @@ struct popover: View {
                     }
                 }
                 .offset(y: -3.5)
-                .padding(.horizontal, 5)
+                .padding(.horizontal, fromDock ? 5 : ListMetrics.headerSidePadding)
                 .onHover{ hovering in (overStack, overStack2) = (-1, -1) }
                 VStack(alignment:.leading,spacing: 0) {
                     if allDevices.count < 1 && hiddenDevices.count < 1{
@@ -626,7 +674,7 @@ struct popover: View {
                                 .padding(.vertical, 6)
                                 .padding(.horizontal, 10)
                                 .background(overStack == index ? Color.blackWhite.opacity(0.15) : .clear)//.cornerRadius(4)
-                                .clipShape(RoundedCornersShape(radius: 2.9, corners: index == allDevices.count - (hiddenDevices.count > 0 ? 0 : 1) ? [.bottomLeft, .bottomRight] : (index == 0 ? [.topLeft, .topRight] : [])))
+                                .clipShape(RoundedCornersShape(radius: ListMetrics.rowCornerRadius, corners: index == allDevices.count - (hiddenDevices.count > 0 ? 0 : 1) ? [.bottomLeft, .bottomRight] : (index == 0 ? [.topLeft, .topRight] : [])))
                                 .onHover{ hovering in
                                     overStack2 = -1
                                     overStackNC = -1
@@ -762,13 +810,7 @@ struct popover: View {
                     }
                 }
                 .padding(.horizontal, 6)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 4, style: .continuous)
-                        .strokeBorder(Color.secondary, lineWidth: 1)
-                        .padding(.vertical, -1)
-                        .padding(.horizontal, 5)
-                        .opacity(0.23)
-                )
+                .deviceListBackground()
                 .offset(y: 2.5)
                 if nearCast {
                     ForEach(allNearcast.indices, id: \.self) { index in
@@ -784,7 +826,7 @@ struct popover: View {
                 }
                 if !fromDock {
                     Color.clear
-                        .frame(height: 8.5)
+                        .frame(height: ListMetrics.bottomSpacing)
                         .onHover { hovering in
                             if hovering {
                                 overStack = -1
@@ -961,19 +1003,13 @@ struct nearcastView: View {
                     .onHover{ hovering in overStack = index }
                 }
                 .background((overStackNC == mainIndex && overStack == index) ? Color.blackWhite.opacity(0.15) : .clear)
-                .clipShape(RoundedCornersShape(radius: 2.9, corners: index == devices.count - 1 ? [.bottomLeft, .bottomRight] : (index == 0 ? [.topLeft, .topRight] : [])))
+                .clipShape(RoundedCornersShape(radius: ListMetrics.rowCornerRadius, corners: index == devices.count - 1 ? [.bottomLeft, .bottomRight] : (index == 0 ? [.topLeft, .topRight] : [])))
                 if index != devices.count-1 { Divider() }
             }
         }
         .onHover{ hovering in overStackNC = mainIndex }
         .padding(.horizontal, 6)
-        .overlay(
-            RoundedRectangle(cornerRadius: 4)
-                .strokeBorder(Color.secondary, lineWidth: 1)
-                .padding(.vertical, -1)
-                .padding(.horizontal, 5)
-                .opacity(0.23)
-        )
+        .deviceListBackground()
         .offset(y: 2.5)
     }
 

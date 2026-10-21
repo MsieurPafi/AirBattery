@@ -18,7 +18,7 @@ Les têtes de PR de l'archive locale sont disponibles dans `archive/pr/<N>` (`gi
 | #214 | Plus de connexion BT auto aux iOS | **repris** (D-009) | cherry-pick `-x` de `3f2a6eb` « only connect iOS devices authorized by the user », `781f750` et `ceaede7` (UI de la fenêtre), `c9f9505` « fix retry state, show failure reason » → `7ca2817`, `0737d17`, `5710d86`, `709c794`. `aa85210` (import) sauté : déjà dans `774c380`. Testé par Côme le 2026-10-21. |
 | #210 | Wi-Fi privée iOS (`syncmac`) | à évaluer | recompiler le binaire, ne pas l'intégrer tel quel |
 | #211 | Mode d'énergie | hors périmètre | cf. IDEAS.md |
-| #200 | Liquid Glass | à évaluer | |
+| #200 | Liquid Glass | **non repris**, inspiration seulement (D-012) | Mélange l'interface et d'autres sujets (lancement au login via `SMAppService.loginItem`, cible de déploiement, widgets), dont une partie entre en conflit avec `main`. Applique `glassEffect` sur des panneaux par-dessus le verre du popover (verre sur verre) avec des rayons fixes (5/10 pt), sans traiter la concentricité. Ses changements de lancement au login et de widgets restent à évaluer séparément. |
 | #191 | Souris Roccat | à évaluer | |
 | #170 | Traduction française | à évaluer | |
 | #164 | CLI `supported` | à évaluer | |

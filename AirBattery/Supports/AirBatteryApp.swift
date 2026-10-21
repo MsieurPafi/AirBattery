@@ -403,7 +403,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
             menuPopover.contentViewController = contentView
             menuPopover.behavior = .transient
             var bound = button.bounds
-            if getMenuBarHeight() == 24.0 { bound.origin.y -= 6 }
+            if #available(macOS 26.0, *) {
+                // The hidden anchor still takes room: without this the popover sat ~9.5 pt
+                // below the menu bar, versus ~2.5-3 pt for other Liquid Glass menu bar apps
+                // (measured on a notched MacBook Pro). Not yet checked on a 24 pt menu bar.
+                bound.origin.y -= 7
+            } else if getMenuBarHeight() == 24.0 { bound.origin.y -= 6 }
             menuPopover.show(relativeTo: bound, of: button, preferredEdge: .minY)
             //menuPopover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
             menuPopover.contentViewController?.view.window?.makeKeyAndOrderFront(nil)
