@@ -186,3 +186,24 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Testé sur appareil réel :** oui, par Côme (iPhone 17, Apple Watch).
 **Pistes ouvertes :** traduire les nouveaux textes en français (avec #170).
 **Prochaine étape :** PR #210 (Wi-Fi privée d'iOS, `syncmac`) : recompiler `wificonnection` depuis les sources plutôt qu'intégrer le binaire de la PR.
+
+---
+
+## 2026-10-21 (suite 8) — Nouveau flux Git, évaluation de la PR #210
+
+**Contexte :** macOS 27.0.1 (26A434), `main` @ `ecf31cb` (poussé).
+
+**Fait :**
+- Côme revient sur l'autorisation de pousser `main` : désormais une branche par gros sujet, poussée librement sur `origin`, avec une PR sur son fork qu'il fusionne lui-même (D-010, règle ajoutée dans `CLAUDE.md` § Git).
+- PR #210 (`syncmac` pour `wificonnection`) lue : description, `wificonnection.c`, appel ajouté dans `IDeviceBattery.writeBatteryInfo`.
+- **Côme est-il concerné ?** Mesures en lecture seule, iPhone débranché :
+  - `idevice_id -l` → rien en USB ; `idevice_id -n` → **1 appareil joignable en Wi-Fi**.
+  - `log show --last 2h --predicate 'process == "usbmuxd" AND eventMessage CONTAINS "Ignoring"'` : seulement des `already attached as N-fe80::… Ignoring bonjour add event` (l'appareil est **déjà** rattaché) ; **0** message `Pariable=false`, le symptôme décrit par la PR. Une seule adresse MAC annoncée.
+  - Conclusion : sur son réseau domestique, le rattachement Wi-Fi fonctionne. Le cas de la PR se produirait sur un autre réseau Wi-Fi (l'adresse privée « fixe » d'iOS est différente pour chaque réseau), et ne serait corrigé qu'au prochain branchement USB.
+- Recompilation de `wificonnection` : le dépôt n'embarque **aucun en-tête** (`AirBattery/libimobiledevice/` = `COPYING`, `bin/`, `lib/`). `otool -L bin/wificonnection` : liée à `libimobiledevice-1.0.6`, `libimobiledevice-glue-1.0.0`, `libusbmuxd-2.0.6`, `libplist-2.0.4`, `libssl.3`, `libcrypto.3` via `@executable_path/../lib/`. Les binaires s'identifient comme `1.3.0-210-g73b6fd1`. Il faut donc récupérer les en-têtes de ces bibliothèques, à des commits compatibles.
+
+**Avis sur #210 (donné à Côme) :** diagnostic solide, code propre et idempotent. Mais il réécrit le *pair record* système (partagé avec Finder/Xcode) sans garder l'adresse d'origine, et il lance un processus de plus à **chaque** sondage USB. À reprendre avec trois améliorations : garder l'ancienne valeur, n'appeler `syncmac` qu'une fois par branchement USB, recompiler depuis les sources (script dans `scripts/`). Priorité moyenne, puisque Côme n'est pas touché chez lui.
+
+**Décisions :** D-010.
+**Testé sur appareil réel :** non (mesures passives seulement).
+**Prochaine étape :** choix de Côme entre #210 (avec ces améliorations) et la souris MX Anywhere 3 (bug qu'il constate lui-même).
