@@ -44,7 +44,7 @@ struct SettingsView: View {
             .padding(.top, 9)
         }
         .frame(width: 600, height: 440)
-        .navigationTitle("AirBattery Settings")
+        .navigationTitle("AirBattery Plus Settings")
     }
 }
 
@@ -110,7 +110,7 @@ struct GeneralView: View {
                     CheckForUpdatesView(updater: updaterController.updater)
                 }
                 if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
-                    Text("AirBattery v\(appVersion)")
+                    Text("AirBattery Plus v\(appVersion)")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .onTapGesture {

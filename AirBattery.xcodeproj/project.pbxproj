@@ -840,6 +840,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AirBattery/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "AirBattery Plus";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "AirBattery uses Bluetooth to collect battery information from peripheral devices.";
@@ -874,6 +875,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AirBattery/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "AirBattery Plus";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "AirBattery uses Bluetooth to collect battery information from peripheral devices.";

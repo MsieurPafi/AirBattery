@@ -1017,7 +1017,9 @@ struct nearcastView: View {
 
 func openAboutPanel() {
     NSApp.activate(ignoringOtherApps: true)
-    NSApp.orderFrontStandardAboutPanel(nil)
+    // CFBundleName stays "AirBattery" (it follows the product name); show the display name.
+    let name = Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String ?? "AirBattery"
+    NSApp.orderFrontStandardAboutPanel(options: [.applicationName: name])
 }
 
 func openSettingPanel() {
