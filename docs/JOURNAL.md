@@ -380,3 +380,22 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Testé sur appareil réel :** oui (épinglage, position). Icônes AirPods 4/Max et MacBook Neo non testables (matériel absent).
 **État laissé :** build Debug en cours d'exécution à la place de l'app installée (1.7.0) ; option « Discover more BLE devices » encore activée depuis le test du lot 4 (réglage partagé avec l'app installée).
 **Prochaine étape :** PR du lot 5 ; choix des fonctions par Côme.
+
+---
+
+## 2026-10-21 (suite 17) — Release 1.7.1 (pre-release)
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, branche `release/1.7.1` depuis `main` @ `911c3bd` (lots 1 à 5 de callieskye).
+
+**Fait :**
+- `01fa83e` : version 1.7.1 (171), section 1.7.1 du `CHANGELOG.md`.
+- Build Release propre ; vérifié : 1.7.1 (171), universel, signé `PCH7VR8GPS`, pas de `SUFeedURL`, `codesign --verify --deep --strict` OK (dans `build/` et dans le DMG monté).
+- DMG `AirBattery-Plus-1.7.1.dmg` (même procédure que 1.7.0, D-013), SHA-256 `dd0a614b42dc924dbcf1d48e366c2e3756ef77f86a34d38ef2aaacfc4f51654c`.
+- Test de Côme : la 1.7.1 remplace la 1.7.0 dans Applications ; menu, widget et version 1.7.1 OK.
+- Tag annoté `v1.7.1` sur `01fa83e`, poussé. Pre-release publiée : https://github.com/MsieurPafi/AirBattery/releases/tag/v1.7.1 (notes reprises du changelog, numéros upstream en police de code). DMG retéléchargé : même SHA-256.
+
+**Échecs :** —
+**Décisions :** — (procédure D-013)
+**Testé sur appareil réel :** oui, par Côme.
+**Note :** la bascule du mode économie d'énergie de callieskye (#117/#129) passe par `pmset -a lowpowermode`, qui exige les droits administrateur ; elle est déconseillée à Côme (refus silencieux sans privilèges).
+**Prochaine étape :** première fonction choisie par Côme : tri de la liste par batterie (#56, #188).
