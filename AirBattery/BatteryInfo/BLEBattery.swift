@@ -196,6 +196,11 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
     var bleDevicesVendor: [String:String] = [:]
     var scanTimer: Timer?
     private var discoveredIOSPeripherals: [UUID: CBPeripheral] = [:]
+    /// Generic BLE peripherals ("Discover more BLE devices") that turned out to have no
+    /// battery level: not reconnected again during this launch. Reconnecting to them every
+    /// cycle kept the Mac from sleeping (upstream #132).
+    private var knownNonBatteryPeripherals: Set<UUID> = []
+    private var batteryPeripherals: Set<UUID> = []
     private var iosConnectionPolicy: IOSBLEConnectionPolicy
     private var iosServicesRemaining: [UUID: Int] = [:]
     private var iosReadsRemaining: [UUID: Int] = [:]
@@ -384,7 +389,7 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
             if let data = advertisementData[CBAdvertisementDataManufacturerDataKey] as? Data, data.count > 0 {
                 if data[0] != 76 {
                     //获取非Apple的普通BLE设备数据
-                    if readBLEDevice {
+                    if readBLEDevice && !knownNonBatteryPeripherals.contains(peripheral.identifier) {
                         if let device = AirBatteryModel.getByName(deviceName) {
                             if now - device.lastUpdate > refreshAge { get = true } } else { get = true }
                     }
@@ -412,6 +417,18 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
         if get && peripheral.state == .disconnected {
             retainPeripheral(peripheral)
             centralManager.connect(peripheral, options: nil)
+            // Read, then release: holding GATT connections open to generic BLE devices
+            // competed with audio devices for the radio (upstream #178). 8 s is enough to
+            // read the battery, model and vendor characteristics.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 8) { [weak self] in
+                guard let self = self else { return }
+                if !self.batteryPeripherals.contains(peripheral.identifier) {
+                    self.knownNonBatteryPeripherals.insert(peripheral.identifier)
+                }
+                if peripheral.state == .connected || peripheral.state == .connecting {
+                    self.centralManager.cancelPeripheralConnection(peripheral)
+                }
+            }
         }
     }
     
@@ -500,6 +517,7 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
                     return
                 }
                 if isIOSConnection { iosBatteryReadSucceeded.insert(identifier) }
+                batteryPeripherals.insert(identifier)
                 var charging = 0
                 //if let lastLevel = bleDevicesLevel[deviceName], cStatusOfBLE {
                 if let lastLevel = bleDevicesLevel[deviceName] {
@@ -709,7 +727,7 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
         guard let name = peripheral.name else { return }
         if AirBatteryModel.checkIfBlocked(name: name) { return }
         
-        if let deviceName = peripheral.name{
+        if var deviceName = peripheral.name{
             //NSLog("AirPods: \(messageType) message [\(data.hexEncodedString())]")
             let now = Date().timeIntervalSince1970
             let dataHex = data.hexEncodedString()
@@ -718,6 +736,11 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
             let deviceID = peripheral.identifier.uuidString
             var model = (messageType == "open" ? getHeadphoneModel(String(format: "%02x%02x", data[6], data[5])) : "Airpods Pro 2")
             if let Case = AirBatteryModel.getByName(deviceName + " (Case)".local) { model = Case.deviceModel ?? model }
+            // On macOS 26 the advertised name of AirPods can come back as "iPhone" (upstream
+            // #172). The model decoded from this same packet is reliable: prefer it then.
+            if model != "Headphones", deviceName.lowercased().contains("iphone") || deviceName.lowercased().contains("ipad") {
+                deviceName = model
+            }
             
             // Bit 7 is the charging flag. A stray byte between 101 and 127 has it unset and
             // went through unchanged (AirPods shown at 125%, upstream #76): clamp to 100.

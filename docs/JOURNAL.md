@@ -335,3 +335,30 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Échecs :** —
 **Testé sur appareil réel :** non. Lot sans changement de comportement visible ; testé par analyse statique et tests isolés.
 **Prochaine étape :** lot 2 (rafraîchissement).
+
+---
+
+## 2026-10-21 (suite 15) — Lots 2 à 4 de callieskye : rafraîchissement, batterie du Mac, Bluetooth
+
+**Contexte :** macOS 27.0.1 (26A434), branches empilées `port/callie-2-refresh` → `port/callie-3-mac-battery` → `port/callie-4-bluetooth` (sur `port/callie-1-robustness`).
+
+**Vérifications avant de porter (sur le Mac de Côme) :**
+- #91 : avec l'app installée (1.7.0), menu fermé, relevés `abt --json` toutes les 75 s : Watch 76 → 82 → 83 %, `update` 0 à −1 min. La vue `MultiBatteryView` (Dock) fait bien tourner ses minuteurs sans icône dans le Dock : #91 **non reproduit**. Par contre, `IDeviceBattery.scanDevices()` y était appelé toutes les 5 s (`dockTimer`), sans limitation propre.
+- #78 : `return` au lieu de `continue` confirmé dans `batteryAlert()`.
+- Lots 3 et 4 : registre de la batterie, logs `bluetoothd` (12 h) et format `CBPowerSource` relevés (COMPAT.md notes 5 et 6, UPSTREAM.md).
+
+**Fait :**
+- Lot 2 : `b7757d0` (minuteur de 15 s pour les appareils iOS), `d069d4e` (#78).
+- Lot 3 : `020bf44` (pourcentage via `IOPowerSources`).
+- Lot 4 : `2d29f99` (#132/#178), `985e256` (#172).
+- Non repris, avec preuves : Bose/#91 partie BT, #137, santé/cycles (#152). Voir UPSTREAM.md.
+
+**Test groupé** (Côme a autorisé l'arrêt de son app installée ; build Debug PID 35965) :
+- Rafraîchissement menu fermé (`abt --json` à 19:56:45, 19:57:56, 19:59:07) : iPhone, souris, AirPods à jour ; Watch 89 → 91 % (en charge). Mac 100 %, comme `pmset -g batt`. Aucune erreur ou faute de l'app.
+- Comptage des lancements de `idevice_id` par échantillonnage `ps` (4/s) : **non concluant**, les processus sont trop brefs pour être vus. Le passage de 5 s à 15 s repose sur le code.
+- `comptest` a planté pendant le test (COMPAT note 5) sans effet sur l'app.
+- BLE générique (Côme a coché « Discover more BLE devices ») : journaux `bluetoothd` sur 4 min. 6 périphériques connectés à 20:00:36, **déconnectés à 20:00:44** ; aucun n'est recontacté aux scans de 20:01, 20:02 et 20:03 ; 3 nouveaux à 20:02:37, déconnectés 8 s plus tard. Seul l'iPhone autorisé (#214) se reconnecte chaque minute. Aucune demande d'appairage (seulement des `RetrievePairedPeersWithOptions`). Aucun de ces périphériques n'exposait de batterie.
+
+**Échecs :** comptage des processus par `ps`, non concluant (voir ci-dessus).
+**Testé sur appareil réel :** oui (Côme + mesures de Claude).
+**Prochaine étape :** PR des lots 2 à 4 ; lot 5 (icônes et interface).
