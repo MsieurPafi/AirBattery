@@ -69,12 +69,12 @@ struct airbattery: ParsableCommand {
             NSWorkspace.shared.open(url, configuration: config)
         }
         usleep(500000)
-        var devices = AirBatteryModel.readData()
+        // Read the copy the app exports outside the widget's sandbox container
+        // (see AirBatteryModel.exportForTools): the container itself is protected.
+        let exportFolder = AirBatteryModel.exportFolder()
+        var devices = AirBatteryModel.readData(url: exportFolder.appendingPathComponent("data.json"))
         if nearcast {
-            let allNearcast = getFiles(withExtension: "json", in: ncFolder)
-            for jsonUrl in allNearcast {
-                devices += AirBatteryModel.ncGetAll(url: jsonUrl, fromWidget: true)
-            }
+            devices += AirBatteryModel.readData(url: exportFolder.appendingPathComponent("nearcast.json"))
         }
         let items: [item] = devices.map { $0.toItem() }
         if json {
