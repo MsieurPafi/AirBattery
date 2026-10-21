@@ -20,6 +20,7 @@ Légende : ✅ vérifié sur appareil réel · ⚠️ partiel / dégradé · ❌
 | AirPods / Beats (BLE) | `BLEBattery.swift` | ✅ AirPods Pro, écouteurs + boîtier (2026-10-21) |
 | BLE générique GATT 180F | `BLEBattery.swift` | ❔ |
 | iPhone / iPad (libimobiledevice) | `IDeviceBattery.swift` | ✅ iPhone 17 en USB (2026-10-21) |
+| iPhone / iPad via BLE (liste autorisée, D-009) | `BLEBattery.swift` | ✅ iPhone 17 autorisé via « Manage » › « Pair… » ; Apple Watch refusée avec un message (2026-10-21) |
 | Apple Watch (`comptest`) | `IDeviceBattery.swift` | ✅ via l'iPhone (2026-10-21) |
 | Apple Pencil | `IDeviceBattery.swift` | ❔ |
 | Nearcast | `Multipeer.swift` | ❔ |

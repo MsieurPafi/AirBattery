@@ -168,3 +168,21 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Décisions :** —
 **Testé sur appareil réel :** oui, veille/réveil par Côme (PR #216). Observation à poursuivre quelques jours.
 **Prochaine étape :** décision de Côme sur #214.
+
+---
+
+## 2026-10-21 (suite 7) — PR #214 testée et fusionnée
+
+**Contexte :** macOS 27.0.1 (26A434), commit de départ `93dd9d2`.
+
+**Fait :**
+- Côme avait activé « Discover iOS devices via Bluetooth » sur le build **sans** #214 (PID 13065, lancé à 17:05), sans trouver le bouton « Manage ». Normal : vérifié avec `ps` (chemin `build/DerivedData`) et `defaults read io.github.msieurpafi.AirBattery ideviceOverBLE` → `1`. Bascule immédiate sur le build d'essai `build/DerivedData-trial` (PID 15963).
+- Test de Côme : « Manage » › « Pair… » sur son iPhone : OK, l'iPhone remonte. La Watch apparaît dans « Nearby Apple Devices » ; « Pair… » dessus affiche le message de refus prévu (seuls iPhone/iPad sont supportés).
+- `fix/89-ios-ble-allowlist` rebasée sur `main` (seulement des commits de doc entre-temps), puis fast-forward. Rebuild dans `build/DerivedData`, relance (PID 16543) : l'autorisation persiste (`authorizedIOSBLEDevices` = 1 entrée « iPhone »).
+- `build/DerivedData-trial` supprimé ; `pluginkit` ne liste plus qu'un seul widget du fork.
+
+**Échecs :** —
+**Décisions :** D-009.
+**Testé sur appareil réel :** oui, par Côme (iPhone 17, Apple Watch).
+**Pistes ouvertes :** traduire les nouveaux textes en français (avec #170).
+**Prochaine étape :** PR #210 (Wi-Fi privée d'iOS, `syncmac`) : recompiler `wificonnection` depuis les sources plutôt qu'intégrer le binaire de la PR.

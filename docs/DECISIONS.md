@@ -66,3 +66,11 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 **Pourquoi :** c'est le seul candidat qui traite la pile exacte de nos crashs ; diff minimal et lisible ; historique propre.
 **Conséquences :** les connexions BT sont traitées en série (2,5 s + un `system_profiler` par appareil) : après un réveil avec beaucoup d'appareils, les mises à jour arrivent plus lentement (effet signalé par l'auteur de #216). Les accès en lecture-modification-écriture via `Devices[i].x = …` restent non atomiques (perte de mise à jour possible, plus de corruption mémoire), mais seul `AirBatteryModel` y accède et il passe par `_devices` sous verrou.
 **Validée par Côme :** oui (feu vert pour démarrer la Phase 1 par la PR #216, 2026-10-21)
+
+## D-009 — Découverte Bluetooth des iPhone/iPad : liste d'appareils autorisés (PR upstream #214)   (2026-10-21, statut : acceptée)
+**Contexte :** avec l'option « Discover iOS devices via Bluetooth », l'app se connectait d'elle-même à tout appareil Apple dont l'annonce BLE ressemblait à un iPhone/iPad, y compris ceux des voisins : popups d'appairage à répétition (upstream #89, #158, #169).
+**Options envisagées :** A. garder le comportement d'origine, avec les listes noire/blanche par nom (inefficaces d'après #169) / B. PR #214 : découverte ≠ connexion ; l'utilisateur autorise explicitement chaque appareil (« Manage » › « Pair… »), autorisation indexée par identifiant CoreBluetooth, délai de 30 s, pause d'une heure après un échec / C. retirer l'option.
+**Décision :** B.
+**Pourquoi :** supprime la nuisance pour l'entourage sans retirer la fonction ; l'option reste désactivée par défaut ; diff isolé dans `BLEBattery.swift` et `SettingsView.swift`.
+**Conséquences :** changement de comportement : un iPhone/iPad n'est lu en Bluetooth qu'après autorisation manuelle (stockée dans `authorizedIOSBLEDevices`, UUID → nom). Les Apple Watch sont refusées avec un message explicite (elles passent par l'iPhone). Pas de traduction française des nouveaux textes (à faire avec la PR #170). Messages de commit d'origine en chinois, conservés tels quels pour garder l'auteur (`Moyuin-aka`).
+**Validée par Côme :** oui (testé le 2026-10-21 : appairage de son iPhone OK, Watch refusée avec le message « seuls les iPhone et iPad sont supportés »)
