@@ -165,9 +165,32 @@ class AirBatteryModel {
         if ibStatus.hasBattery { devices.insert(ib2ab(ibStatus), at: 0) }
         do {
             let jsonData = try JSONEncoder().encode(devices)
-            try jsonData.write(to: getJsonURL())
+            try jsonData.write(to: getJsonURL(), options: .atomic)
         } catch {
             print("Write JSON error：\(error)")
+        }
+        if Bundle.main.bundleIdentifier == AppIdentifiers.app { exportForTools(devices) }
+    }
+
+    /// Folder read by abt and other local tools. Since macOS 14, a process launched
+    /// from a terminal may not read another app's sandbox container, so the widget's
+    /// Documents folder is off limits for abt. Application Support is not protected.
+    static func exportFolder() -> URL {
+        return fd.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent(AppIdentifiers.app)
+    }
+
+    /// Writes data.json (local devices) and nearcast.json (Nearcast devices, already
+    /// filtered like in the app) to `exportFolder()`.
+    static func exportForTools(_ devices: [Device]) {
+        let folder = exportFolder()
+        do {
+            try fd.createDirectory(at: folder, withIntermediateDirectories: true)
+            try JSONEncoder().encode(devices).write(to: folder.appendingPathComponent("data.json"), options: .atomic)
+            var nearcastDevices: [Device] = []
+            for url in getFiles(withExtension: "json", in: ncFolder) { nearcastDevices += ncGetAll(url: url) }
+            try JSONEncoder().encode(nearcastDevices).write(to: folder.appendingPathComponent("nearcast.json"), options: .atomic)
+        } catch {
+            print("Export JSON error：\(error)")
         }
     }
     

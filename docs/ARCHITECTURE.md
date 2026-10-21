@@ -29,8 +29,9 @@ Nearcast : `Supports/Multipeer.swift` (MultipeerKit, `airbattery-nc`, AES-GCM + 
 
 1. Chaque source appelle `AirBatteryModel.updateDevice(_:)`.
 2. `AirBatteryModel.writeData()` écrit `~/Library/Containers/<bundle-id-widget>/Data/Documents/data.json`.
-3. Le widget relit ce fichier ; `abt` ouvre `<schéma>://writedata`, attend 500 ms, relit le fichier.
-4. Données Nearcast : `…/Documents/NearcastData/*.json`.
+3. Le widget relit ce fichier.
+4. L'app principale écrit aussi une copie pour les outils locaux dans `~/Library/Application Support/<bundle-id-app>/` : `data.json` (mêmes données) et `nearcast.json` (appareils Nearcast déjà filtrés comme dans l'app). Raison : depuis macOS 14, un processus lancé depuis un terminal ne peut plus lire le container sandboxé d'une autre app. `abt` ouvre `<schéma>://writedata`, attend 500 ms, puis lit cette copie.
+5. Données Nearcast reçues : `…/Documents/NearcastData/*.json` (container du widget).
 
 ## Identifiants codés en dur
 
