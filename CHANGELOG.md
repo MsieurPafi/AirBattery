@@ -2,6 +2,16 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
+## 1.7.2 — 2026-10-21 (pre-release)
+
+### New
+
+- **Sort Devices** (Settings › Menu Bar & Dock): by name, lowest battery first or highest battery first, in the menu, the Dock icon and the widgets (upstream #56, #188). An AirPods case stays with its earbuds, an iPhone with its Watch, an iPad with its Pencil. "Default" keeps the previous order.
+
+### Changes
+
+- The app now shows as **AirBattery Plus**, including in the widget gallery, where the fork and the official app used to appear as two identical "AirBattery" entries. Bundle IDs and settings are unchanged.
+
 ## 1.7.1 — 2026-10-21 (pre-release)
 
 Fixes ported from callieskye's 1.6.5 community build ([callieskye/Air-Battery](https://github.com/callieskye/Air-Battery)), each one checked on macOS 27 first. Several of her changes didn't apply here and were left out; the details are in `docs/UPSTREAM.md`.
