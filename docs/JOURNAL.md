@@ -227,3 +227,19 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Échecs :** —
 **Testé sur appareil réel :** oui, par Côme (MX Anywhere 3).
 **Prochaine étape :** PR sur le fork, à faire relire par Côme.
+
+---
+
+## 2026-10-21 (suite 10) — `abt` débloqué ; pense-bête UI
+
+**Contexte :** macOS 27.0.1 (26A434), branche `fix/abt-data-access` depuis `main` @ `0dcb797`.
+
+**Fait :**
+- Pense-bête dans `IDEAS.md` : « soucis d'UI signalés par Côme », sans détail pour l'instant, à sa demande.
+- Cause du blocage d'`abt` (COMPAT note 2) : `abt` lisait `data.json` et `NearcastData/` dans le container sandboxé du widget (`~/Library/Containers/io.github.msieurpafi.AirBattery.widget/…`), protégé contre les processus lancés depuis un terminal depuis macOS 14.
+- Correctif : `AirBatteryModel.exportForTools()`, appelée par `writeData()` dans l'app principale seulement. Elle écrit `data.json` et `nearcast.json` dans `~/Library/Application Support/io.github.msieurpafi.AirBattery/`, et `abt` lit là. Les écritures sont devenues atomiques (`.atomic`).
+- Vérifié depuis le shell de Claude Code, qui était refusé avant : `abt` → tableau avec 3 appareils (Mac 100 % +, MX Anywhere 3 85 % -, iPhone 95 % -) ; `abt --csv` OK ; `abt --nearcast --json` OK (`nearcast.json` = `[]`, aucun Mac Nearcast).
+
+**Échecs :** —
+**Testé sur appareil réel :** sur le Mac de Côme, depuis un shell, par Claude. Pas encore depuis le Terminal de Côme.
+**Prochaine étape :** PR sur le fork.
