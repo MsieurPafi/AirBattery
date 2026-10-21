@@ -8,10 +8,11 @@ Chaque contournement en place dans le code : pourquoi, où, comment le retirer u
 **Comment le retirer :** dès que D-007 est acceptée, changer la valeur dans le projet (8 occurrences dans `project.pbxproj`) et retirer l'option.
 **Retiré :** D-007 acceptée, cible passée à 12.0 dans le projet. Correction : il y avait 10 occurrences (2 au niveau projet + 8 dans les targets), pas 8.
 
-## W-002 — Builds sans signature
+## W-002 — Builds sans signature   (retiré le 2026-10-21)
 **Pourquoi :** l'équipe personnelle de Côme (`PCH7VR8GPS`) est configurée, mais le trousseau ne contient encore aucun certificat « Apple Development » (`security find-identity -v -p codesigning` → `0 valid identities found`).
 **Où :** dans la commande de build : `CODE_SIGNING_ALLOWED=NO`.
 **Comment le retirer :** créer le certificat (Xcode › Réglages › Comptes › Gérer les certificats, ou un build avec `-allowProvisioningUpdates`), puis builder sans l'option.
+**Retiré :** Côme a créé le certificat « Apple Development » dans Xcode ; le build signé passe sans `-allowProvisioningUpdates` (aucun profil nécessaire).
 
 <!-- Modèle :
 ## W-001 — <titre>

@@ -76,3 +76,25 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Décisions :** D-007 acceptée.
 **Testé sur appareil réel :** non.
 **Prochaine étape :** certificat de développement pour l'équipe `PCH7VR8GPS`, build signé, puis étape 7 (premier lancement).
+
+---
+
+## 2026-10-21 (suite 3) — Build signé avec l'équipe personnelle
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1 (27A9275), commit de départ `6cb684b`.
+**Objectif :** lever W-002 (signature) et préparer l'étape 7.
+
+**Fait :**
+- Côme a créé le certificat « Apple Development » dans Xcode (Réglages › Comptes › Gérer les certificats). `security find-identity -v -p codesigning` → 1 identité valide, équipe `PCH7VR8GPS`.
+- Build signé sans option particulière : OK, aucun profil de provisionnement requis. Détail des signatures et entitlements dans `COMPAT.md` § « Build signé ». W-002 retiré.
+- PlugInKit a enregistré le widget du fork depuis `DerivedData` ; container sandboxé créé (vide).
+- Binaires libimobiledevice embarqués : s'exécutent (`1.3.0-210-g73b6fd1`, ad hoc). Aucun appareil iOS branché.
+- AirBattery officielle : app principale arrêtée ; seule son extension widget (`com.lihaoyun6.AirBattery.widget`, lancée par WidgetKit) tourne. Elle ne scanne pas le BLE.
+
+**Échecs :**
+- `security find-certificate -c "Apple Development"` renvoie d'abord un certificat **expiré** (`notAfter=Jul 12 14:08:21 2025`, même équipe) resté dans le trousseau. Sans effet sur la signature (`find-identity -v` ne liste que le valide), mais Côme peut le supprimer de Trousseaux d'accès s'il veut faire le ménage.
+
+**Contournements :** aucun actif.
+**Décisions :** —
+**Testé sur appareil réel :** non (app pas encore lancée).
+**Prochaine étape :** étape 7, premier lancement avec Côme (checklist donnée en session).

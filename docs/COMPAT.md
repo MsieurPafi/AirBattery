@@ -19,11 +19,11 @@ Légende : ✅ vérifié sur appareil réel · ⚠️ partiel / dégradé · ❌
 | BT tiers via logs `bluetoothd` | `BTDBattery.swift` | ❔ |
 | AirPods / Beats (BLE) | `BLEBattery.swift` | ❔ |
 | BLE générique GATT 180F | `BLEBattery.swift` | ❔ |
-| iPhone / iPad (libimobiledevice) | `IDeviceBattery.swift` | ❔ |
+| iPhone / iPad (libimobiledevice) | `IDeviceBattery.swift` | ❔ binaires embarqués exécutables (`idevice_id --version`), aucun appareil testé |
 | Apple Watch (`comptest`) | `IDeviceBattery.swift` | ❔ |
 | Apple Pencil | `IDeviceBattery.swift` | ❔ |
 | Nearcast | `Multipeer.swift` | ❔ |
-| Widget | `widget/` | ❔ |
+| Widget | `widget/` | ⚠️ enregistré par PlugInKit avec la signature gratuite, affichage non testé |
 | CLI `abt` | `abt/` | ❔ |
 
 ## Build
@@ -53,3 +53,20 @@ Avec `CODE_SIGNING_ALLOWED=NO MACOSX_DEPLOYMENT_TARGET=12.0` et le correctif n°
 - `appintentsmetadataprocessor` : `Metadata extraction skipped, no AppIntents.framework dependency found` (sans conséquence a priori).
 
 Logs complets : `build/logs/` (non versionnés).
+
+### 2026-10-21 — Build signé (équipe personnelle gratuite)
+
+`xcodebuild -project AirBattery.xcodeproj -scheme AirBattery -configuration Debug -derivedDataPath build/DerivedData build` → **BUILD SUCCEEDED**, sans `-allowProvisioningUpdates` ni profil embarqué.
+
+| Bundle | Identifier | Équipe | Entitlements (Debug) |
+| --- | --- | --- | --- |
+| `AirBattery.app` | `io.github.msieurpafi.AirBattery` | `PCH7VR8GPS` | `get-task-allow` |
+| `AirBatteryWidgetExtension.appex` | `io.github.msieurpafi.AirBattery.widget` | `PCH7VR8GPS` | `app-sandbox`, `get-task-allow` |
+| `AirBatteryHelper.app` | `io.github.msieurpafi.AirBatteryHelper` | `PCH7VR8GPS` | `app-sandbox`, `files.user-selected.read-only`, `get-task-allow` |
+| `Sparkle.framework`, `Resources/abt` | — | `PCH7VR8GPS` | — |
+| `Resources/libimobiledevice/{bin,lib}/*` | — | aucune (ad hoc, `linker-signed`, binaires de l'auteur) | — |
+
+- Hardened runtime actif partout ; `codesign --verify --deep --strict` OK.
+- `spctl -a -vv` → `rejected` (signature de développement, non notarisée) : attendu, sans effet sur un build local qui n'a pas d'attribut de quarantaine.
+- `pluginkit -m -v -A -i io.github.msieurpafi.AirBattery.widget` : extension enregistrée depuis `build/DerivedData/…`, et le container `~/Library/Containers/io.github.msieurpafi.AirBattery.widget` a été créé. **L'enregistrement du widget fonctionne avec une signature gratuite** ; reste à vérifier qu'il s'affiche et lit les données.
+- `libimobiledevice/bin/idevice_id --version` → `idevice_id 1.3.0-210-g73b6fd1` : les binaires embarqués s'exécutent sur macOS 27.0.1.
