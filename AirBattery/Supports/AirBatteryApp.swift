@@ -114,6 +114,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
             var allDevices = AirBatteryModel.getAll()
             let ibStatus = InternalBattery.status
             if ibStatus.hasBattery { allDevices.insert(ib2ab(ibStatus), at: 0) }
+            allDevices = AirBatteryModel.sortForDisplay(allDevices)
             let contentViewSwiftUI = popover(fromDock: true, allDevice: allDevices)
             let contentView = NSHostingView(rootView: contentViewSwiftUI)
             let hiddenRow = AirBatteryModel.getBlackList().count > 0 ? 1 : 0
@@ -403,6 +404,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
             var allDevices = AirBatteryModel.getAll()
             let ibStatus = InternalBattery.status
             if ibStatus.hasBattery { allDevices.insert(ib2ab(ibStatus), at: 0) }
+            allDevices = AirBatteryModel.sortForDisplay(allDevices)
             let contentView = NSHostingController(rootView: popover(fromDock: false, allDevice: allDevices))
             menuPopover.setValue(true, forKeyPath: "shouldHideAnchor")
             menuPopover.contentViewController = contentView

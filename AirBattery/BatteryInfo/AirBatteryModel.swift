@@ -121,6 +121,41 @@ class AirBatteryModel {
         return newList.filter({ !checkIfBlocked(name: $0.deviceName) })
     }
     
+    /// Order of the device list in the menu, the Dock and the widget (setting "sortDevices").
+    /// "default" keeps the discovery order. "name", "levelAsc" and "levelDesc" sort groups as a
+    /// whole: an AirPods case with its earbuds, an iPhone with its Watch, an iPad with its
+    /// Pencil. A group's level is its lowest one; devices without a battery go last.
+    /// The Mac's own battery is sorted like any other device.
+    static func sortForDisplay(_ list: [Device], reversed: Bool = false) -> [Device] {
+        let order = ud.string(forKey: "sortDevices") ?? "default"
+        if order == "default" { return list }
+        let thisMac = ud.string(forKey: "deviceName")
+        let names = Set(list.map { $0.deviceName })
+        // Peripherals reported by this Mac carry its name as parent: sort them on their own.
+        func isChild(_ d: Device) -> Bool {
+            return d.parentName != "" && d.parentName != thisMac && names.contains(d.parentName)
+        }
+        var groups: [[Device]] = []
+        for d in list where !isChild(d) {
+            groups.append([d] + list.filter { isChild($0) && $0.parentName == d.deviceName })
+        }
+        func lowestLevel(_ group: [Device]) -> Int? {
+            return group.filter { $0.hasBattery }.map { $0.batteryLevel }.min()
+        }
+        func byName(_ a: [Device], _ b: [Device]) -> Bool {
+            return a[0].deviceName.localizedStandardCompare(b[0].deviceName) == .orderedAscending
+        }
+        groups.sort { a, b in
+            if order == "name" { return byName(a, b) }
+            guard let levelA = lowestLevel(a) else { return false }
+            guard let levelB = lowestLevel(b) else { return true }
+            if levelA != levelB { return order == "levelAsc" ? levelA < levelB : levelA > levelB }
+            return byName(a, b)
+        }
+        if reversed { groups.reverse() }
+        return groups.flatMap { $0 }
+    }
+
     static func getByName(_ name: String) -> Device? {
         for d in getAll(noFilter: true) { if d.deviceName == name { return d } }
         return nil
@@ -160,9 +195,11 @@ class AirBatteryModel {
         //let showMac = ud.object(forKey: "showMacOnWidget") as? Bool ?? true
         let revList = ud.object(forKey: "revListOnWidget") as? Bool ?? false
         
-        var devices = getAll(reverse: revList)
+        let sorted = (ud.string(forKey: "sortDevices") ?? "default") != "default"
+        var devices = getAll(reverse: revList && !sorted)
         let ibStatus = InternalBattery.status
         if ibStatus.hasBattery { devices.insert(ib2ab(ibStatus), at: 0) }
+        devices = sortForDisplay(devices, reversed: revList)
         do {
             let jsonData = try JSONEncoder().encode(devices)
             try jsonData.write(to: getJsonURL(), options: .atomic)
