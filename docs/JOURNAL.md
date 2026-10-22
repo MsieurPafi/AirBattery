@@ -462,3 +462,21 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Testé sur appareil réel :** oui, par Côme (iPhone 17 en Wi-Fi et USB, Apple Watch).
 **Pistes ouvertes :** surveiller les crashs de `comptest` sur plusieurs jours ; mentionner l'autorisation réseau local dans les notes de version.
 **Prochaine étape :** PR, puis release 1.7.3.
+
+---
+
+## 2026-10-22 (suite 21) — Release 1.7.3 (pre-release)
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1. PR #18 fusionnée avec l'accord de Côme (`main` @ `0c7df16`). Branche `release/1.7.3`.
+
+**Fait :**
+- `d62d71b` : version 1.7.3 (173) et changelog (correctif `comptest`/#198, outils recompilés, note sur l'autorisation réseau local redemandée à chaque mise à jour).
+- Build Release propre : 1.7.3 (173), `CFBundleName` « AirBattery Plus », pas de `SUFeedURL`, `codesign --verify --deep --strict` OK, `ideviceinfo 1.4.0`, 7 fichiers de licence embarqués.
+- DMG construit depuis un dossier temporaire du scratchpad (plus de `build/dist/stage`), puis copies de build désenregistrées (`pluginkit -r`, `lsregister -u`) et `build/DerivedData-release` supprimé **avant** l'installation par Côme : un seul widget du fork enregistré (`/Applications`).
+- Test de Côme : 1.7.3 installée, version 1.7.3, iPhone, Watch et widget OK.
+- Tag `v1.7.3` sur `d62d71b` (commit compilé). Pre-release publiée : https://github.com/MsieurPafi/AirBattery/releases/tag/v1.7.3. SHA-256 `bdc98bbf1d10b1573f6be4acedafb21c2809666ee35a34ae5c229b3ee033790a`, identique après retéléchargement.
+- Crashs : aucun nouveau rapport `comptest` depuis le correctif (derniers : 12:48 et 12:52, avant `5b4cf12`).
+
+**Échecs :** —
+**Testé sur appareil réel :** oui, par Côme.
+**Prochaine étape :** surveiller `comptest` sur plusieurs jours ; reste de la tâche identité (README, crédits, textes d'aide dont `NSLocalNetworkUsageDescription`) ; mises à jour GitHub / CI.
