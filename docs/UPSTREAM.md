@@ -29,6 +29,7 @@ Les têtes de PR de l'archive locale sont disponibles dans `archive/pr/<N>` (`gi
 | Issue | Statut | Notes |
 | --- | --- | --- |
 | #207 | **corrigée** (`perf/ble-scan`, `0b75d57`) | Le rapporteur soupçonnait « un port Mach mal libéré par une minuterie à 1 Hz » : c'est juste, mais ce n'est pas lié au Bluetooth. `IOServiceClose()` sur un service jamais ouvert, dans la lecture de la batterie du Mac. |
+| #198 | **corrigée** (`5b4cf12`, D-016) | `comptest` utilisait un pointeur `idevice_t` non initialisé quand l'iPhone était injoignable. Ni libimobiledevice, ni AirBattery n'étaient en cause ; le délai de 15 s (`6ea85bb`) limitait seulement les dégâts. |
 | #178 | piste (D-011) | Scan BLE actif divisé par deux ; gain non vérifiable chez Côme (pas de saccades). |
 
 ## « 1.6.4 Community Patch » (issue #208)

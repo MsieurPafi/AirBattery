@@ -122,3 +122,11 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 **Pourquoi :** c'est la voie standard, et le nom de module fixé préserve le dictionnaire AppleScript (`AirBattery.listAll`…) et les noms de classes Swift (`_TtC10AirBattery…`, vérifiés dans le binaire).
 **Conséquences :** le produit s'appelle `AirBattery Plus.app`, l'exécutable `AirBattery Plus`, et le processus s'appelle « AirBattery Plus » dans `ps`, `log` et le Moniteur d'activité. Les commandes de test doivent utiliser `/usr/bin/log … process == "AirBattery Plus"` et le chemin `build/DerivedData/Build/Products/Debug/AirBattery Plus.app`. Inchangés : bundle IDs, widget, helper (il ouvre l'app par chemin), `abt`, réglages.
 **Validée par Côme :** oui (demande « AirBattery Plus » dans la galerie, 2026-10-21)
+
+## D-016 — libimobiledevice recompilée depuis les versions publiées   (2026-10-22, statut : acceptée)
+**Contexte :** les binaires embarqués dataient de 2024 (`1.3.0-210-g73b6fd1`, libplist 2.0.4, OpenSSL 3.2.1 de Homebrew) et exigeaient **macOS 14** alors que l'app vise 12.0. `comptest` plantait plusieurs fois par jour (upstream #198).
+**Options envisagées :** A. HEAD de développement (demande autoconf/automake/libtool via Homebrew) / B. dernières versions publiées, tarballs épinglés par SHA-256.
+**Décision :** B, choisie par Côme : OpenSSL 3.5.9 (LTS), libplist 2.8.0, libimobiledevice-glue 1.3.3, libusbmuxd 2.1.1, libtatsu 1.0.5 (nouvelle dépendance de 1.4.0, utilisée seulement à la compilation), libimobiledevice 1.4.0. Universel arm64 + x86_64, macOS 12.0 minimum. Script `scripts/build-libimobiledevice.sh` (clang, make, perl, pkg-config ; rien installé sur le système). `comptest.c` versionné dans `scripts/libimobiledevice/` (gist de nikias + les deux ajouts du binaire de 2024 + correctif de #198).
+**Pourquoi :** reproductible, auditable, cohérent avec la cible de l'app, sans outillage supplémentaire.
+**Conséquences :** ~13 Mo de binaires embarqués (libcrypto ~10 Mo) ; licences dans `AirBattery/libimobiledevice/licenses/`, versions dans `VERSIONS.txt`. OpenSSL n'est pas reproductible au bit près d'une compilation à l'autre. Mettre à jour = changer les lignes `SOURCES` du script et relancer. Retour arrière : revert du commit `3cb0e62`.
+**Validée par Côme :** oui (2026-10-21)
