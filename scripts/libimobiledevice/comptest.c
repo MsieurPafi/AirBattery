@@ -9,7 +9,11 @@
  * Changes for AirBattery (matching the binary shipped by lihaoyun6 in 2024):
  * - print the full watch UDID ("Checking watch <udid>"): AirBattery uses it as the
  *   device ID;
- * - also query "DeviceName", which AirBattery shows as the watch's name.
+ * - also query "DeviceName", which AirBattery shows as the watch's name;
+ * - initialize `device` and check the lookup result: idevice_new_with_options() leaves
+ *   `device` untouched when the phone is not reachable, so the uninitialized pointer
+ *   was used and freed later, crashing comptest (upstream AirBattery #198);
+ * - check that companion_proxy started, and unsubscribe from device events on exit.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -113,10 +117,10 @@ int main(int argc, char** argv)
 		sleep(1);
 	}
 
-	idevice_t device;
+	idevice_event_unsubscribe();
 
-	idevice_new_with_options(&device, argv[1], IDEVICE_LOOKUP_USBMUX | IDEVICE_LOOKUP_NETWORK);
-	if (!device) {
+	idevice_t device = NULL;
+	if (idevice_new_with_options(&device, argv[1], IDEVICE_LOOKUP_USBMUX | IDEVICE_LOOKUP_NETWORK) != IDEVICE_E_SUCCESS || !device) {
 		fprintf(stderr, "Could not find device %s\n", argv[1]);
 		return -1;
 	}
@@ -128,7 +132,11 @@ int main(int argc, char** argv)
 	printf("Retrieving list of watches...\n");
 
 	companion_proxy_client_t cpx = NULL;
-	companion_proxy_client_start_service(device, &cpx, NULL);
+	if (companion_proxy_client_start_service(device, &cpx, NULL) != COMPANION_PROXY_E_SUCCESS || !cpx) {
+		fprintf(stderr, "Failed to start companion_proxy\n");
+		idevice_free(device);
+		return -1;
+	}
 
 	plist_t devices = NULL;
 	companion_proxy_error_t cerr = companion_proxy_get_device_registry(cpx, &devices);
