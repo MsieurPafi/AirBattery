@@ -435,3 +435,30 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **À retenir :** une copie compilée dans `build/` (Debug ou Release) est enregistrée par LaunchServices et PlugInKit, et peut **prendre la place** de l'app installée pour le widget. Après un build Release, la désenregistrer ou supprimer le dossier ; ne pas laisser traîner de `build/dist/stage`.
 **Testé sur appareil réel :** oui, par Côme (galerie, widget, tri).
 **Prochaine étape :** autres fonctions de callieskye au choix de Côme ; reste de la tâche identité ; mises à jour GitHub / CI.
+
+---
+
+## 2026-10-21/22 (suite 20) — libimobiledevice recompilée ; cause de #198
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1. Branche `compat/libimobiledevice-rebuild` depuis `main` @ `a38f75a`.
+
+**Fait :**
+- `bd6e331` : fonctions restantes de callieskye marquées « non retenues » (décision de Côme).
+- État des lieux : outils présents (clang, make, perl, pkg-config, Homebrew ; **pas** d'autoconf/automake). Binaires de 2024 : `1.3.0-210-g73b6fd1`, OpenSSL 3.2.1, `minos 14.0`.
+- `comptest` : le gist de nikias ne correspond **pas** au binaire de 2024 (qui affichait l'UDID complet de la montre et lisait `DeviceName`, d'après `strings`). Copie adaptée dans `scripts/libimobiledevice/comptest.c`, origine en en-tête.
+- Script `scripts/build-libimobiledevice.sh`. Échecs successifs, chacun corrigé :
+  1. `configure: error: Package requirements (libtatsu-1.0 >= 1.0.3) were not met` → libtatsu 1.0.5 ajoutée (signalé à Côme).
+  2. `Package requirements (libcurl >= 7.0) were not met` : variables passées en environnement sans effet → passées en arguments de `configure` (libcurl du SDK).
+  3. `wificonnection.c:96:33: error: use of undeclared identifier 'PACKAGE_VERSION'` → `-DPACKAGE_VERSION='"1.4.0"'`.
+  4. `libcrypto` contenait le chemin du dossier de build (`…/prefix-arm64/ssl/…`) → OpenSSL compilé pour un préfixe neutre `/usr/local/airbattery-openssl` puis installé via `DESTDIR`.
+- Résultat (`3cb0e62`) : 5 outils + 6 bibliothèques universels, `minos 12.0`, dépendances en `@executable_path/../lib/`, signés ad hoc, aucun chemin personnel, licences et `VERSIONS.txt` livrés.
+- Test : iPhone et Watch relus **en Wi-Fi** avec les nouveaux outils.
+- 12:48 et 12:52 : crash du **nouveau** `comptest` (SIGABRT dans `idevice_free`). Lecture du source : `idevice_t device;` non initialisé + résultat de `idevice_new_with_options` ignoré, alors que la fonction ne remplit pas `device` en cas d'échec (vérifié dans `src/idevice.c` de 1.4.0). **Cause de #198.** Corrigé dans `5b4cf12`.
+- Côme : demande « autoriser AirBattery Plus à rechercher des appareils sur les réseaux locaux » au réveil → cause : autorisation liée à l'UUID de l'exécutable (`nehelper`), qui change à chaque compilation (COMPAT note 8).
+- Test USB (Côme, 13:09) : iPhone relu et passé en « en charge » pendant le branchement ; Watch à jour ; aucun crash de `comptest` depuis 13:06.
+
+**Échecs :** voir les 4 étapes de compilation ci-dessus. L'échantillonnage `ps` (0,1 s) ne capte pas les outils, trop brefs.
+**Décisions :** D-016.
+**Testé sur appareil réel :** oui, par Côme (iPhone 17 en Wi-Fi et USB, Apple Watch).
+**Pistes ouvertes :** surveiller les crashs de `comptest` sur plusieurs jours ; mentionner l'autorisation réseau local dans les notes de version.
+**Prochaine étape :** PR, puis release 1.7.3.

@@ -29,6 +29,7 @@ Les têtes de PR de l'archive locale sont disponibles dans `archive/pr/<N>` (`gi
 | Issue | Statut | Notes |
 | --- | --- | --- |
 | #207 | **corrigée** (`perf/ble-scan`, `0b75d57`) | Le rapporteur soupçonnait « un port Mach mal libéré par une minuterie à 1 Hz » : c'est juste, mais ce n'est pas lié au Bluetooth. `IOServiceClose()` sur un service jamais ouvert, dans la lecture de la batterie du Mac. |
+| #198 | **corrigée** (`5b4cf12`, D-016) | `comptest` utilisait un pointeur `idevice_t` non initialisé quand l'iPhone était injoignable. Ni libimobiledevice, ni AirBattery n'étaient en cause ; le délai de 15 s (`6ea85bb`) limitait seulement les dégâts. |
 | #178 | piste (D-011) | Scan BLE actif divisé par deux ; gain non vérifiable chez Côme (pas de saccades). |
 
 ## « 1.6.4 Community Patch » (issue #208)
@@ -74,6 +75,18 @@ Binaire non audité : ne pas l'exécuter.
 | 14 | Survol Nearcast (#159), icône épinglée figée, texte de survol écrasé | 5 | #159 **porté** `6db2a6a` ; icône épinglée **portée** `27f28da` (sans le `!`, avec un cache vidé au désépinglage) ; texte écrasé **non repris** (causé par les 2 boutons qu'elle avait ajoutés ; sa solution supprimait « il y a X min ») |
 | 15 | `autosaveName` des icônes de barre des menus (#182) | 5 | **porté** `27f28da` ; effet sur Thaw non démontré (voir COMPAT note 7) |
 
-**Fonctions (au choix de Côme)** : tri de la liste (#56, et #188 du brief) — **réimplémenté** `63fdc33` (Réglages › Menu Bar & Dock, menu + Dock + widget, groupes conservés) ; restent : sourdine des alertes par appareil (#135), alerte batterie faible avec seuil, bascule du mode économie d'énergie (#117/#129), écouteurs toujours séparés (#116), copier l'ID (#108), fond blanc du widget (#119), barre de batterie pour les épinglés (#100), astuce Watch/Pencil (#95/#136), Siri Remote (#85, non vérifiée par l'autrice).
+**Fonctions (au choix de Côme)** — tri de la liste (#56, #188) **réimplémenté** `63fdc33` (PR #15, version 1.7.2). Les autres sont **non retenues** pour l'instant (décision de Côme, 2026-10-22, sur l'avis de Claude) :
+
+| Fonction | Pourquoi non retenue |
+| --- | --- |
+| Sourdine des alertes par appareil (#135) | l'app a déjà des alertes **par appareil** (seuils « faible » / « chargé » réglables) : il suffit de ne pas en créer |
+| Alerte batterie faible avec seuil | doublon global des alertes par appareil existantes |
+| Bascule du mode économie d'énergie (#117/#129) | `pmset -a lowpowermode` exige les droits administrateur (échec silencieux sinon) ; hors du sujet « batterie des accessoires » |
+| Écouteurs toujours séparés (#116) | quasi couvert par « Earbud Merging Threshold » réglé à 1 |
+| Copier l'identifiant (#108) | utile au débogage seulement |
+| Fond blanc du widget (#119) | cosmétique, peu cohérent avec les widgets de macOS 26/27 |
+| Barre de batterie des épinglés (#100) | cosmétique |
+| Astuce Watch/Pencil au premier lancement (#95/#136) | **à reconsidérer si le fork devient public** (aide aux nouveaux utilisateurs) |
+| Siri Remote (#85) | non vérifiée par l'autrice ; image `appletvremote.gen1` absente → plantage |
 
 Pour la concurrence, voir D-008 : son code ne corrige pas la capture de `device` dans `deviceIsConnected`.
