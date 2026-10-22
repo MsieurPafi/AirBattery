@@ -2,6 +2,20 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
+## 1.7.3 — 2026-10-22 (pre-release)
+
+### Fixes
+
+- **Apple Watch reader (`comptest`) no longer crashes** (upstream #198). It used an uninitialized connection whenever the iPhone was unreachable at that moment; the crashes happened several times a day.
+
+### Changes
+
+- **iPhone, iPad and Watch tools rebuilt** from current releases: libimobiledevice 1.4.0, libplist 2.8.0, libusbmuxd 2.1.1, libimobiledevice-glue 1.3.3 and OpenSSL 3.5.9 (LTS), instead of 2024 builds. They now run on macOS 12 like the app (the old ones required macOS 14). `scripts/build-libimobiledevice.sh` rebuilds them from pinned sources; license texts are in `libimobiledevice/licenses/`.
+
+### Note
+
+- After each update, macOS asks again whether AirBattery Plus may find devices on the local network: the permission is tied to the exact app binary. Allow it to keep Nearcast and iPhone/iPad over Wi-Fi working.
+
 ## 1.7.2 — 2026-10-21 (pre-release)
 
 ### New
