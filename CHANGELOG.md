@@ -2,6 +2,12 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
+## Unreleased
+
+### New
+
+- **iPhone Duo icon** (model `iPhone19,4`), drawn after the one iOS shows on the phone itself. It used the generic iPhone icon.
+
 ## 1.7.3 — 2026-10-22 (pre-release)
 
 ### Fixes
