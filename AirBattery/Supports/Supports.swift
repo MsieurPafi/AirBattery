@@ -586,6 +586,7 @@ func getDeviceIcon(_ d: Device) -> String {
     case "MobilePhone":
         return "iphone.gen1"
     case "iPhone":
+        if d.deviceModel == "iPhone19,4" { return "iphone.duo" }
         if let model = d.deviceModel, let m = model.components(separatedBy: ",").first, let id = m.components(separatedBy: "e").last {
             if (Int(id) ?? 0 < 10) || ["iPhone12,8", "iPhone14,6"].contains(model) { return "iphone.gen1" }
             if (Int(id) ?? 0 < 14) { return "iphone.gen2" }

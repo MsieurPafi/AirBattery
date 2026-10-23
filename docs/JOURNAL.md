@@ -480,3 +480,21 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Échecs :** —
 **Testé sur appareil réel :** oui, par Côme.
 **Prochaine étape :** surveiller `comptest` sur plusieurs jours ; reste de la tâche identité (README, crédits, textes d'aide dont `NSLocalNetworkUsageDescription`) ; mises à jour GitHub / CI.
+
+---
+
+## 2026-10-23 — Relevé des logs, icône de l'iPhone Duo
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, `main` @ `b13b907`. Branche `feat/iphone-duo-icon`.
+
+**Fait :**
+- Crashs : **aucun rapport** depuis le correctif de `comptest` (`5b4cf12`) ; derniers rapports le 2026-10-22 à 12:48 et 12:52, avant le correctif. 1.7.3 lancée depuis ~21 h, RSS ~89 Mo, 0 `EXC_GUARD`.
+- Bruit dans les logs sur 24 h (non investigué) : 897 `Cannot create IOBluetoothDevice`, 149 « No name or address », 145 `handlePeerDisconnectionCompleted`, 58 CoreBluetooth « API MISUSE … can only accept this command while in the powered on state », 25 messages AppKit.
+- Nouvel iPhone de Côme : **iPhone Duo**, modèle `iPhone19,4`, vu comme type « iPhone » avec l'icône générique. Pas de symbole Duo dans le catalogue SF Symbols de macOS 27.
+- Icône `iphone.duo` dessinée d'après l'icône officielle envoyée par Côme (celle qu'affiche l'iPhone) : format presque carré, petits rayons côté charnière (gauche), grands rayons à droite, caméra en haut à droite, barre en bas. Même style que `iphone.svg` (gabarit, contour 0,85, écran 0,2125). Générée par un petit script (courbes de Bézier, pas d'arcs SVG).
+- `getDeviceIcon` : `iPhone19,4` → `iphone.duo`. Build OK, image présente dans `Assets.car`. Copie de build désenregistrée (`pluginkit -r`, `lsregister -u`) ; seul le widget de `/Applications` reste enregistré.
+
+**Échecs :** —
+**Testé sur appareil réel :** oui, par Côme (21:40) : la version de test voit l'iPhone Duo (`iPhone19,4`) et affiche la nouvelle icône dans le menu. Ensuite : copie de build désenregistrée, 1.7.3 de `/Applications` relancée.
+**Pistes ouvertes :** l'Apple Watch n'apparaît plus depuis l'appairage de l'iPhone Duo (sans doute à re-autoriser en USB avec le nouvel iPhone) ; bruit de logs ci-dessus.
+**Prochaine étape :** fusion de la PR #20.
