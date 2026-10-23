@@ -495,6 +495,6 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 - `getDeviceIcon` : `iPhone19,4` → `iphone.duo`. Build OK, image présente dans `Assets.car`. Copie de build désenregistrée (`pluginkit -r`, `lsregister -u`) ; seul le widget de `/Applications` reste enregistré.
 
 **Échecs :** —
-**Testé sur appareil réel :** non. Rendu vérifié en aperçu (AppKit), pas encore dans l'app avec l'iPhone Duo.
+**Testé sur appareil réel :** oui, par Côme (21:40) : la version de test voit l'iPhone Duo (`iPhone19,4`) et affiche la nouvelle icône dans le menu. Ensuite : copie de build désenregistrée, 1.7.3 de `/Applications` relancée.
 **Pistes ouvertes :** l'Apple Watch n'apparaît plus depuis l'appairage de l'iPhone Duo (sans doute à re-autoriser en USB avec le nouvel iPhone) ; bruit de logs ci-dessus.
-**Prochaine étape :** test de l'icône par Côme, puis PR fusionnée.
+**Prochaine étape :** fusion de la PR #20.
