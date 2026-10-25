@@ -60,7 +60,10 @@ struct GeneralView: View {
             SGroupBox(label: "Startup") {
                 SToggle("Launch at Login", isOn: $launchAtLogin)
                     .onChange(of: launchAtLogin) { newValue in
-                        SMLoginItemSetEnabled(AppIdentifiers.helper as CFString, newValue)
+                        // Show what macOS actually did, e.g. if the user refused it
+                        if !LoginItem.set(newValue) || LoginItem.isEnabled != newValue {
+                            DispatchQueue.main.async { launchAtLogin = LoginItem.isEnabled }
+                        }
                     }
                 Divider().opacity(0.5)
                 SPicker("Show AirBattery Plus", selection: $showOn) {
@@ -427,7 +430,7 @@ struct DisplayView: View {
                 }.disabled(!intBattOnStatusBar)
                 Divider().opacity(0.5)
                 SPicker("Remove Offline Device", selection: $disappearTime) {
-                    Text("Never").tag(UInt32.max)
+                    Text("Never").tag(Int(UInt32.max))
                     Text("after 20min").tag(20)
                     Text("after 40min").tag(40)
                     Text("after 60min").tag(60)

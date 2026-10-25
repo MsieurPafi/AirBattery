@@ -258,10 +258,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
         IOBluetoothDevice.register(forConnectNotifications: self, selector: #selector(deviceIsConnected(notification:fromDevice:)))
         NSAppleEventManager.shared().setEventHandler(self, andSelector: #selector(handleURLEvent(_:replyEvent:)), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
         //if let window = NSApplication.shared.windows.first { window.close() }
-        launchAtLogin = NSWorkspace.shared.runningApplications.contains { $0.bundleIdentifier == AppIdentifiers.helper }
+        launchAtLogin = LoginItem.isEnabled
         Log.app.notice("Launch at login: \(self.launchAtLogin, privacy: .public)")
         Log.app.notice("Icon mode: \(self.showOn, privacy: .public)")
-        if ncGroupID != "" { if nearCast { netcastService.resume() } }
+        if nearCast && isGroudIDValid(id: ncGroupID) { netcastService.resume() }
         if let result = process(path: "/usr/sbin/system_profiler", arguments: ["SPBluetoothDataType", "-json"]) { SPBluetoothDataModel.shared.data = result }
         
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
@@ -320,7 +320,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
 
         if showOn == "dock" || showOn == "both" {
             let tipID = "ab.docktile-power.note"
-            let never = ud.object(forKey: "neverRemindMe") as! [String]
+            let never = (ud.stringArray(forKey: "neverRemindMe") ?? [])
             if !never.contains(tipID) {
                 let alert = createAlert(title: "AirBattery Plus Tips".local, message: "Displaying AirBattery Plus on the Dock will consume more power, it is better to use Menu Bar mode or Widgets.".local, button1: "Don't remind me again", button2: "OK")
                 if alert.runModal() == .alertFirstButtonReturn { ud.setValue(never + [tipID], forKey: "neverRemindMe") }
@@ -329,7 +329,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
         
         if readBTHID {
             let tipID = "ab.third-party-device.note"
-            let never = ud.object(forKey: "neverRemindMe") as! [String]
+            let never = (ud.stringArray(forKey: "neverRemindMe") ?? [])
             if !never.contains(tipID) {
                 let alert = createAlert(title: "AirBattery Plus Tips".local, message: "If some of your devices shows battery level in the Bluetooth menu, but AirBattery Plus doesn't find it. Try disconnecting and reconnecting it, and wait a few minutes.".local, button1: "Don't remind me again", button2: "OK")
                 if alert.runModal() == .alertFirstButtonReturn { ud.setValue(never + [tipID], forKey: "neverRemindMe") }
@@ -533,7 +533,7 @@ public extension UserDefaults {
 }
 
 func refeshPinnedBar(unpin: String? = nil) {
-    var pinnedList = (ud.object(forKey: "pinnedList") ?? []) as! [String]
+    var pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
     if pinnedList.isEmpty { return }
     if let unpin = unpin { pinnedList.removeAll(where: { $0 == unpin }) }
     var allDevices = AirBatteryModel.getAll()
@@ -576,28 +576,32 @@ func setPinnedIcon(_ button: NSStatusBarButton, device: Device) {
     pinnedIcons[device.deviceName] = icon
 }
 
-@discardableResult
-func ensureLoginItem(enabled: Bool) -> Bool {
-    let helperBundleIdentifier = AppIdentifiers.helper
-    if #available(macOS 13.0, *) {
-        do {
-            if enabled {
-                try SMAppService.mainApp.register()
-            } else {
-                try SMAppService.mainApp.unregister()
-            }
-            return true
-        } catch {
-            Log.app.error("SMAppService register/unregister failed: \(error.localizedDescription, privacy: .public)")
-            return false
+/// Launch at login through the bundled helper (Contents/Library/LoginItems), the same
+/// registration as before, so existing users keep a single login item.
+enum LoginItem {
+    /// macOS 13+: the state macOS reports. macOS 12 has no API for it: the helper only runs
+    /// when the app was launched at login, which is the best available hint.
+    static var isEnabled: Bool {
+        if #available(macOS 13.0, *) {
+            return SMAppService.loginItem(identifier: AppIdentifiers.helper).status == .enabled
         }
-    } else {
-        let ok = SMLoginItemSetEnabled(helperBundleIdentifier as CFString, enabled)
-        if !ok { Log.app.error("SMLoginItemSetEnabled failed for \(helperBundleIdentifier, privacy: .public)") }
+        return NSWorkspace.shared.runningApplications.contains { $0.bundleIdentifier == AppIdentifiers.helper }
+    }
+
+    @discardableResult
+    static func set(_ enabled: Bool) -> Bool {
+        if #available(macOS 13.0, *) {
+            let service = SMAppService.loginItem(identifier: AppIdentifiers.helper)
+            do {
+                if enabled { try service.register() } else { try service.unregister() }
+                return true
+            } catch {
+                Log.app.error("Login item \(enabled ? "register" : "unregister", privacy: .public) failed: \(error.localizedDescription, privacy: .public)")
+                return false
+            }
+        }
+        let ok = SMLoginItemSetEnabled(AppIdentifiers.helper as CFString, enabled)
+        if !ok { Log.app.error("SMLoginItemSetEnabled failed for \(AppIdentifiers.helper, privacy: .public)") }
         return ok
     }
-}
-
-func registerDefaults() {
-    UserDefaults.standard.register(defaults: ["LaunchAtLogin": false])
 }

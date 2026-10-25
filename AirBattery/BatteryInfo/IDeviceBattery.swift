@@ -42,7 +42,7 @@ class IDeviceBattery {
                         if let level = json["level"] as? Int, let model = json["model"] as? String, let vendor = json["vendor"] as? String {
                             let status = (json["status"] as? Int) ?? 0
                             Log.idevice.debug("Pencil of \(d.deviceName): \(result)")
-                            AirBatteryModel.updateDevice(Device(deviceID: "Pencil_"+d.deviceID, deviceType: vendor == "Apple" ? "ApplePencil" : "Pencil", deviceName: vendor == "Apple" ? "Apple Pencil".local : "Pencil".local, deviceModel: model, batteryLevel: level, isCharging: status, parentName: d.deviceName, lastUpdate: Date().timeIntervalSince1970))
+                            AirBatteryModel.updateDevice(Device(deviceID: "Pencil_"+d.deviceID, deviceType: vendor == "Apple" ? "ApplePencil" : "Pencil", deviceName: vendor == "Apple" ? "Apple Pencil" : "Pencil", deviceModel: model, batteryLevel: level, isCharging: status, parentName: d.deviceName, lastUpdate: Date().timeIntervalSince1970))
                         }
                     }
                 }

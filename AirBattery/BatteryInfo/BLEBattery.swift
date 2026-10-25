@@ -239,7 +239,7 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
         // One scan per refresh interval (was every 29 s): halves the time the radio
         // spends in active scanning. Devices connected to the Mac are read elsewhere.
         let interval = TimeInterval(60 * updateInterval)
-        scanTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(scan), userInfo: nil, repeats: true)
+        scanTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in self?.scan() }
         Log.ble.notice("Start scanning BLE devices")
         // 立即启动一次扫描
         scan(longScan: true)
@@ -691,10 +691,10 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
         //guard let result = process(path: "/usr/sbin/system_profiler", arguments: ["SPBluetoothDataType", "-json"]) else { return 255 }
         if let json = try? JSONSerialization.jsonObject(with: Data(SPBluetoothDataModel.shared.data.utf8), options: []) as? [String: Any],
         let SPBluetoothDataTypeRaw = json["SPBluetoothDataType"] as? [Any],
-        let SPBluetoothDataType = SPBluetoothDataTypeRaw[0] as? [String: Any],
+        let SPBluetoothDataType = SPBluetoothDataTypeRaw.first as? [String: Any],
         let device_connected = SPBluetoothDataType["device_connected"] as? [Any] {
             for device in device_connected{
-                let d = device as! [String: Any]
+                guard let d = device as? [String: Any] else { continue }
                 if let n = d.keys.first,n == name,let info = d[n] as? [String: Any] {
                     if let level = info["device_batteryLevel"+side] as? String {
                         return UInt8(level.replacingOccurrences(of: "%", with: "")) ?? 255
@@ -709,10 +709,10 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
         //guard let result = process(path: "/usr/sbin/system_profiler", arguments: ["SPBluetoothDataType", "-json"]) else { return "general_bt" }
         if let json = try? JSONSerialization.jsonObject(with: Data(SPBluetoothDataModel.shared.data.utf8), options: []) as? [String: Any],
         let SPBluetoothDataTypeRaw = json["SPBluetoothDataType"] as? [Any],
-        let SPBluetoothDataType = SPBluetoothDataTypeRaw[0] as? [String: Any],
+        let SPBluetoothDataType = SPBluetoothDataTypeRaw.first as? [String: Any],
         let device_connected = SPBluetoothDataType["device_connected"] as? [Any] {
             for device in device_connected{
-                let d = device as! [String: Any]
+                guard let d = device as? [String: Any] else { continue }
                 if let n = d.keys.first,n == name,let info = d[n] as? [String: Any] {
                     if let type = info["device_minorType"] as? String {
                         return type
@@ -796,16 +796,16 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
         //guard let result = process(path: "/usr/sbin/system_profiler", arguments: ["SPBluetoothDataType", "-json"]) else { return paired }
         if let json = try? JSONSerialization.jsonObject(with: Data(SPBluetoothDataModel.shared.data.utf8), options: []) as? [String: Any],
         let SPBluetoothDataTypeRaw = json["SPBluetoothDataType"] as? [Any],
-        let SPBluetoothDataType = SPBluetoothDataTypeRaw[0] as? [String: Any]{
+        let SPBluetoothDataType = SPBluetoothDataTypeRaw.first as? [String: Any]{
             if let device_connected = SPBluetoothDataType["device_connected"] as? [Any]{
                 for device in device_connected{
-                    let d = device as! [String: Any]
+                    guard let d = device as? [String: Any] else { continue }
                     if let key = d.keys.first { paired.append(key) }
                 }
             }
             if let device_connected = SPBluetoothDataType["device_not_connected"] as? [Any]{
                 for device in device_connected{
-                    let d = device as! [String: Any]
+                    guard let d = device as? [String: Any] else { continue }
                     if let key = d.keys.first { paired.append(key) }
                 }
             }

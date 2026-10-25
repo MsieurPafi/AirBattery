@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Foundation
+import CryptoKit
 import MultipeerKit
 
 class MultipeerService: ObservableObject {
@@ -79,7 +80,8 @@ class MultipeerService: ObservableObject {
                                 case 255:
                                     createNotification(title: info.title, message: "\(peer.name) \(info.info)")
                                 case 254:
-                                    _ = BTTool.connect(mac: info.atta)
+                                    // Used to connect the Bluetooth device named in the message: a peer
+                                    // must not be able to do that remotely (AUDIT-2026-10-25, Nearcast 4).
                                     createNotification(title: info.title, message: "\(peer.name) \(info.info)")
                                 default:
                                     createNotification(title: info.title, message: info.info)
@@ -93,17 +95,16 @@ class MultipeerService: ObservableObject {
                     Log.nearcast.debug("Data received")
                     if let jsonString = decryptString(message.content, password: self.ncGroupID) {
                         if let jsonData = jsonString.data(using: .utf8) {
-                            let url = ncFolder.appendingPathComponent("\(message.sender).json")
-                            try? jsonData.write(to: url)
+                            let url = ncFolder.appendingPathComponent(ncFileName(for: message.sender) + ".json")
+                            try? jsonData.write(to: url, options: .atomic)
                         } else {
                             Log.nearcast.error("Failed to convert a JSON string to data")
                         }
                     }
                 default:
-                    Log.nearcast.error("Unknown Nearcast command: \(message.command, privacy: .public)")
-                    if let info = self.createInfo(type: 255, title: "Unknown Command".local, info: String(format: "doesn't support command \"%@\"".local, message.command)) {
-                        self.sendMessage(info, peerID: peer.id)
-                    }
+                    // No reply: echoing the peer's text back, encrypted with the group key, let
+                    // anyone forge Nearcast notifications (AUDIT-2026-10-25, Nearcast 3).
+                    Log.nearcast.error("Unknown Nearcast command: \(message.command.prefix(32))")
                     return
                 }
             }
@@ -200,3 +201,11 @@ struct NCNotification: Codable {
     let info: String
     let atta: String
 }
+
+/// File name for a peer's data. `sender` comes from the network unauthenticated: used as is,
+/// "../" in it would write outside the Nearcast folder (AUDIT-2026-10-25, Nearcast 1).
+func ncFileName(for sender: String) -> String {
+    if sender.range(of: "^[A-Za-z0-9-]{1,64}$", options: .regularExpression) != nil { return sender }
+    return SHA256.hash(data: Data(sender.utf8)).map { String(format: "%02x", $0) }.joined()
+}
+

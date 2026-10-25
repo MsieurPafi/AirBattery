@@ -363,7 +363,7 @@ struct popover: View {
     @State private var hidden = [Int]()
     @State private var hidden2 = [Int]()
     @State private var alertList = ud.get(objectType: [btAlert].self, forKey: "alertList") ?? []
-    @State private var pinnedList = (ud.object(forKey: "pinnedList") ?? []) as! [String]
+    @State private var pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
     @State private var allNearcast = getFiles(withExtension: "json", in: ncFolder)
     
     var body: some View {
@@ -611,7 +611,7 @@ struct popover: View {
                                                 if allDevices[index].deviceID != "@MacInternalBattery" {
                                                     if !pinnedList.contains(allDevices[index].deviceName) {
                                                         Button(action: {
-                                                            pinnedList = (ud.object(forKey: "pinnedList") ?? []) as! [String]
+                                                            pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
                                                             pinnedList.append(allDevices[index].deviceName)
                                                             ud.set(pinnedList, forKey: "pinnedList")
                                                             refeshPinnedBar()
@@ -625,7 +625,7 @@ struct popover: View {
                                                         .onHover{ hovering in overPinButton = hovering }
                                                     } else {
                                                         Button(action: {
-                                                            pinnedList = (ud.object(forKey: "pinnedList") ?? []) as! [String]
+                                                            pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
                                                             pinnedList.removeAll(where:  { $0 == allDevices[index].deviceName })
                                                             refeshPinnedBar(unpin: allDevices[index].deviceName)
                                                             ud.set(pinnedList, forKey: "pinnedList")
@@ -660,10 +660,10 @@ struct popover: View {
                                                 if allDevices[index].deviceID != "@MacInternalBattery" {
                                                     Button(action: {
                                                         hidden.append(index)
-                                                        var blackList = (ud.object(forKey: "blackList") ?? []) as! [String]
+                                                        var blackList = (ud.stringArray(forKey: "blackList") ?? [])
                                                         blackList.append(allDevices[index].deviceName)
                                                         ud.set(blackList, forKey: "blackList")
-                                                        let pinnedList = (ud.object(forKey: "pinnedList") ?? []) as! [String]
+                                                        let pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
                                                         if pinnedList.contains(allDevices[index].deviceName){
                                                             refeshPinnedBar()
                                                         }
@@ -726,7 +726,7 @@ struct popover: View {
                                     if allDevices[index].deviceID != "@MacInternalBattery" {
                                         if !pinnedList.contains(allDevices[index].deviceName) {
                                             Button(action: {
-                                                pinnedList = (ud.object(forKey: "pinnedList") ?? []) as! [String]
+                                                pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
                                                 pinnedList.append(allDevices[index].deviceName)
                                                 ud.set(pinnedList, forKey: "pinnedList")
                                                 refeshPinnedBar()
@@ -735,7 +735,7 @@ struct popover: View {
                                             }
                                         } else {
                                             Button(action: {
-                                                pinnedList = (ud.object(forKey: "pinnedList") ?? []) as! [String]
+                                                pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
                                                 pinnedList.removeAll { $0 == allDevices[index].deviceName }
                                                 ud.set(pinnedList, forKey: "pinnedList")
                                                 refeshPinnedBar()
@@ -761,7 +761,7 @@ struct popover: View {
                                         }
                                         Button(action: {
                                             hidden.append(index)
-                                            var blackList = (ud.object(forKey: "blackList") ?? []) as! [String]
+                                            var blackList = (ud.stringArray(forKey: "blackList") ?? [])
                                             blackList.append(allDevices[index].deviceName)
                                             ud.set(blackList, forKey: "blackList")
                                         }) {
@@ -792,10 +792,10 @@ struct popover: View {
                                 if !hidden2.contains(index){
                                     Button(action: {
                                         hidden2.append(index)
-                                        var blackList = (ud.object(forKey: "blackList") ?? []) as! [String]
+                                        var blackList = (ud.stringArray(forKey: "blackList") ?? [])
                                         blackList.removeAll { $0 == hiddenDevices[index].deviceName }
                                         ud.set(blackList, forKey: "blackList")
-                                        let pinnedList = (ud.object(forKey: "pinnedList") ?? []) as! [String]
+                                        let pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
                                         if pinnedList.contains(hiddenDevices[index].deviceName){
                                             refeshPinnedBar()
                                         }
@@ -878,7 +878,7 @@ struct nearcastView: View {
     @State private var overAlertButton = false
     @State private var overPinButton = false
     @State private var alertList = ud.get(objectType: [btAlert].self, forKey: "alertList") ?? []
-    @State private var pinnedList = (ud.object(forKey: "pinnedList") ?? []) as! [String]
+    @State private var pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
     
     var body: some View {
         Spacer().frame(height: 8)
@@ -959,7 +959,7 @@ struct nearcastView: View {
                                     }
                                     if !pinnedList.contains(devices[index].deviceName) {
                                         Button(action: {
-                                            pinnedList = (ud.object(forKey: "pinnedList") ?? []) as! [String]
+                                            pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
                                             pinnedList.append(devices[index].deviceName)
                                             ud.set(pinnedList, forKey: "pinnedList")
                                             refeshPinnedBar()
@@ -973,7 +973,7 @@ struct nearcastView: View {
                                         .onHover{ hovering in overPinButton = hovering }
                                     } else {
                                         Button(action: {
-                                            pinnedList = (ud.object(forKey: "pinnedList") ?? []) as! [String]
+                                            pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
                                             pinnedList.removeAll { $0 == devices[index].deviceName }
                                             ud.set(pinnedList, forKey: "pinnedList")
                                             refeshPinnedBar()

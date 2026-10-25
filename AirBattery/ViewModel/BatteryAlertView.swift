@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UserNotifications
 
 struct btAlert: Codable, Equatable {
     let name: String
@@ -179,6 +180,7 @@ class AlertWindowController {
             // 确认操作后，关闭窗口并返回数据
             self.window?.close()
             onConfirm(newAlert)
+            warnIfNotificationsAreOff()
         }, onCancel: {
             // 取消操作，关闭窗口
             self.window?.close()
@@ -242,3 +244,23 @@ func batteryAlert() {
         }
     }
 }
+
+/// An alert saved while notifications are turned off for the app would never show:
+/// say so, and offer to open the notification settings.
+func warnIfNotificationsAreOff() {
+    UNUserNotificationCenter.current().getNotificationSettings { settings in
+        guard settings.authorizationStatus == .denied else { return }
+        DispatchQueue.main.async {
+            let alert = createAlert(level: .informational, title: "Notifications Are Off",
+                                    message: "Notifications are turned off for AirBattery Plus, so this alert won't be shown. You can turn them on in System Settings › Notifications.",
+                                    button1: "Open Settings", button2: "OK")
+            guard alert.runModal() == .alertFirstButtonReturn else { return }
+            let pane = "x-apple.systempreferences:com.apple.Notifications-Settings.extension?id=\(AppIdentifiers.app)"
+            let legacyPane = "x-apple.systempreferences:com.apple.preference.notifications"
+            var target = legacyPane
+            if #available(macOS 13.0, *) { target = pane }
+            if let url = URL(string: target) { NSWorkspace.shared.open(url) }
+        }
+    }
+}
+

@@ -31,7 +31,7 @@ class reloadAll: NSScriptCommand {
 
 class getUsage: NSScriptCommand {
     override func performDefaultImplementation() -> Any? {
-        let device = self.evaluatedArguments!["name"] as! String
+        guard let device = self.evaluatedArguments?["name"] as? String else { return -1 }
         var allDevices = AirBatteryModel.getAll(noFilter: true)
         let ibStatus = InternalBattery.status
         if ibStatus.hasBattery { allDevices.insert(ib2ab(ibStatus), at: 0) }
@@ -44,7 +44,7 @@ class getUsage: NSScriptCommand {
 
 class getStatus: NSScriptCommand {
     override func performDefaultImplementation() -> Any? {
-        let device = self.evaluatedArguments!["name"] as! String
+        guard let device = self.evaluatedArguments?["name"] as? String else { return -1 }
         var allDevices = AirBatteryModel.getAll(noFilter: true)
         let ibStatus = InternalBattery.status
         if ibStatus.hasBattery { allDevices.insert(ib2ab(ibStatus), at: 0) }

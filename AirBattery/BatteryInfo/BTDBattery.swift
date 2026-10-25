@@ -16,7 +16,7 @@ class BTDBattery {
     
     func startScan() {
         let interval = TimeInterval(59 * updateInterval)
-        scanTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(scanDevices), userInfo: nil, repeats: true)
+        scanTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in self?.scanDevices() }
         Log.bluetooth.notice("Start scanning Bluetooth HID devices")
         scanDevices(longScan: true)
     }

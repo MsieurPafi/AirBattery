@@ -2628,6 +2628,28 @@
         }
       }
     },
+    "Notifications Are Off": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notifications désactivées"
+          }
+        }
+      }
+    },
+    "Notifications are turned off for AirBattery Plus, so this alert won't be shown. You can turn them on in System Settings › Notifications.": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les notifications sont désactivées pour AirBattery Plus : cette alerte ne s'affichera pas. Vous pouvez les activer dans Réglages Système › Notifications."
+          }
+        }
+      }
+    },
     "Notify me when battery charged above:": {
       "extractionState": "manual",
       "localizations": {
@@ -2726,6 +2748,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ouvrir"
+          }
+        }
+      }
+    },
+    "Open Settings": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir les réglages"
           }
         }
       }
@@ -3713,29 +3746,6 @@
         }
       }
     },
-    "Unknown Command": {
-      "extractionState": "manual",
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Commande inconnue"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未知命令"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未知命令"
-          }
-        }
-      }
-    },
     "Until Empty:": {
       "extractionState": "manual",
       "localizations": {
@@ -3939,29 +3949,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "無法連線指定的裝置!"
-          }
-        }
-      }
-    },
-    "doesn't support command \"%@\"": {
-      "extractionState": "manual",
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ne prend pas en charge la commande « %@ »"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "不支持 \"%@\" 命令!"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "不支援 \"%@\" 命令!"
           }
         }
       }

@@ -2,6 +2,23 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
+## Unreleased
+
+### Fixes
+
+- **Fewer crash risks**: a Mac battery reporting a zero capacity, an empty Bluetooth report from `system_profiler`, unexpected values in the battery registry or in hand-edited settings, an AppleScript call without a device name, a malformed Nearcast group ID.
+- **"Remove Offline Device › Never"** now works (it did nothing).
+- **Launch at login** shows its real state, also when the app was opened by hand, and uses the current macOS API on macOS 13 and later. The existing login item is kept.
+- When you save a battery alert while notifications are turned off for the app, it now says so and offers to open the notification settings.
+- One Bluetooth device with an unreadable level no longer hides the devices after it.
+- IOKit references were leaked at each scan of Magic accessories.
+- `abtp`: the minutes since the last update were negative in `--json`; `--csv` now quotes device names and gives levels as numbers.
+- The Bluetooth and HID scans were started by their timers with an invalid argument.
+
+### Security
+
+- **Nearcast**: data from another Mac can no longer be written outside the Nearcast folder, files are written atomically, a peer can no longer make this Mac connect a Bluetooth device, and unknown commands are no longer echoed back (that echo could be used to forge notifications). A stronger Nearcast protocol is planned.
+
 ## 1.9.0 — 2026-10-25 (pre-release)
 
 ### New

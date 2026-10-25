@@ -96,15 +96,15 @@ class AirBatteryModel {
     }
     
     static func getBlackList() -> [Device] {
-        let blackList = (ud.object(forKey: "blackList") ?? []) as! [String]
+        let blackList = (ud.stringArray(forKey: "blackList") ?? [])
         let devices = getAll(noFilter: true)
         return devices.filter({ blackList.contains($0.deviceName) })
     }
     
     static func getAll(reverse: Bool = false, noFilter: Bool = false) -> [Device] {
         let thisMac = ud.string(forKey: "deviceName")
-        let disappearTime = (ud.object(forKey: "disappearTime") ?? 20) as! Int
-        let blackList = (ud.object(forKey: "blackList") ?? []) as! [String]
+        let disappearTime = (ud.object(forKey: "disappearTime") as? Int ?? 20)
+        let blackList = (ud.stringArray(forKey: "blackList") ?? [])
         let now = Double(Date().timeIntervalSince1970)
         var list = (reverse ? Array(Devices.reversed()) : Devices).filter { (now - $0.lastUpdate < Double(disappearTime * 60)) }
         if !noFilter { list = list.filter { !blackList.contains($0.deviceName) && !$0.isHidden } }
@@ -243,7 +243,7 @@ class AirBatteryModel {
     }
     
     static func ncGetAll(url: URL, fromWidget: Bool = false) -> [Device] {
-        let disappearTime = (ud.object(forKey: "disappearTime") ?? 20) as! Int
+        let disappearTime = (ud.object(forKey: "disappearTime") as? Int ?? 20)
         let devices = readData(url: url)
         let now = Double(Date().timeIntervalSince1970)
         var localDevices = getAll().map({ $0.deviceName })
