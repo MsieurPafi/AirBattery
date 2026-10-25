@@ -710,3 +710,22 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Échecs :** voir les trois essais ci-dessus.
 **Testé sur appareil réel :** oui (captures de Côme).
 **Prochaine étape :** PR, puis release 1.9.0.
+
+---
+
+## 2026-10-25 (suite 11) — Release 1.9.0 (pre-release)
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1. PR #31 fusionnée avec l'accord de Côme (`main` @ `6b244dd`). Branche `release/1.9.0`.
+
+**Fait :**
+- `9001dda` : version 1.9.0 (190), changelog (app en français, fenêtre du Dock en Liquid Glass, marges du popover, guide utilisateur EN/FR et captures, journalisation unifiée).
+- Build Release propre : 1.9.0 (190), `codesign --verify --deep --strict` OK, pas de `SUFeedURL`, `fr.lproj` dans l'app (186 phrases) et le widget, **aucune trace du mode démo** dans le binaire (`strings | grep demoDevices` → 0), `ideviceinfo 1.4.0`, `abtp`.
+- DMG depuis un dossier temporaire du scratchpad, `hdiutil verify` OK ; copies de build (Release, DMG, Debug) désenregistrées et `build/DerivedData-release` supprimé.
+- Tag `v1.9.0` sur `9001dda`. Pre-release publiée : https://github.com/MsieurPafi/AirBattery/releases/tag/v1.9.0. SHA-256 `fa020348fed7dcc069cb65659303207188673d9b520a7287ebe9b8188a728176`, identique après retéléchargement.
+
+**Échecs :**
+- Côme a répondu « 1.9.0 installée, l'app est en français » mais `/Applications` contenait encore la 1.8.0 (Info.plist de 14:34, pas de `fr.lproj`, processus lancé par moi à 16:44 après les captures) ; le français vu venait sans doute de la copie de test. **La release était déjà publiée** : je l'ai publiée sur la foi de ce message sans vérifier l'app installée au préalable. Signalé à Côme, fusion de la PR de release suspendue. Côme a ensuite réellement installé la 1.9.0 : À propos affiche 1.9.0 (190) en français (capture), vérifié côté système (Info.plist 1.9.0, `fr.lproj` présent, widget 1.9.0 enregistré depuis `/Applications`).
+- Leçon pour la procédure de release : **vérifier la version de `/Applications` (PlistBuddy, pas `defaults read`, qui peut renvoyer une valeur en cache) avant de publier**, même quand Côme confirme son test.
+
+**Testé sur appareil réel :** oui, par Côme (après la correction ci-dessus).
+**Prochaine étape :** au choix de Côme : mises à jour depuis GitHub / CI ; indexation des appareils par identifiant ; observation « connected » chaque minute (IDEAS).
