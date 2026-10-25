@@ -1067,3 +1067,17 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Testé sur appareil réel :** pas encore : le test passe par la publication (le flux est lu sur `main`).
 **Prochaine étape :** accord de Côme pour publier la 1.11.1 et fusionner l'appcast, puis son test (checklist dans le résumé de la PR).
+
+## 2026-10-25 (suite 27) — Mise à jour 1.11.0 → 1.11.1 par Sparkle : validée
+
+**Contexte :** 1.11.1 publiée (tag `v1.11.1` sur `7f08ac5`, https://github.com/MsieurPafi/AirBattery-Plus/releases/tag/v1.11.1, DMG retéléchargé : même SHA-256), PR #49 fusionnée avec l'accord de Côme (`main` @ `acfc1b4`). Le CDN de `raw.githubusercontent.com` a servi l'ancien flux environ 40 s après la fusion.
+
+**Fait :**
+- Test de Côme : « Rechercher des mises à jour… » → 1.11.1 proposée, téléchargée, installée, relancée ; « AirBattery Plus v1.11.1 » dans les réglages. **Pas de demande d'accès au réseau local.**
+- Vérifié : 1.11.1 (1111), signature valide, pas de quarantaine, `spctl -a` « rejected » (attendu, non notarisée) sans effet, processus relancé à 19:17:30, widget 1.11.1 seul enregistré, aucun rapport de plantage, `SULastCheckTime` 18:17:30 UTC.
+- Pourquoi pas de demande d'accès au réseau local : UUID d'exécutable identiques entre la 1.11.0 et la 1.11.1 (pas de changement de code), déjà connus de `nesessionmanager`. Correction datée de la note 8 de COMPAT, guide EN/FR ajusté (« après la plupart des mises à jour »).
+- Non vérifié : l'accès au réseau local en pratique (aucun iPhone en Wi-Fi ni en USB au moment de la vérification : `idevice_id -l` et `-n` vides).
+
+**Décisions :** D-026 complétée (vérification faite).
+**Testé sur appareil réel :** oui, par Côme.
+**Prochaine étape :** au choix de Côme : CI GitHub Actions ; Nearcast v2 (#41) ; pistes de l'analyse.

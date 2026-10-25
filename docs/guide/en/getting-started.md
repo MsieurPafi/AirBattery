@@ -15,13 +15,13 @@
 
 ## Update
 
-AirBattery Plus finds new versions itself. On its second launch, it asks whether to check for updates automatically; you can change this later in **Settings › General › Update**, or check now with **Check for Updates…** at the bottom of the settings. Updates come from this repository's releases on GitHub, and are installed only if they carry the project's signature. Then macOS asks again for local network access (step 3 below).
+AirBattery Plus finds new versions itself. On its second launch, it asks whether to check for updates automatically; you can change this later in **Settings › General › Update**, or check now with **Check for Updates…** at the bottom of the settings. Updates come from this repository's releases on GitHub, and are installed only if they carry the project's signature. Then macOS may ask again for local network access (step 3 below).
 
 Versions up to 1.10.0 can't update themselves. To update by hand:
 
 1. Quit AirBattery Plus (menu bar icon › ⓧ).
 2. Install the new version as above, replacing the old one. Your settings are kept.
-3. macOS asks again whether AirBattery Plus may find devices on the local network: allow it. The permission is tied to the exact app version.
+3. macOS may ask again whether AirBattery Plus may find devices on the local network: allow it. The permission is tied to the app's code, so macOS asks again after most updates.
 
 macOS may keep showing the old app icon for a while after an update: it caches icons, and refreshes them on its own or after you log out.
 
