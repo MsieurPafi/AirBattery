@@ -152,14 +152,14 @@ struct mainBatteryView: View {
         .onReceive(dockTimer) { t in refeshPinnedBar() }
         .onReceive(mainTimer) { t in
             if item.hasBattery {
-                InternalBattery.status = getPowerState()
+                // One read per second (it was read twice, ~15 IOKit properties each time)
+                if intBattOnStatusBar && test_debug {
+                    InternalBattery.status = iBattery(hasBattery: test_hasib, isCharging: !test_full, isCharged: false, acPowered: test_ac, timeLeft: "", batteryLevel: test_iblevel)
+                } else {
+                    InternalBattery.status = getPowerState()
+                }
                 let width = statusBarItem.button?.frame.size.width
                 if intBattOnStatusBar {
-                    if test_debug {
-                        InternalBattery.status = iBattery(hasBattery: test_hasib, isCharging: !test_full, isCharged: false, acPowered: test_ac, timeLeft: "", batteryLevel: test_iblevel)
-                    } else {
-                        InternalBattery.status = getPowerState()
-                    }
                     item = InternalBattery.status
                     if batteryPercent != "outside" {
                         if width != 42 { setStatusBar(width: 42) }

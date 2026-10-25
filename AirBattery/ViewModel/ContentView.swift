@@ -201,35 +201,6 @@ struct MultiBatteryView: View {
             darkMode = getDarkMode()
             NSApp.dockTile.display()
         }
-        .onReceive(alertTimer) {_ in batteryAlert() }
-        .onReceive(widgetViewTimer) {_ in
-            if widgetInterval != -1 { WidgetCenter.shared.reloadAllTimelines() }
-        }
-        .onReceive(widgetDataTimer) {_ in
-            SPBluetoothDataModel.shared.refeshData (completion: { result in
-                DispatchQueue.global(qos: .background).async {
-                    MagicBattery.shared.scanDevices()
-                    AirBatteryModel.writeData()
-                }
-            }, error: {
-                AirBatteryModel.writeData()
-            })
-        }
-        .onReceive(nearCastTimer) {_ in
-            if nearCast && ncGroupID != ""{
-                var allDevices = AirBatteryModel.getAll()
-                allDevices.insert(ib2ab(InternalBattery.status), at: 0)
-                do {
-                    let jsonData = try JSONEncoder().encode(allDevices)
-                    guard let jsonString = String(data: jsonData, encoding: .utf8) else { return }
-                    guard let data = encryptString(jsonString, password: ncGroupID) else { return }
-                    let message = NCMessage(id: String(ncGroupID.prefix(15)), sender: systemUUID ?? deviceName, command: "", content: data)
-                    netcastService.sendMessage(message)
-                } catch {
-                    Log.data.error("Write JSON error: \(String(describing: error), privacy: .public)")
-                }
-            }
-        }
         .onReceive(dockTimer) { t in
             if showOn == "both" || showOn == "dock" {
                 var list = AirBatteryModel.getAll()

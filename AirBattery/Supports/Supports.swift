@@ -12,12 +12,10 @@ import UserNotifications
 let widgetInterval = ud.integer(forKey: "widgetInterval")
 let updateInterval = ud.integer(forKey: "updateInterval")
 
-let mainTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-let dockTimer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
-let alertTimer = Timer.publish(every: 300, on: .main, in: .common).autoconnect()
-let widgetDataTimer = Timer.publish(every: TimeInterval(24 * updateInterval), on: .main, in: .common).autoconnect()
-let nearCastTimer = Timer.publish(every: TimeInterval(60 * updateInterval + Int(arc4random_uniform(10)) - Int(arc4random_uniform(10))), on: .main, in: .common).autoconnect()
-let widgetViewTimer = Timer.publish(every: TimeInterval(60 * updateInterval), on: .main, in: .common).autoconnect()
+// UI timers. A tolerance lets macOS group their wakeups with other work.
+let mainTimer = Timer.publish(every: 1, tolerance: 0.1, on: .main, in: .common).autoconnect()
+let dockTimer = Timer.publish(every: 5, tolerance: 0.5, on: .main, in: .common).autoconnect()
+
 let macID = getMacModelIdentifier()
 let isoFormatter = ISO8601DateFormatter()
 var lowPowerNoteDelay = [String: Double]()
@@ -215,30 +213,30 @@ struct RoundedCornersShape: Shape {
     }
 }
 
-public func process(path: String, arguments: [String], timeout: Int = 0) -> String? {
+/// Runs a tool and returns its standard output, or nil if it failed or printed nothing.
+/// Every call has a timeout (20 s by default): a hung tool used to block its thread forever.
+public func process(path: String, arguments: [String], timeout: Int = 20) -> String? {
     let task = Process()
     task.launchPath = path
     task.arguments = arguments
-    task.standardError = Pipe()
+    // A pipe nobody reads blocks the tool once it fills (64 KB): discard error output
+    task.standardError = FileHandle.nullDevice
 
     let outputPipe = Pipe()
     defer { outputPipe.fileHandleForReading.closeFile() }
     task.standardOutput = outputPipe
 
-    if timeout != 0 {
+    if timeout > 0 {
         DispatchQueue.global().asyncAfter(deadline: .now() + .seconds(timeout)) {
-            if task.isRunning {
-                // Name the tool, or the script run by bash; never the arguments (device IDs)
-                let tool = ((path.hasSuffix("/bash") ? arguments.first ?? path : path) as NSString).lastPathComponent
-                Log.process.warning("\(tool, privacy: .public) timed out after \(timeout, privacy: .public) s")
-                task.terminate()
-                // Escalate if still running shortly after terminate
-                DispatchQueue.global().asyncAfter(deadline: .now() + .milliseconds(400)) {
-                    if task.isRunning {
-                        let pid = task.processIdentifier
-                        _ = process(path: "/bin/kill", arguments: ["-9", String(pid)], timeout: 1)
-                    }
-                }
+            guard task.isRunning else { return }
+            // Name the tool, or the script run by bash; never the arguments (device IDs)
+            let tool = ((path.hasSuffix("/bash") ? arguments.first ?? path : path) as NSString).lastPathComponent
+            Log.process.warning("\(tool, privacy: .public) timed out after \(timeout, privacy: .public) s")
+            // Stop the children first: `log show` started by a script kept running, and kept
+            // the output pipe open, after its bash was killed.
+            terminateTree(task.processIdentifier, signal: SIGTERM)
+            DispatchQueue.global().asyncAfter(deadline: .now() + .milliseconds(400)) {
+                if task.isRunning { terminateTree(task.processIdentifier, signal: SIGKILL) }
             }
         }
     }
@@ -256,6 +254,24 @@ public func process(path: String, arguments: [String], timeout: Int = 0) -> Stri
     if output.isEmpty { return nil }
 
     return output.trimmingCharacters(in: .newlines)
+}
+
+/// Sends `signal` to a process and all its descendants, children first.
+private func terminateTree(_ pid: pid_t, signal: Int32) {
+    let pgrep = Process()
+    pgrep.launchPath = "/usr/bin/pgrep"
+    pgrep.arguments = ["-P", String(pid)]
+    pgrep.standardError = FileHandle.nullDevice
+    let pipe = Pipe()
+    pgrep.standardOutput = pipe
+    if (try? pgrep.run()) != nil {
+        let children = String(decoding: pipe.fileHandleForReading.readDataToEndOfFile(), as: UTF8.self)
+        pgrep.waitUntilExit()
+        for child in children.split(separator: "\n").compactMap({ pid_t($0) }) {
+            terminateTree(child, signal: signal)
+        }
+    }
+    kill(pid, signal)
 }
 
 func getMenuBarHeight() -> CGFloat {

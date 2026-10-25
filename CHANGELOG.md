@@ -20,6 +20,9 @@ Changes in this fork compared with the official [AirBattery](https://github.com/
 - **"Discover more BT devices" works again for devices reported in the Bluetooth logs** (third-party headphones and speakers): since upstream PR #163, the log reader passed malformed options and dates to `log show`, which rejected them, so it read nothing. It now reads at most the last 10 minutes of logs, escapes device names, and only runs `system_profiler` when it needs it.
 - Possible crashes: Bluetooth devices are now read on the main thread only, and the Mac's battery status is protected against concurrent access (same kind of crash as upstream #215).
 
+- **Less background work**: the widgets' data is only rewritten, and the widgets reloaded, when something they show changes (or every 5 minutes); `system_profiler` no longer runs on the main thread; the Mac's battery is read once per second instead of twice; background tasks no longer depend on the Dock icon's view; timers allow macOS to group their wakeups. Measured over 6 minutes: about a third fewer `system_profiler` runs and 70% fewer widget reloads.
+- **External tools can no longer hang**: every tool gets a timeout (20 s by default), a timed-out script is stopped with its children, and error output can no longer block a tool. iPhone/iPad scans no longer overlap, devices that can't be read are retried once per refresh interval instead of every 15 s, and the Apple Pencil is read once per interval instead of at every scan.
+
 ### Security
 
 - **Nearcast**: data from another Mac can no longer be written outside the Nearcast folder, files are written atomically, a peer can no longer make this Mac connect a Bluetooth device, and unknown commands are no longer echoed back (that echo could be used to forge notifications). A stronger Nearcast protocol is planned.
