@@ -575,3 +575,20 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Testé sur appareil réel :** rendu système sur macOS 27.0.1 seulement ; macOS 12–25 non testé.
 **Pistes ouvertes :** vérifier l'icône dans le Dock et le Finder après installation d'une release (cache d'icônes de LaunchServices).
 **Prochaine étape :** avis de Côme, fusion, puis release 1.8.0 (identité + icône).
+
+---
+
+## 2026-10-25 (suite 4) — Release 1.8.0 (pre-release)
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1. PR #24 (icône) fusionnée avec l'accord de Côme (`main` @ `a2bbcb5`). Branche `release/1.8.0`.
+
+**Fait :**
+- `5fa7a79` : version 1.8.0 (180) ; changelog (identité D-017, `abtp`, icône D-018, README ; note sur le cache d'icônes de macOS).
+- Build Release propre : 1.8.0 (180), `CFBundleName` « AirBattery Plus », pas de `SUFeedURL`, nouveau copyright et textes d'autorisation, `CFBundleIconName = AppIcon`, 3 `IconImageStack` (clair, sombre, teinté) + `AppIcon.icns`, `abtp` embarqué, `codesign --verify --deep --strict` OK.
+- DMG depuis un dossier temporaire du scratchpad, `hdiutil verify` OK ; copies de build (Release, DMG, Debug) désenregistrées et `build/DerivedData-release` supprimé avant l'installation.
+- Test de Côme : 1.8.0 installée, nouvelle icône, tout fonctionne. Widget 1.8.0 enregistré depuis `/Applications`.
+- Tag `v1.8.0` sur `5fa7a79`. Pre-release publiée : https://github.com/MsieurPafi/AirBattery/releases/tag/v1.8.0. SHA-256 `da0e4167ce3996e55e07fe35096c713dc0a3510246029e5759b5ece145daca2c`, identique après retéléchargement.
+
+**Échecs :** —
+**Testé sur appareil réel :** oui, par Côme.
+**Prochaine étape :** au choix de Côme : app et doc FR/EN, mises à jour GitHub / CI, `os.Logger`, fenêtre Dock et alertes en Liquid Glass.
