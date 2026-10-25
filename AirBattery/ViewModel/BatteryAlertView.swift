@@ -123,11 +123,11 @@ struct AlertInputView: View {
                 .padding([.leading, .trailing], 5)
                 .padding([.top, .bottom], 10)
                 HStack(spacing: 16) {
-                    let canDelete = alertList.map({$0.name}).contains(name)
+                    let canDelete = alertList.map({$0.name}).containsDeviceName(name)
                     if canDelete {
                         Button(action: {
                             alertList = ud.get(objectType: [btAlert].self, forKey: "alertList") ?? []
-                            alertList.removeAll(where: {$0.name == name})
+                            alertList.removeAll(where: { DeviceIdentity.sameName($0.name, name) })
                             ud.set(object: alertList, forKey: "alertList")
                             onCancel()
                         }, label: {
@@ -221,8 +221,8 @@ func batteryAlert() {
     let ncFiles = getFiles(withExtension: "json", in: ncFolder)
     for ncFile in ncFiles { allDevices += AirBatteryModel.ncGetAll(url: ncFile) }
     
-    for device in allDevices.filter({ alertList.map({$0.name}).contains($0.deviceName) }) {
-        if let alert = alertList.first(where: { $0.name == device.deviceName }) {
+    for device in allDevices.filter({ alertList.map({$0.name}).containsDeviceName($0.deviceName) }) {
+        if let alert = alertList.first(where: { DeviceIdentity.sameName($0.name, device.deviceName) }) {
             if device.batteryLevel < alert.low && device.isCharging == 0 && alert.lowOn {
                 if let delay = lowPowerNoteDelay[device.deviceName], delay > now.timeIntervalSince1970 { continue }
                 let title = "Low Battery".local

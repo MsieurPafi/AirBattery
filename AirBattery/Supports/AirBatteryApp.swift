@@ -543,11 +543,11 @@ public extension UserDefaults {
 func refeshPinnedBar(unpin: String? = nil) {
     var pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
     if pinnedList.isEmpty { return }
-    if let unpin = unpin { pinnedList.removeAll(where: { $0 == unpin }) }
+    if let unpin = unpin { pinnedList.removeAll(where: { DeviceIdentity.sameName($0, unpin) }) }
     var allDevices = AirBatteryModel.getAll()
     let ncFiles = getFiles(withExtension: "json", in: ncFolder)
     for ncFile in ncFiles { allDevices += AirBatteryModel.ncGetAll(url: ncFile) }
-    let pinnedDevices = allDevices.filter({ pinnedList.contains($0.deviceName) })
+    let pinnedDevices = allDevices.filter({ pinnedList.containsDeviceName($0.deviceName) })
     let deviceNames = pinnedDevices.map({ $0.deviceName })
     for device in pinnedDevices {
         if let index = pinnedItems.firstIndex(where: { $0.button?.toolTip == device.deviceName }) {
@@ -568,7 +568,7 @@ func refeshPinnedBar(unpin: String? = nil) {
             pinnedItems.append(statusItem)
         }
     }
-    let expItems = pinnedItems.filter({ !pinnedList.contains($0.button?.toolTip ?? "") || !deviceNames.contains($0.button?.toolTip ?? "") })
+    let expItems = pinnedItems.filter({ !pinnedList.containsDeviceName($0.button?.toolTip ?? "") || !deviceNames.contains($0.button?.toolTip ?? "") })
     let expNames = expItems.map({ $0.button?.toolTip ?? "" })
     DispatchQueue.main.async { for e in expItems { NSStatusBar.system.removeStatusItem(e) } }
     pinnedItems.removeAll{ expNames.contains($0.button?.toolTip ?? "") }

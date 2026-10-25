@@ -70,7 +70,8 @@ class AirBatteryModel {
         //if blockedItems.contains(device.deviceName) { return }
         devicesLock.lock(); defer { devicesLock.unlock() }
         //self.Devices.removeAll(where: {blockedItems.contains($0.deviceName)})
-        if let index = _devices.firstIndex(where: { $0.deviceName == device.deviceName }) {
+        // Same ID first, then same name (DeviceIdentity, D-025)
+        if let index = DeviceIdentity.matchIndex(id: device.deviceID, name: device.deviceName, in: _devices.map { ($0.deviceID, $0.deviceName) }) {
             _devices[index] = device
         } else {
             _devices.append(device)
@@ -80,7 +81,7 @@ class AirBatteryModel {
     static func hideDevice(_ name: String) {
         devicesLock.lock(); defer { devicesLock.unlock() }
         for index in _devices.indices {
-            if _devices[index].deviceName == name {
+            if DeviceIdentity.sameName(_devices[index].deviceName, name) {
                 _devices[index].isHidden = true
             }
         }
@@ -89,7 +90,7 @@ class AirBatteryModel {
     static func unhideDevice(_ name: String) {
         devicesLock.lock(); defer { devicesLock.unlock() }
         for index in _devices.indices {
-            if _devices[index].deviceName == name {
+            if DeviceIdentity.sameName(_devices[index].deviceName, name) {
                 _devices[index].isHidden = false
             }
         }
@@ -98,7 +99,7 @@ class AirBatteryModel {
     static func getBlackList() -> [Device] {
         let blackList = (ud.stringArray(forKey: "blackList") ?? [])
         let devices = getAll(noFilter: true)
-        return devices.filter({ blackList.contains($0.deviceName) })
+        return devices.filter({ blackList.containsDeviceName($0.deviceName) })
     }
     
     static func getAll(reverse: Bool = false, noFilter: Bool = false) -> [Device] {
@@ -107,7 +108,7 @@ class AirBatteryModel {
         let blackList = (ud.stringArray(forKey: "blackList") ?? [])
         let now = Double(Date().timeIntervalSince1970)
         var list = (reverse ? Array(Devices.reversed()) : Devices).filter { (now - $0.lastUpdate < Double(disappearTime * 60)) }
-        if !noFilter { list = list.filter { !blackList.contains($0.deviceName) && !$0.isHidden } }
+        if !noFilter { list = list.filter { !blackList.containsDeviceName($0.deviceName) && !$0.isHidden } }
         var newList: [Device] = list.filter({ $0.parentName == thisMac })
         for d in list {
             if d.parentName == "" && d.parentName != thisMac {
@@ -157,7 +158,7 @@ class AirBatteryModel {
     }
 
     static func getByName(_ name: String) -> Device? {
-        for d in getAll(noFilter: true) { if d.deviceName == name { return d } }
+        for d in getAll(noFilter: true) { if DeviceIdentity.sameName(d.deviceName, name) { return d } }
         return nil
     }
     
@@ -290,7 +291,7 @@ class AirBatteryModel {
         #endif
         let whitelistMode = ud.bool(forKey: "whitelistMode")
         let blockedItems = (ud.object(forKey: "blockedDevices") as? [String]) ?? [String]()
-        if (blockedItems.contains(name) && !whitelistMode) || (!blockedItems.contains(name) && whitelistMode) {
+        if (blockedItems.containsDeviceName(name) && !whitelistMode) || (!blockedItems.containsDeviceName(name) && whitelistMode) {
             return true
         }
         return false

@@ -915,3 +915,27 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Testé sur appareil réel :** oui (mesures sur le Mac de Côme).
 **Pistes ouvertes :** le reste des `system_profiler` (~2,5 par minute) vient de la relecture des accessoires Magic toutes les 24 s ; une lecture par intervalle suffirait sans doute. Batterie du Mac sur notification (`IOPSNotificationCreateRunLoopSource`) plutôt qu'à la seconde : non fait.
 **Prochaine étape :** PR 5 (indexation par identifiant + tests).
+
+---
+
+## 2026-10-25 (suite 19) — Analyse, PR 5 : identité des appareils et tests unitaires
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1 (Swift 6.4), `main` @ `09a90e8` (PR #39 fusionnée avec l'accord de Côme). Branche `feat/device-identity`.
+
+**Fait :**
+- Carte des identifiants par source (voir D-025). L'indexation par identifiant seul aurait risqué des doublons d'AirPods (identifiant d'annonce changeant) et la migration de toutes les listes de l'utilisateur, qui sont par nom : **portée réduite**, et le plan de l'analyse est ajusté.
+- `Shared/Core/DeviceIdentity.swift` :
+  - `canonicalName` (suffixe du boîtier dans les 4 langues) ;
+  - `normalizedID` (adresses `aa-bb` / `AA:BB`) ;
+  - `isUDID` ;
+  - `matchIndex` (même identifiant d'abord, sinon même nom sauf deux UDID différents) ;
+  - `[String].containsDeviceName`.
+- Appliqué à `updateDevice`, `hideDevice`/`unhideDevice`, `getBlackList`, `getAll`, `getByName`, `checkIfBlocked`, aux alertes (`BatteryAlertView`, popover), aux épingles (`refeshPinnedBar`, popover), aux retraits des listes (11 tests d'appartenance et 4 retraits remplacés dans `ContentView`) et à AppleScript.
+- `Shared/Core/BatteryParsing.swift` : lecture d'`ideviceinfo` déplacée depuis `IDeviceBattery.parseBattery`, qui délègue.
+- Paquet Swift à la racine (`Package.swift`, `Tests/AirBatteryCoreTests`) : `swift test` → 12 tests, 0 échec. `.swiftpm/` ignoré (`.build/` l'était déjà).
+- Build Debug OK. Nouvelle note « Metadata extraction skipped » du traitement AppIntents pour le helper : il est recompilé parce qu'il inclut `Shared`. Information, sans effet.
+- Copie de test 2 min sur le Mac de Côme : mêmes 5 appareils, sans doublon, aucune erreur. Listes de Côme : aucune épingle ni appareil masqué ; alertes sur MX et Air75, non concernées. 1.9.0 relancée et widget réenregistré.
+
+**Échecs :** —
+**Testé sur appareil réel :** liste d'appareils seulement (pas d'AirPods sortis du boîtier pendant le test ; cas couvert par les tests unitaires).
+**Prochaine étape :** PR 6 (Nearcast v2) : décision à prendre avec Côme sur la compatibilité avec le client iOS ; PR 7 (nettoyage) ; puis une release.

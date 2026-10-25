@@ -46,6 +46,16 @@ Requirements: a recent Xcode (the project is developed with Xcode 27 on macOS 27
 - **Run one copy at a time.** Quit the installed AirBattery Plus (and the official AirBattery) before running a build: two instances scanning Bluetooth at once give misleading results.
 - **Local network access** is granted per binary: macOS asks again after each build.
 
+### Unit tests
+
+Pure logic lives in `Shared/Core` (Foundation only: it is compiled into every target) and is tested with Swift Package Manager:
+
+```bash
+swift test
+```
+
+Add tests in `Tests/AirBatteryCoreTests`, and move logic there when it can be tested without the app (parsing tool output, matching devices…).
+
 ### Screenshots
 
 Debug builds have a demo mode with neutral devices, for screenshots: launch the app with `-demoDevices YES` (add `-AppleLanguages "(en)"` for English). Real devices are hidden and the Mac shows as "MacBook Pro".
