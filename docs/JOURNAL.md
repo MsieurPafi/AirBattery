@@ -628,3 +628,10 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Testé sur appareil réel :** oui, par Côme.
 **Pistes ouvertes :** icône de l'À propos (ci-dessus).
 **Prochaine étape :** PR, fusion par Côme.
+
+**Ajout (2026-10-25, suite 6) :**
+- Icône de l'À propos : l'app installée (1.8.0) montre bien la **nouvelle** icône (Côme) → l'ancienne icône verte de la copie de build venait du cache d'icônes de macOS pour ce chemin.
+- Côme signale des coins du bas non concentriques dans le **popover de la barre des menus** (1.8.0). Mesure au pixel sur sa capture : 5 pt sur les côtés, **3 pt** en bas entre le bord et la liste. Dans la fenêtre du Dock : ~11 pt en bas (formule de hauteur trop généreuse).
+- Correctifs : `popover` reçoit sa liste dès l'initialisation (`State(initialValue:)`), ce qui permet de mesurer la fenêtre du Dock avec `fittingSize` ; marge du bas 9 pt pour le popover (le popover système en masque ~2), 6 puis 8 pt pour la fenêtre du Dock (3 pt mesurés avec 6). Mesures finales : popover 5/5 pt, fenêtre du Dock 6/5 pt (côté/bas). Validé par Côme. D-020 mise à jour.
+- Au lancement de la copie de test, l'iPhone apparaissait avec l'icône Bluetooth (appareil BLE générique nommé « iPhone ») avant d'être reconnu : noté dans IDEAS (indexation par nom).
+- Copie de build désenregistrée, 1.8.0 relancée (seul widget enregistré).

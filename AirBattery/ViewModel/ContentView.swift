@@ -280,8 +280,12 @@ enum ListMetrics {
     /// The Dock window draws its own glass, without the popover's extra 2.5 pt on top.
     static var dockHeaderTopSpacing: CGFloat { headerTopSpacing + 2.5 }
     static var headerSidePadding: CGFloat { liquidGlass ? 11.5 : 5 }
-    /// Space under the list: same visual margin as on the sides on macOS 26+.
-    static var bottomSpacing: CGFloat { liquidGlass ? 7 : 8.5 }
+    /// Space under the list, so its bottom corners are concentric with the window's
+    /// (same 5 pt gap as on the sides; the list background overhangs the rows by 1 pt).
+    /// The system popover hides about 2 pt of it under its bottom edge (measured on screenshots).
+    static var bottomSpacing: CGFloat { liquidGlass ? 9 : 8.5 }
+    /// Same for the Dock window: its NSGlassEffectView also hides about 2 pt at the bottom.
+    static let dockBottomSpacing: CGFloat = 8
 }
 
 extension View {
@@ -332,6 +336,13 @@ struct BlurView: NSViewRepresentable {
 struct popover: View {
     var fromDock: Bool = false
     var allDevice: [Device]
+
+    init(fromDock: Bool = false, allDevice: [Device]) {
+        self.fromDock = fromDock
+        self.allDevice = allDevice
+        // Filled in now, not only in onAppear, so the view can be measured before it is shown
+        _allDevices = State(initialValue: allDevice)
+    }
 
     @AppStorage("nearCast") var nearCast = false
     
@@ -830,7 +841,7 @@ struct popover: View {
                 }
                 if !fromDock || ListMetrics.liquidGlass {
                     Color.clear
-                        .frame(height: ListMetrics.bottomSpacing)
+                        .frame(height: fromDock ? ListMetrics.dockBottomSpacing : ListMetrics.bottomSpacing)
                         .onHover { hovering in
                             if hovering {
                                 overStack = -1

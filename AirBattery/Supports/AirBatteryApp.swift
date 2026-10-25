@@ -129,9 +129,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
                 }
             }
             var menuHeight = CGFloat((max(max(allDevices.count,1)+ncDeviceCount,1)+hiddenRow)*37+30+ncCount)
-            // The Liquid Glass layout adds the popover's top and bottom margins. SwiftUI can't
-            // measure the view here: its device list is only filled in onAppear.
-            if ListMetrics.liquidGlass { menuHeight += ListMetrics.dockHeaderTopSpacing + ListMetrics.bottomSpacing }
+            // Liquid Glass layout: measure the view (the formula above doesn't know its margins)
+            if ListMetrics.liquidGlass { menuHeight = contentView.fittingSize.height }
             let mouse = NSEvent.mouseLocation
             var menuX = mouse.x
             var menuY = mouse.y
@@ -175,8 +174,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
                 // stay concentric with the window (D-020)
                 let glass = NSGlassEffectView(frame: NSRect(origin: .zero, size: contentView.frame.size))
                 glass.cornerRadius = ListMetrics.popoverCornerRadius
-                // The window keeps the size computed above: left to the hosting view, it was
-                // resized once the list filled in and grew down past the bottom of the screen
+                // The window keeps the size measured above: left to the hosting view, it could
+                // be resized after showing and grow down past the bottom of the screen
                 contentView.sizingOptions = []
                 contentView.frame.origin = .zero
                 glass.contentView = contentView
