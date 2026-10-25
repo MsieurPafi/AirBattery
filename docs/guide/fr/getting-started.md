@@ -15,7 +15,9 @@
 
 ## Mise à jour
 
-Il n'y a pas encore de mise à jour automatique : suivez les versions du dépôt sur GitHub pour être prévenu des nouveautés.
+AirBattery Plus trouve elle-même les nouvelles versions. À son deuxième lancement, elle demande si elle peut rechercher automatiquement les mises à jour ; vous pouvez changer ce choix plus tard dans **Réglages › Général › Mise à jour**, ou vérifier tout de suite avec **Rechercher des mises à jour…** en bas des réglages. Les mises à jour viennent des versions publiées sur GitHub, et ne sont installées que si elles portent la signature du projet. macOS redemande ensuite l'accès au réseau local (étape 3 ci-dessous).
+
+Les versions jusqu'à la 1.10.0 ne se mettent pas à jour seules. Pour mettre à jour à la main :
 
 1. Quittez AirBattery Plus (icône de la barre des menus › ⓧ).
 2. Installez la nouvelle version comme ci-dessus, en remplaçant l'ancienne. Vos réglages sont conservés.

@@ -1000,3 +1000,26 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Échecs :** —
 **Testé sur appareil réel :** oui, par Côme.
 **Prochaine étape :** au choix de Côme : mises à jour depuis GitHub / CI ; Nearcast v2 (#41).
+
+## 2026-10-25 (suite 23) — Mises à jour par Sparkle (D-026)
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, commit de départ `9c249c0` (PR #45 fusionnée avec l'accord de Côme), branche `feat/sparkle-updates`
+**Objectif :** réactiver Sparkle avec une clé et un appcast propres au fork (option B choisie par Côme).
+
+**Fait :**
+- Clé EdDSA générée sur le Mac de Côme, avec son accord : `build/DerivedData/SourcePackages/artifacts/sparkle/Sparkle/bin/generate_keys --account io.github.msieurpafi.AirBattery`. Clé publique `uUnzqQIUgDEL6VMjBtNE8PfnsYDMrS8Tx/Kr6w8R7H8=` (relue avec `generate_keys -p --account …`). Clé privée dans le trousseau de session : sauvegarde à faire par Côme (D-026).
+- `Info.plist` : `SUFeedURL` (raw `main`), `SUPublicEDKey` ; `SUEnableAutomaticChecks = NO` retiré. `Sparkle.swift` : `updatesEnabled = true`.
+- `appcast.xml` de l'auteur (v1.6.3) remplacé par un flux vide du fork.
+- `scripts/update-appcast.sh <dmg>` : lit la version dans l'app du DMG, convertit la section du `CHANGELOG.md` en HTML, lance `generate_appcast` dans un dossier temporaire avec l'appcast actuel, vérifie que la nouvelle entrée est signée, puis recopie `appcast.xml`.
+- Essais du script (appcast remis à vide ensuite) : DMG de la 1.10.0 téléchargé de la release → entrée **non signée**, sans erreur (l'app n'a pas de `SUPublicEDKey`) : vérification ajoutée au script. DMG d'un build Debug de la branche → entrée signée. Deuxième version (copie modifiée en 1.10.1 / 1101, re-signée ad hoc, section de test temporaire dans le CHANGELOG) → les deux entrées présentes, chacune avec son adresse de release.
+- Agent utilisateur de Sparkle relu dans le binaire (`%@%@/%@ Sparkle/%@`) : nom et version de l'app, pas de version de macOS ; écrit tel quel dans la page de confidentialité.
+- Docs : guide EN/FR (prise en main § Mise à jour, réglages, confidentialité), `CHANGELOG.md` (*Unreleased*), `CONTRIBUTING.md` § Releases, `ARCHITECTURE.md`, `IDEAS.md`, D-026, D-004 marquée remplacée.
+
+**Échecs :**
+- Copie modifiée sans re-signature → `generate_appcast` : « Skipped AirBattery-Plus-1.10.1.dmg … The app failed Apple Code Signing checks … Code=-67030 ». Attendu : il vérifie la signature de code. Re-signée ad hoc pour l'essai.
+- `hdiutil attach/detach` : avertissements de dépréciation sous macOS 27 (comme `hdiutil create`, suite 13) ; sans effet.
+- Build Debug lancé directement depuis le shell (`…/Contents/MacOS/AirBattery Plus`) → arrêt immédiat, rapport `~/Library/Logs/DiagnosticReports/AirBattery Plus-2026-10-25-185757.ips` : « This app has crashed because it attempted to access privacy-sensitive data without a usage description … NSBluetoothAlwaysUsageDescription ». La clé est bien dans l'`Info.plist` du build : lancée depuis un shell, l'app a ce shell pour processus responsable aux yeux de TCC. **Ce rapport n'est pas un crash de l'app** (ne pas le compter au prochain relevé). Relancé avec `open -n` : démarre, Sparkle sans erreur ; arrêté, copie désenregistrée (`pluginkit -r`, `lsregister -u`), widget de `/Applications` réenregistré.
+
+**Décisions :** D-026 (remplace D-004)
+**Testé sur appareil réel :** non. Il faut une première version avec Sparkle installée à la main, puis la suivante livrée par Sparkle (Gatekeeper à observer).
+**Prochaine étape :** PR ; puis release de la première version avec Sparkle, installée à la main par Côme, et une seconde pour essayer la mise à jour.

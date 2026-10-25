@@ -16,7 +16,7 @@ The app is not sandboxed, like the original AirBattery: it runs the tools that r
 ## What stays on your Mac
 
 - Battery levels and device names are stored on your Mac only, for the widgets and `abtp`.
-- AirBattery Plus sends nothing over the internet: no analytics, no automatic updates.
+- AirBattery Plus sends no analytics. Its only internet access is the update check: it downloads the list of versions from GitHub (`appcast.xml` in this repository), automatically if you allowed it, or when you click **Check for Updates…**, then the new version if you install it. GitHub sees these requests like any download (your IP address, and the app's version in the user agent; no system information is sent). Turn off **Settings › General › Update › Automatically check for updates** to never check on your own.
 - With Nearcast, levels are shared with your other Macs on the local network, encrypted with your Group ID.
 
 ## Logs

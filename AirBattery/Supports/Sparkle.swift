@@ -8,9 +8,10 @@
 import SwiftUI
 import Sparkle
 
-// Updates are disabled in this fork until it has its own appcast and EdDSA key.
-// The updater is never started and its UI is hidden. See docs/dev/DECISIONS.md (D-004).
-let updatesEnabled = false
+// Updates from the fork's own appcast (appcast.xml on main), signed with the fork's EdDSA
+// key (D-026, replaces D-004). Sparkle asks the user on the second launch whether to check
+// automatically: nothing is checked before they agree, or click Check for Updates.
+let updatesEnabled = true
 
 // This view model class publishes when new updates can be checked by the user
 final class CheckForUpdatesViewModel: ObservableObject {

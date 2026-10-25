@@ -2,6 +2,13 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
+## Unreleased
+
+### Changes
+
+- **In-app updates**: AirBattery Plus finds and installs new versions itself, from this repository's releases (Sparkle, turned off since 1.7.0). On its second launch it asks whether to check automatically; **Settings › General › Update** and **Check for Updates…** are back. Updates are installed only if they carry the project's signature (its own key, not the original app's). The only internet access is this check, to GitHub: see [Permissions & privacy](https://github.com/MsieurPafi/AirBattery-Plus/blob/main/docs/guide/en/permissions-privacy.md).
+- Versions up to 1.10.0 can't update themselves: install this version by hand.
+
 ## 1.10.0 — 2026-10-25 (pre-release)
 
 Fixes from a full audit of the app (performance, security, code quality).

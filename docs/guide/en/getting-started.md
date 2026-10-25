@@ -15,7 +15,9 @@
 
 ## Update
 
-There are no automatic updates yet: watch the repository's releases on GitHub to hear about new versions.
+AirBattery Plus finds new versions itself. On its second launch, it asks whether to check for updates automatically; you can change this later in **Settings › General › Update**, or check now with **Check for Updates…** at the bottom of the settings. Updates come from this repository's releases on GitHub, and are installed only if they carry the project's signature. Then macOS asks again for local network access (step 3 below).
+
+Versions up to 1.10.0 can't update themselves. To update by hand:
 
 1. Quit AirBattery Plus (menu bar icon › ⓧ).
 2. Install the new version as above, replacing the old one. Your settings are kept.
