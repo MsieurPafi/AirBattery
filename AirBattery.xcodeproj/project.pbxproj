@@ -60,6 +60,7 @@
 		18EF7E632C141CB70065A9E1 /* BatteryWidget3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18EF7E622C1414A50065A9E1 /* BatteryWidget3.swift */; };
 		18F615F32B763DD800873AA4 /* BLEBattery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18F615F22B763DD800873AA4 /* BLEBattery.swift */; };
 		18F615F92B76439300873AA4 /* AirBatteryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18F615F82B76439300873AA4 /* AirBatteryModel.swift */; };
+		F1C0A1B2C3D4E5F60718293B /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = F1C0A1B2C3D4E5F60718293A /* AppIcon.icon */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -168,6 +169,7 @@
 		18EF7E622C1414A50065A9E1 /* BatteryWidget3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryWidget3.swift; sourceTree = "<group>"; };
 		18F615F22B763DD800873AA4 /* BLEBattery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEBattery.swift; sourceTree = "<group>"; };
 		18F615F82B76439300873AA4 /* AirBatteryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirBatteryModel.swift; sourceTree = "<group>"; };
+		F1C0A1B2C3D4E5F60718293A /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -265,6 +267,7 @@
 				18F615F72B763FC900873AA4 /* ViewModel */,
 				18F615F62B763FAB00873AA4 /* BatteryInfo */,
 				18A0A9CD2AAE07EA00975B81 /* Credits.rtf */,
+				F1C0A1B2C3D4E5F60718293A /* AppIcon.icon */,
 				1841D4522AA6071D0022A1BE /* Assets.xcassets */,
 				186671CC2B791CF700D4D27B /* Info.plist */,
 				18283DB22B8583A4009B1B13 /* AirBattery.entitlements */,
@@ -516,6 +519,7 @@
 				184ADF0A2DDB6C9F004791F0 /* logReader.sh in Resources */,
 				184ADF0B2DDB6C9F004791F0 /* Scriptable.sdef in Resources */,
 				18E8A8DB2DDB8D4E002E9A4B /* Assets.xcassets in Resources */,
+				F1C0A1B2C3D4E5F60718293B /* AppIcon.icon in Resources */,
 				18A0A9CB2AAE07EA00975B81 /* Credits.rtf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

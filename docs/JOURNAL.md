@@ -557,3 +557,21 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Prochaine étape :** relecture et test par Côme, puis fusion ; ensuite l'icône.
 
 **Ajout (2026-10-25, suite 2) :** test de Côme sur la copie de build : fenêtre À propos, installation de `abtp` depuis les réglages, `abtp`, `abtp --help`, désinstallation et textes des réglages jugés corrects. Ensuite : aucun lien `abtp` ni `airbattery` dans `/usr/local/bin`, copie de build désenregistrée, 1.7.4 de `/Applications` relancée (seul widget enregistré).
+
+---
+
+## 2026-10-25 (suite 3) — Nouvelle icône (B2, Icon Composer)
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, `main` @ `9d7de6e` (PR #23 fusionnée avec l'accord de Côme). Branche `feat/app-icon`.
+
+**Fait :**
+- 6 maquettes plates (A1, A2, B1, B2, C1, C2) + l'icône actuelle, rendues avec CoreSVG (`NSImage`) ; Côme choisit **B2**. Premier rendu : contour visible de l'éclair (remplissage et trait semi-transparents qui se superposent) → éclair dessiné à travers un masque.
+- B2 affinée : éclair agrandi, « + » aligné en haut à droite ; contrôle à 16, 32, 64, 128, 256 px sur fond clair et sombre (« + » invisible à 16 px, lisible dès 32 px).
+- Format Icon Composer reconstitué sans l'interface : modèle de fichier d'Xcode (`Icon Composer Icon.xctemplate/…/icon.json`), clés confirmées dans `IconComposerFoundation`/`IconRendering` (`groups`, `layers`, `image-name`, `glass`, `linear-gradient`, `orientation`, `shadow`, `translucency`…), type de fichier `folder.iconcomposer.icon` (`StandardFileTypes.xcspec`).
+- `AirBattery/AppIcon.icon` (fond en dégradé, calques `bolt.svg` et `plus.svg` en verre) ajouté aux ressources de l'app. `actool` produit `IconImageStack` clair, sombre et teinté + `AppIcon.icns`, sans avertissement malgré l'`AppIcon.appiconset` du même nom. Rendu système vérifié avec `NSWorkspace.icon(forFile:)` (Liquid Glass correct).
+- PNG de `AppIcon.appiconset` remplacés par la version plate de B2 (macOS 12–25, en-tête du README). Scripts `scripts/icon/make-icon-artwork.py` et `export-pngs.swift`. D-018. Copie de build désenregistrée.
+
+**Échecs :** `iconutil -c iconset` sur l'`AppIcon.icns` généré ne contient que 16 à 128@2x (256 px max) : sans conséquence, le rendu système passe par `Assets.car`.
+**Testé sur appareil réel :** rendu système sur macOS 27.0.1 seulement ; macOS 12–25 non testé.
+**Pistes ouvertes :** vérifier l'icône dans le Dock et le Finder après installation d'une release (cache d'icônes de LaunchServices).
+**Prochaine étape :** avis de Côme, fusion, puis release 1.8.0 (identité + icône).
