@@ -2,6 +2,14 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
+## Unreleased
+
+### Changes
+
+- **The app is called AirBattery Plus everywhere**: Bluetooth and local network permission prompts, settings, tips and the About panel, which now links to this fork and credits the original AirBattery by lihaoyun6.
+- **The command line tool is now `abtp`** (was `airbattery`, the same name as the official app's tool). If you had installed it, install it again from Settings › Command Line Tool: the old `airbattery` link is removed when it belongs to AirBattery Plus, never when it belongs to the official app.
+- README rewritten for the fork, with credits to the original project and to the contributors whose work was ported.
+
 ## 1.7.4 — 2026-10-25 (pre-release)
 
 ### New
@@ -16,7 +24,7 @@ Changes in this fork compared with the official [AirBattery](https://github.com/
 
 ### Fixes
 
-- **Apple Watch reader (`comptest`) no longer crashes** (upstream #198). It used an uninitialized connection whenever the iPhone was unreachable at that moment; the crashes happened several times a day.
+- **Apple Watch reader (`comptest`) no longer crashes** (upstream [#198](https://github.com/lihaoyun6/AirBattery/issues/198)). It used an uninitialized connection whenever the iPhone was unreachable at that moment; the crashes happened several times a day.
 
 ### Changes
 
@@ -30,7 +38,7 @@ Changes in this fork compared with the official [AirBattery](https://github.com/
 
 ### New
 
-- **Sort Devices** (Settings › Menu Bar & Dock): by name, lowest battery first or highest battery first, in the menu, the Dock icon and the widgets (upstream #56, #188). An AirPods case stays with its earbuds, an iPhone with its Watch, an iPad with its Pencil. "Default" keeps the previous order.
+- **Sort Devices** (Settings › Menu Bar & Dock): by name, lowest battery first or highest battery first, in the menu, the Dock icon and the widgets (upstream [#56](https://github.com/lihaoyun6/AirBattery/issues/56), [#188](https://github.com/lihaoyun6/AirBattery/issues/188)). An AirPods case stays with its earbuds, an iPhone with its Watch, an iPad with its Pencil. "Default" keeps the previous order.
 
 ### Changes
 
@@ -43,15 +51,15 @@ Fixes ported from callieskye's 1.6.5 community build ([callieskye/Air-Battery](h
 ### Fixes
 
 - **No more crashes on unexpected tool output**: iPhone, iPad and Watch battery info, Bluetooth log lines and IOKit properties are now parsed safely instead of with forced unwraps.
-- **`comptest` (Apple Watch battery) can no longer hang the app**: it is stopped after 15 s. It still crashes now and then inside the bundled libimobiledevice (upstream #198), but without affecting AirBattery.
-- **AirPods levels above 100%** (for example 125%) are clamped (upstream #76).
-- **Battery alerts**: one device waiting out its notification delay no longer silences the alerts of all the others (upstream #78).
+- **`comptest` (Apple Watch battery) can no longer hang the app**: it is stopped after 15 s. It still crashes now and then inside the bundled libimobiledevice (upstream [#198](https://github.com/lihaoyun6/AirBattery/issues/198)), but without affecting AirBattery.
+- **AirPods levels above 100%** (for example 125%) are clamped (upstream [#76](https://github.com/lihaoyun6/AirBattery/issues/76)).
+- **Battery alerts**: one device waiting out its notification delay no longer silences the alerts of all the others (upstream [#78](https://github.com/lihaoyun6/AirBattery/issues/78)).
 - **Mac battery percentage** now comes from the same source as the macOS menu bar. It could differ when a charge limit is set.
-- **"Discover more BLE devices"**: connections are released after reading the battery, and devices without one are no longer retried every cycle. This kept some Macs awake (upstream #132) and is a suspected cause of audio stutter (upstream #178).
-- **AirPods reported as "iPhone"** on macOS 26 now get their model name (upstream #172).
-- **Icons**: AirPods 4 with ANC (upstream #166), AirPods Max (upstream #204, #205) and MacBook Neo (upstream #195).
-- **Pinned menu bar items** now update their icon and keep their position across launches (upstream #182).
-- **Nearcast list**: the hover highlight clears when the cursor leaves (upstream #159).
+- **"Discover more BLE devices"**: connections are released after reading the battery, and devices without one are no longer retried every cycle. This kept some Macs awake (upstream [#132](https://github.com/lihaoyun6/AirBattery/issues/132)) and is a suspected cause of audio stutter (upstream [#178](https://github.com/lihaoyun6/AirBattery/issues/178)).
+- **AirPods reported as "iPhone"** on macOS 26 now get their model name (upstream [#172](https://github.com/lihaoyun6/AirBattery/issues/172)).
+- **Icons**: AirPods 4 with ANC (upstream [#166](https://github.com/lihaoyun6/AirBattery/issues/166)), AirPods Max (upstream [#204](https://github.com/lihaoyun6/AirBattery/issues/204), [#205](https://github.com/lihaoyun6/AirBattery/issues/205)) and MacBook Neo (upstream [#195](https://github.com/lihaoyun6/AirBattery/issues/195)).
+- **Pinned menu bar items** now update their icon and keep their position across launches (upstream [#182](https://github.com/lihaoyun6/AirBattery/issues/182)).
+- **Nearcast list**: the hover highlight clears when the cursor leaves (upstream [#159](https://github.com/lihaoyun6/AirBattery/issues/159)).
 
 ### Changes
 
@@ -69,24 +77,24 @@ First release of the fork, based on the official 1.6.3 plus the upstream commits
 
 ### Fixes
 
-- **Crash after waking from sleep** in the Bluetooth connection handler ("pointer being freed was not allocated", upstream #215, #206). From upstream PR #216 by its author, cherry-picked.
-- **Mach port `EXC_GUARD` errors twice per second** in the kernel log while the app runs (upstream #207). The internal battery reader closed an IOKit service it never opened.
+- **Crash after waking from sleep** in the Bluetooth connection handler ("pointer being freed was not allocated", upstream [#215](https://github.com/lihaoyun6/AirBattery/issues/215), [#206](https://github.com/lihaoyun6/AirBattery/issues/206)). From upstream PR [#216](https://github.com/lihaoyun6/AirBattery/pull/216) by its author, cherry-picked.
+- **Mach port `EXC_GUARD` errors twice per second** in the kernel log while the app runs (upstream [#207](https://github.com/lihaoyun6/AirBattery/issues/207)). The internal battery reader closed an IOKit service it never opened.
 - **BLE peripherals already connected to the Mac** (for example a Logitech MX Anywhere 3) now show their battery. They no longer advertise, so the BLE scan never saw them.
 - **`abt` command line tool** works again: since macOS 14 it was denied access to the widget's container. The app now also writes its data to `~/Library/Application Support/io.github.msieurpafi.AirBattery/`.
 - Missing `ServiceManagement` import that broke the build with recent Xcode versions.
 
 ### Changes
 
-- **No more automatic Bluetooth connections to nearby iPhones and iPads** (upstream #89, #158, #169). With "Discover iOS devices via Bluetooth", you now pick your own devices once in Settings › Nearbility › Manage. From upstream PR #214 by Moyuin-aka, cherry-picked.
-- **Lighter Bluetooth scanning**: one active BLE scan per refresh interval instead of every 29 s (about 9% of the time instead of 18%), and no scan at all when no feature needs it. A suspected contributor to Bluetooth audio stutter (upstream #178).
+- **No more automatic Bluetooth connections to nearby iPhones and iPads** (upstream [#89](https://github.com/lihaoyun6/AirBattery/issues/89), [#158](https://github.com/lihaoyun6/AirBattery/issues/158), [#169](https://github.com/lihaoyun6/AirBattery/issues/169)). With "Discover iOS devices via Bluetooth", you now pick your own devices once in Settings › Nearbility › Manage. From upstream PR [#214](https://github.com/lihaoyun6/AirBattery/pull/214) by Moyuin-aka, cherry-picked.
+- **Lighter Bluetooth scanning**: one active BLE scan per refresh interval instead of every 29 s (about 9% of the time instead of 18%), and no scan at all when no feature needs it. A suspected contributor to Bluetooth audio stutter (upstream [#178](https://github.com/lihaoyun6/AirBattery/issues/178)).
 - **Liquid Glass layout on macOS 26 and later**: device lists and toolbar buttons follow the popover's rounded corners, and the popover sits right under the menu bar.
 
 ### Also included (merged upstream after 1.6.3, never released)
 
-- More reliable launch at login (upstream PR #161).
-- The app no longer gets terminated automatically by macOS (upstream PR #162).
-- Lower CPU use when reading Bluetooth logs (upstream PR #163).
-- Popup display fix (upstream PR #177).
+- More reliable launch at login (upstream PR [#161](https://github.com/lihaoyun6/AirBattery/pull/161)).
+- The app no longer gets terminated automatically by macOS (upstream PR [#162](https://github.com/lihaoyun6/AirBattery/pull/162)).
+- Lower CPU use when reading Bluetooth logs (upstream PR [#163](https://github.com/lihaoyun6/AirBattery/pull/163)).
+- Popup display fix (upstream PR [#177](https://github.com/lihaoyun6/AirBattery/pull/177)).
 
 ### Known limitations
 
