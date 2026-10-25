@@ -939,3 +939,17 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Échecs :** —
 **Testé sur appareil réel :** liste d'appareils seulement (pas d'AirPods sortis du boîtier pendant le test ; cas couvert par les tests unitaires).
 **Prochaine étape :** PR 6 (Nearcast v2) : décision à prendre avec Côme sur la compatibilité avec le client iOS ; PR 7 (nettoyage) ; puis une release.
+
+---
+
+## 2026-10-25 (suite 20) — Nearcast v2 mis de côté, issues activées
+
+**Contexte :** `main` @ `602ec5c` (PR #40 fusionnée avec l'accord de Côme). Branche `docs/nearcast-v2-todo`.
+
+**Fait :**
+- Nearcast v2 (PR 6 du plan) reporté : il rompt la compatibilité avec la v1 (client iOS, Mac non mis à jour), Côme n'utilise pas Nearcast, et les mesures d'attente de la PR #36 couvrent le plus grave. Côme juge le sujet important : à garder.
+- Les issues étaient **désactivées** sur le dépôt (réglage par défaut d'un fork), alors que le guide et `CONTRIBUTING.md` pointent vers la page Issues. Activées avec l'accord de Côme (`gh repo edit --enable-issues`).
+- Issue [#41](https://github.com/MsieurPafi/AirBattery-Plus/issues/41) « Nearcast v2: a secure protocol » (étiquette `enhancement`), texte versionné dans `docs/dev/issues/nearcast-v2.md`. Ligne « À faire » dans `IDEAS.md`.
+
+**Échecs :** —
+**Prochaine étape :** PR 7 (nettoyage), puis une release.
