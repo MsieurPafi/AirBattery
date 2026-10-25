@@ -2,5 +2,25 @@
 <rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
     <channel>
         <title>AirBattery Plus</title>
+        <item>
+            <title>1.11.0</title>
+            <pubDate>Sun, 25 Oct 2026 19:05:12 +0100</pubDate>
+            <link>https://github.com/MsieurPafi/AirBattery-Plus</link>
+            <sparkle:fullReleaseNotesLink>https://github.com/MsieurPafi/AirBattery-Plus/blob/main/CHANGELOG.md</sparkle:fullReleaseNotesLink>
+            <sparkle:version>1110</sparkle:version>
+            <sparkle:shortVersionString>1.11.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>12.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h3>Changes</h3>
+<ul>
+<li><strong>In-app updates</strong>: AirBattery Plus finds and installs new versions itself, from this repository's releases (Sparkle, turned off since 1.7.0). On its second launch it asks whether to check automatically; <strong>Settings › General › Update</strong> and <strong>Check for Updates…</strong> are back. Updates are installed only if they carry the project's signature (its own key, not the original app's). The only internet access is this check, to GitHub: see <a href="https://github.com/MsieurPafi/AirBattery-Plus/blob/main/docs/guide/en/permissions-privacy.md">Permissions &amp; privacy</a>.</li>
+<li>Versions up to 1.10.0 can't update themselves: install this version by hand.</li>
+</ul>
+<h3>Note</h3>
+<ul>
+<li>After the update, macOS asks again for local network access: allow it.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/MsieurPafi/AirBattery-Plus/releases/download/v1.11.0/AirBattery-Plus-1.11.0.dmg" length="12767805" type="application/octet-stream" sparkle:edSignature="5qx7FLZgY0Ba++/IQVUbAgNTZKPD3egBjRHEx2MGyd5GxiurVyDjbAg4BHi/YiiaAvxQAYkCx/H5McCNuR93Cg=="/>
+        </item>
     </channel>
 </rss>

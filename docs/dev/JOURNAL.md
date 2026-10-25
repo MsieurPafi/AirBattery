@@ -1023,3 +1023,19 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Décisions :** D-026 (remplace D-004)
 **Testé sur appareil réel :** non. Il faut une première version avec Sparkle installée à la main, puis la suivante livrée par Sparkle (Gatekeeper à observer).
 **Prochaine étape :** PR ; puis release de la première version avec Sparkle, installée à la main par Côme, et une seconde pour essayer la mise à jour.
+
+## 2026-10-25 (suite 24) — Release 1.11.0 (pre-release), première version avec Sparkle
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1. Clé privée sauvegardée par Côme (fichier d'export supprimé, vérifié : absent du Bureau). PR #46 fusionnée avec son accord (`main` @ `669f194`). Branche `release/1.11.0`. Numéro choisi avec Côme : 1.11.0 (nouvelle fonction) plutôt que 1.10.1.
+
+**Fait :**
+- `c75e4b7` : version 1.11.0 (`CURRENT_PROJECT_VERSION` 1110). *Unreleased* → `## 1.11.0`, avec la note sur l'accès au réseau local.
+- Build Release propre (`clean build`, `build/DerivedData-release`). DMG `AirBattery-Plus-1.11.0.dmg` depuis un dossier du scratchpad (app + raccourci Applications), `hdiutil verify` OK. SHA-256 `b4b1f2bd18c76a3ed79bc3f9c046636d5e4b52ff0517b03ca3a9a41139398c5f`.
+- App du DMG : 1.11.0 (1110), widget 1.11.0, `SUFeedURL` et `SUPublicEDKey` du fork, pas de `SUEnableAutomaticChecks`, `codesign --verify --deep --strict` OK, équipe `PCH7VR8GPS`, 5 `.lproj`, Sparkle.framework, outils libimobiledevice présents, aucune trace de `demoDevices`.
+- `scripts/update-appcast.sh` sur ce DMG : entrée 1.11.0 signée, ajoutée à `appcast.xml` sur la branche. Signature identique à celle de `sign_update --account io.github.msieurpafi.AirBattery` (ed25519 est déterministe). **Le DMG publié doit être exactement ce fichier**, sinon la signature ne correspond plus.
+- Copies de build désenregistrées (`pluginkit -r`, `lsregister -u`), `build/DerivedData-release` supprimé ; un seul widget enregistré, celui de `/Applications` (1.10.0).
+
+**Ordre de publication :** tag et pre-release avec ce DMG d'abord, fusion de la PR (qui porte `appcast.xml`) ensuite.
+**Échecs :** —
+**Testé sur appareil réel :** en attente de Côme (installation à la main de la 1.11.0).
+**Prochaine étape :** test de Côme, publication, fusion ; puis une 1.11.1 pour essayer une mise à jour livrée par Sparkle (Gatekeeper).
