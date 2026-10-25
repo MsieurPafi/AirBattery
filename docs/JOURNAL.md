@@ -515,3 +515,5 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Testé sur appareil réel :** non (en attente du branchement de l'iPhone Duo par Côme).
 **Pistes ouvertes :** préciser dans l'aide de l'app qu'un iPhone doit être fiable en USB pour la Watch (tâche identité / textes d'aide).
 **Prochaine étape :** résultat du branchement USB ; release 1.7.4 (icône Duo) quand Côme le souhaite.
+
+**Ajout (2026-10-25, suite) :** Côme a branché l'iPhone Duo en USB, l'a déclaré fiable et a activé l'affichage en Wi-Fi. `idevice_id -l` et `-n` voient maintenant l'iPhone (`00008160-…`), et la **Watch est revenue** dans l'app (`Watch6,7`, 67 %). COMPAT note 12 confirmée.
