@@ -555,3 +555,5 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Testé sur appareil réel :** non (à faire par Côme : À propos, demandes d'autorisation, installation de `abtp`).
 **Pistes ouvertes :** l'alignement des colonnes de `abtp` est faux avec des noms accentués ou des emojis (préexistant) ; mention éventuelle de Claude Code dans les crédits du README (au choix de Côme, comme la ligne ChatGPT de l'original).
 **Prochaine étape :** relecture et test par Côme, puis fusion ; ensuite l'icône.
+
+**Ajout (2026-10-25, suite 2) :** test de Côme sur la copie de build : fenêtre À propos, installation de `abtp` depuis les réglages, `abtp`, `abtp --help`, désinstallation et textes des réglages jugés corrects. Ensuite : aucun lien `abtp` ni `airbattery` dans `/usr/local/bin`, copie de build désenregistrée, 1.7.4 de `/Applications` relancée (seul widget enregistré).
