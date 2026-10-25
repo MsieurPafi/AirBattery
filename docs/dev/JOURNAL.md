@@ -1108,3 +1108,13 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Décisions :** D-027
 **Prochaine étape :** au choix de Côme : Nearcast v2 (#41) ; pistes de l'analyse (batterie du Mac sur notification, relecture des accessoires Magic moins fréquente, indexation par identifiant seul).
+
+## 2026-10-25 (suite 30) — CI obligatoire sur `main`
+
+**Fait :**
+- PR #53 fusionnée après son CI (succès, 5 min 10 s ; `main` @ `3c6cade`). Run de `main` après la fusion de #51 : succès ; celui de #52 annulé par la `concurrency` (voulu).
+- À la demande de Côme : ruleset « main: CI required » (`25833609`) créé par `gh api -X POST repos/MsieurPafi/AirBattery-Plus/rulesets` : suppression et force-push interdits, PR obligatoire (0 approbation), vérification `build` de GitHub Actions obligatoire, sans contournement. Relu avec `gh api repos/…/rules/branches/main` : `deletion`, `non_fast_forward`, `pull_request`, `required_status_checks`.
+- Côme a demandé pourquoi l'auto-merge : proposé seulement pour « fusionner quand le CI passe » sans attendre ; pas activé (D-010). Branche `dev` évoquée par Côme : pas nécessaire (D-027, ajout).
+
+**Décisions :** D-027 (ajout)
+**Prochaine étape :** vérifier sur cette PR que la fusion est bloquée tant que le CI n'est pas passé.
