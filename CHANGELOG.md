@@ -2,7 +2,7 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
-## Unreleased
+## 1.8.0 — 2026-10-25 (pre-release)
 
 ### Changes
 
@@ -10,6 +10,10 @@ Changes in this fork compared with the official [AirBattery](https://github.com/
 - **The command line tool is now `abtp`** (was `airbattery`, the same name as the official app's tool). If you had installed it, install it again from Settings › Command Line Tool: the old `airbattery` link is removed when it belongs to AirBattery Plus, never when it belongs to the official app.
 - **New app icon**: green to turquoise with a "+", so AirBattery Plus is easy to tell apart from the official app. On macOS 26 and later it is a Liquid Glass icon, with light, dark and tinted variants (upstream [#187](https://github.com/lihaoyun6/AirBattery/issues/187)).
 - README rewritten for the fork, with credits to the original project and to the contributors whose work was ported.
+
+### Note
+
+- macOS may keep showing the old icon in Finder or the Dock for a while after the update: it caches app icons. It refreshes on its own, or after logging out.
 
 ## 1.7.4 — 2026-10-25 (pre-release)
 
