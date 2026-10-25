@@ -261,7 +261,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
         launchAtLogin = LoginItem.isEnabled
         Log.app.notice("Launch at login: \(self.launchAtLogin, privacy: .public)")
         Log.app.notice("Icon mode: \(self.showOn, privacy: .public)")
-        if nearCast && isGroudIDValid(id: ncGroupID) { netcastService.resume() }
+        if nearCast && isGroupIDValid(id: ncGroupID) { netcastService.resume() }
         if let result = process(path: "/usr/sbin/system_profiler", arguments: ["SPBluetoothDataType", "-json"]) { SPBluetoothDataModel.shared.data = result }
         
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
@@ -310,7 +310,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
         NSApp.dockTile.display()
         if nearCast {
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                netcastService.refeshAll()
+                netcastService.refreshAll()
             }
         }
     }
@@ -386,7 +386,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
                             usleep(2500000)
                             //if !appleMacPrefix.contains(prefix) {
                             if !isAppleDevice {
-                                SPBluetoothDataModel.shared.refeshData { _ in
+                                SPBluetoothDataModel.shared.refreshData { _ in
                                     LogReader.shared.run(.connect)
                                     MagicBattery.shared.getIOBTBattery()
                                     MagicBattery.shared.getOtherBTBattery()
@@ -394,10 +394,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
                             } else {
                                 if let device = AirBatteryModel.getByName(name) {
                                     if ["Trackpad", "Keyboard", "MMouse", "Mouse"].contains(device.deviceType) {
-                                        SPBluetoothDataModel.shared.refeshData { _ in MagicBattery.shared.scanDevices() }
+                                        SPBluetoothDataModel.shared.refreshData { _ in MagicBattery.shared.scanDevices() }
                                     }
                                 } else {
-                                    SPBluetoothDataModel.shared.refeshData { _ in MagicBattery.shared.scanDevices() }
+                                    SPBluetoothDataModel.shared.refreshData { _ in MagicBattery.shared.scanDevices() }
                                 }
                             }
                         }
@@ -407,30 +407,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
         }
     }
     
-    /*func menuWillOpen(_ menu: NSMenu) {
-        dockWindow.orderOut(nil)
-        var allDevices = AirBatteryModel.getAll()
-        let ibStatus = InternalBattery.status
-        if ibStatus.hasBattery { allDevices.insert(ib2ab(ibStatus), at: 0) }
-        let contentViewSwiftUI = popover(fromDock: false, allDevice: allDevices)
-        let contentView = NSHostingView(rootView: contentViewSwiftUI)
-        let hiddenRow = AirBatteryModel.getBlackList().count > 0 ? 1 : 0
-        let allNearcast = getFiles(withExtension: "json", in: ncFolder)
-        var ncCount = 0
-        var ncDeviceCount = 0
-        for jsonUrl in allNearcast {
-            let count = AirBatteryModel.ncGetAll(url: jsonUrl).count
-            if count != 0 {
-                ncCount += 7
-                ncDeviceCount += count
-            }
-        }
-        contentView.frame = NSRect(x: 0, y: 0, width: 352, height: (max(max(allDevices.count,1)+ncDeviceCount,1)+hiddenRow)*37+20+ncCount)
-        let menuItem = NSMenuItem()
-        menuItem.view = contentView
-        statusMenu.removeAllItems()
-        statusMenu.addItem(menuItem)
-    }*/
     
     @objc func togglePopover(_ sender: Any?) {
         if let button = statusBarItem.button, !menuPopover.isShown {
@@ -463,7 +439,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
                 case "writedata" :
                     Log.app.debug("URL command: write data")
                     AirBatteryModel.writeData(force: true)
-                case "reloadwingets" :
+                case "reloadwidgets", "reloadwingets" :  // the misspelled form was the original one
                     Log.app.debug("URL command: reload widgets")
                     AirBatteryModel.writeData(force: true)
                     WidgetCenter.shared.reloadAllTimelines()
@@ -540,7 +516,7 @@ public extension UserDefaults {
     }
 }
 
-func refeshPinnedBar(unpin: String? = nil) {
+func refreshPinnedBar(unpin: String? = nil) {
     var pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
     if pinnedList.isEmpty { return }
     if let unpin = unpin { pinnedList.removeAll(where: { DeviceIdentity.sameName($0, unpin) }) }
@@ -643,7 +619,7 @@ final class Scheduler {
     private func refreshData() {
         // Serial queue: a slow system_profiler (after wake) can't pile up runs
         dataQueue.async {
-            SPBluetoothDataModel.shared.refeshData(completion: { _ in
+            SPBluetoothDataModel.shared.refreshData(completion: { _ in
                 MagicBattery.shared.scanDevices()
                 AirBatteryModel.writeData()
             }, error: {
@@ -654,7 +630,7 @@ final class Scheduler {
 
     private func broadcastNearcast() {
         let ncGroupID = ud.string(forKey: "ncGroupID") ?? ""
-        guard ud.bool(forKey: "nearCast"), isGroudIDValid(id: ncGroupID) else { return }
+        guard ud.bool(forKey: "nearCast"), isGroupIDValid(id: ncGroupID) else { return }
         var allDevices = AirBatteryModel.getAll()
         allDevices.insert(ib2ab(InternalBattery.status), at: 0)
         do {

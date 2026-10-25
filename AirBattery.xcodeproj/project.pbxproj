@@ -26,10 +26,8 @@
 		184ADEE62DDB49C7004791F0 /* InternalBattery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1841D47C2AAA20F80022A1BE /* InternalBattery.swift */; };
 		184ADF002DDB6C9F004791F0 /* AirBatteryApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 184ADEF32DDB6C9F004791F0 /* AirBatteryApp.swift */; };
 		184ADF012DDB6C9F004791F0 /* AppleScript.swift in Sources */ = {isa = PBXBuildFile; fileRef = 184ADEF42DDB6C9F004791F0 /* AppleScript.swift */; };
-		184ADF022DDB6C9F004791F0 /* BTTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 184ADEF52DDB6C9F004791F0 /* BTTool.swift */; };
 		184ADF032DDB6C9F004791F0 /* CommandLineTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 184ADEF62DDB6C9F004791F0 /* CommandLineTool.swift */; };
 		184ADF042DDB6C9F004791F0 /* GroupForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 184ADEF72DDB6C9F004791F0 /* GroupForm.swift */; };
-		184ADF052DDB6C9F004791F0 /* InfoButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 184ADEF82DDB6C9F004791F0 /* InfoButton.swift */; };
 		184ADF062DDB6C9F004791F0 /* Multipeer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 184ADEFA2DDB6C9F004791F0 /* Multipeer.swift */; };
 		184ADF072DDB6C9F004791F0 /* Sparkle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 184ADEFC2DDB6C9F004791F0 /* Sparkle.swift */; };
 		184ADF082DDB6C9F004791F0 /* Supports.swift in Sources */ = {isa = PBXBuildFile; fileRef = 184ADEFD2DDB6C9F004791F0 /* Supports.swift */; };
@@ -137,10 +135,8 @@
 		184ADED12DDB2B37004791F0 /* abtp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = abtp; sourceTree = BUILT_PRODUCTS_DIR; };
 		184ADEF32DDB6C9F004791F0 /* AirBatteryApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirBatteryApp.swift; sourceTree = "<group>"; };
 		184ADEF42DDB6C9F004791F0 /* AppleScript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleScript.swift; sourceTree = "<group>"; };
-		184ADEF52DDB6C9F004791F0 /* BTTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTTool.swift; sourceTree = "<group>"; };
 		184ADEF62DDB6C9F004791F0 /* CommandLineTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandLineTool.swift; sourceTree = "<group>"; };
 		184ADEF72DDB6C9F004791F0 /* GroupForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupForm.swift; sourceTree = "<group>"; };
-		184ADEF82DDB6C9F004791F0 /* InfoButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoButton.swift; sourceTree = "<group>"; };
 		184ADEF92DDB6C9F004791F0 /* logReader.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = logReader.sh; sourceTree = "<group>"; };
 		184ADEFA2DDB6C9F004791F0 /* Multipeer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Multipeer.swift; sourceTree = "<group>"; };
 		184ADEFB2DDB6C9F004791F0 /* Scriptable.sdef */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Scriptable.sdef; sourceTree = "<group>"; };
@@ -289,10 +285,8 @@
 			children = (
 				184ADEF32DDB6C9F004791F0 /* AirBatteryApp.swift */,
 				184ADEF42DDB6C9F004791F0 /* AppleScript.swift */,
-				184ADEF52DDB6C9F004791F0 /* BTTool.swift */,
 				184ADEF62DDB6C9F004791F0 /* CommandLineTool.swift */,
 				184ADEF72DDB6C9F004791F0 /* GroupForm.swift */,
-				184ADEF82DDB6C9F004791F0 /* InfoButton.swift */,
 				184ADEF92DDB6C9F004791F0 /* logReader.sh */,
 				184ADEFA2DDB6C9F004791F0 /* Multipeer.swift */,
 				184ADEFB2DDB6C9F004791F0 /* Scriptable.sdef */,
@@ -556,10 +550,8 @@
 				18F615F92B76439300873AA4 /* AirBatteryModel.swift in Sources */,
 				184ADF002DDB6C9F004791F0 /* AirBatteryApp.swift in Sources */,
 				184ADF012DDB6C9F004791F0 /* AppleScript.swift in Sources */,
-				184ADF022DDB6C9F004791F0 /* BTTool.swift in Sources */,
 				184ADF032DDB6C9F004791F0 /* CommandLineTool.swift in Sources */,
 				184ADF042DDB6C9F004791F0 /* GroupForm.swift in Sources */,
-				184ADF052DDB6C9F004791F0 /* InfoButton.swift in Sources */,
 				184ADF062DDB6C9F004791F0 /* Multipeer.swift in Sources */,
 				184ADF072DDB6C9F004791F0 /* Sparkle.swift in Sources */,
 				184ADF082DDB6C9F004791F0 /* Supports.swift in Sources */,

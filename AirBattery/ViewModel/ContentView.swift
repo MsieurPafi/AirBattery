@@ -10,26 +10,6 @@ import WidgetKit
 import Combine
 //import UserNotifications
 
-/*let test_data: [CGFloat] = [99,80,80,73,70,60,59,51,30,30,25,25,19,18,17,15,12,10,10,9] // 示例数据
-struct BarChartView: View {
-    let data: [CGFloat] // 电量数据，取值范围 0 到 1
-    let barSpacing: CGFloat // 柱子之间的间距
-    let barWidth: CGFloat // 柱子宽度
-
-    var body: some View {
-        GeometryReader { geometry in
-            HStack(alignment: .bottom, spacing: barSpacing) { // 设置底部对齐
-                ForEach(0..<data.count, id: \.self) { index in
-                    let height = (data[index] * geometry.size.height)/100
-                    Capsule()
-                        .fill(Color(getPowerColor(Int(data[index]))))
-                        .frame(width: barWidth, height: height)
-                        .padding(.bottom, -barWidth / 2) // 设置底部平坦
-                }
-            }
-        }
-    }
-}*/
 
 class AppearanceMonitor: ObservableObject {
     @Published var isDarkMode: Bool = false
@@ -416,7 +396,7 @@ struct popover: View {
                     Spacer()
                     if nearCast {
                         Button(action: {
-                            netcastService.refeshAll()
+                            netcastService.refreshAll()
                             if fromDock {
                                 dockWindow.orderOut(nil)
                             } else {
@@ -585,7 +565,7 @@ struct popover: View {
                                                             pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
                                                             pinnedList.append(allDevices[index].deviceName)
                                                             ud.set(pinnedList, forKey: "pinnedList")
-                                                            refeshPinnedBar()
+                                                            refreshPinnedBar()
                                                         }, label: {
                                                             Image("pin.circle")
                                                                 .resizable().scaledToFit()
@@ -598,7 +578,7 @@ struct popover: View {
                                                         Button(action: {
                                                             pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
                                                             pinnedList.removeAll(where: { DeviceIdentity.sameName($0, allDevices[index].deviceName) })
-                                                            refeshPinnedBar(unpin: allDevices[index].deviceName)
+                                                            refreshPinnedBar(unpin: allDevices[index].deviceName)
                                                             ud.set(pinnedList, forKey: "pinnedList")
                                                         }, label: {
                                                             Image("pin.circle.fill")
@@ -636,7 +616,7 @@ struct popover: View {
                                                         ud.set(blackList, forKey: "blackList")
                                                         let pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
                                                         if pinnedList.containsDeviceName(allDevices[index].deviceName){
-                                                            refeshPinnedBar()
+                                                            refreshPinnedBar()
                                                         }
                                                     }, label: {
                                                         Image("eye.slash.circle")
@@ -666,80 +646,6 @@ struct popover: View {
                                     overStackNC = -1
                                     if overStack != index { overStack = index }
                                 }
-                                /*.contextMenu{
-                                    if nearCast && ["Trackpad", "Keyboard", "Mouse", "MMouse"].contains(allDevices[index].deviceType) {
-                                        Section(header: Text("Transmit to...").textCase(nil)) {
-                                            Divider()
-                                            ForEach(netcastService.transceiver.availablePeers, id: \.self) { peer in
-                                                Button (action:{
-                                                    createNotification(title: "Transmitting".local,
-                                                                       message: String(format: "%@ -> %@".local, allDevices[index].deviceName, peer.name),
-                                                                       interval: 1)
-                                                    if fromDock {
-                                                        dockWindow.orderOut(nil)
-                                                    } else {
-                                                        menuPopover.performClose(nil)
-                                                    }
-                                                    DispatchQueue.global(qos: .background).async {
-                                                        let ret = BTTool.disconnect(mac: allDevices[index].deviceID)
-                                                        if ret {
-                                                            netcastService.transDevice(device: allDevices[index], to: peer.name)
-                                                        } else {
-                                                            createNotification(title: "Transmission Failed".local,
-                                                                               message: String(format: "Failed to disconnect %@!".local, allDevices[index].deviceName))
-                                                        }
-                                                    }
-                                                }, label:{ Text(peer.name)})
-                                            }
-                                            if netcastService.transceiver.availablePeers.isEmpty { Text("No Available Peers".local) }
-                                        }
-                                    }
-                                    if allDevices[index].deviceID != "@MacInternalBattery" {
-                                        if !pinnedList.containsDeviceName(allDevices[index].deviceName) {
-                                            Button(action: {
-                                                pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
-                                                pinnedList.append(allDevices[index].deviceName)
-                                                ud.set(pinnedList, forKey: "pinnedList")
-                                                refeshPinnedBar()
-                                            }) {
-                                                Label("Pin to Menu Bar", systemImage: "")
-                                            }
-                                        } else {
-                                            Button(action: {
-                                                pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
-                                                pinnedList.removeAll(where: { DeviceIdentity.sameName($0, allDevices[index].deviceName) })
-                                                ud.set(pinnedList, forKey: "pinnedList")
-                                                refeshPinnedBar()
-                                            }) {
-                                                Label("Unpin This Device", systemImage: "")
-                                            }
-                                        }
-                                        Divider()
-                                        Menu(content: {
-                                        }, label: {
-                                            Label("Transfer to...", systemImage: "")
-                                        })
-                                        Divider()
-                                        if #available(macOS 14, *) {
-                                            Button(action: {
-                                                copyToClipboard(allDevices[index].deviceName)
-                                                _ = createAlert(title: "Device Name Copied".local,
-                                                                message: String(format: "Device name: \"%@\" has been copied to the clipboard.".local, allDevices[index].deviceName),
-                                                                button1: "OK".local).runModal()
-                                            }) {
-                                                Label("Copy Device Name", systemImage: "")
-                                            }
-                                        }
-                                        Button(action: {
-                                            hidden.append(index)
-                                            var blackList = (ud.stringArray(forKey: "blackList") ?? [])
-                                            blackList.append(allDevices[index].deviceName)
-                                            ud.set(blackList, forKey: "blackList")
-                                        }) {
-                                            Label("Hide From List", systemImage: "")
-                                        }
-                                    }
-                                }*/
                             }
                             if index != allDevices.count-1 { Divider() }
                         }
@@ -768,7 +674,7 @@ struct popover: View {
                                         ud.set(blackList, forKey: "blackList")
                                         let pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
                                         if pinnedList.containsDeviceName(hiddenDevices[index].deviceName){
-                                            refeshPinnedBar()
+                                            refreshPinnedBar()
                                         }
                                     }, label: {
                                         Image(getDeviceIcon(hiddenDevices[index]))
@@ -933,7 +839,7 @@ struct nearcastView: View {
                                             pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
                                             pinnedList.append(devices[index].deviceName)
                                             ud.set(pinnedList, forKey: "pinnedList")
-                                            refeshPinnedBar()
+                                            refreshPinnedBar()
                                         }, label: {
                                             Image("pin.circle")
                                                 .resizable().scaledToFit()
@@ -947,7 +853,7 @@ struct nearcastView: View {
                                             pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
                                             pinnedList.removeAll(where: { DeviceIdentity.sameName($0, devices[index].deviceName) })
                                             ud.set(pinnedList, forKey: "pinnedList")
-                                            refeshPinnedBar()
+                                            refreshPinnedBar()
                                         }, label: {
                                             Image("pin.circle.fill")
                                                 .resizable().scaledToFit()

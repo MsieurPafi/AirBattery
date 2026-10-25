@@ -26,6 +26,9 @@ Changes in this fork compared with the official [AirBattery](https://github.com/
 - **Battery alerts, pins and hidden devices keep working when the app's language changes**: the AirPods case was saved as "(Case)" in English and is now shown as "(boîtier)" in French, so lists saved before 1.9.0 no longer matched it.
 - **Two iPhones (or iPads, Watches) with the same name are shown as two devices** instead of overwriting each other. A device that reports the same ID under a new name stays one device, and the two forms of Bluetooth addresses (`aa-bb-…`, `AA:BB:…`) are recognized as one.
 
+- The URL command `airbattery-plus://reloadwidgets` is accepted with this spelling (the original misspelled `reloadwingets` still works).
+- About 660 lines of unused code removed (old features left commented out, unused helpers and views).
+
 ### Security
 
 - **Nearcast**: data from another Mac can no longer be written outside the Nearcast folder, files are written atomically, a peer can no longer make this Mac connect a Bluetooth device, and unknown commands are no longer echoed back (that echo could be used to forge notifications). A stronger Nearcast protocol is planned.

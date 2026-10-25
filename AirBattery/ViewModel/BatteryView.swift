@@ -149,7 +149,7 @@ struct mainBatteryView: View {
                     .frame(width: 16, height: 16)
             }
         }
-        .onReceive(dockTimer) { t in refeshPinnedBar() }
+        .onReceive(dockTimer) { t in refreshPinnedBar() }
         .onReceive(mainTimer) { t in
             if item.hasBattery {
                 // One read per second (it was read twice, ~15 IOKit properties each time)

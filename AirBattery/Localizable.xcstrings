@@ -85,29 +85,6 @@
     "%@": {
       "shouldTranslate": false
     },
-    "%@ from %@": {
-      "extractionState": "manual",
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ de %@"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@, 来自: %@"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@, 來自: %@"
-          }
-        }
-      }
-    },
     "%@ · %lld dBm": {
       "localizations": {
         "en": {
@@ -1024,29 +1001,6 @@
         }
       }
     },
-    "Connection Failed": {
-      "extractionState": "manual",
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Échec de la connexion"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "连接失败"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "連線失敗"
-          }
-        }
-      }
-    },
     "Connection timed out. Move the device closer, unlock it and open Personal Hotspot, then retry.": {
       "extractionState": "manual",
       "localizations": {
@@ -1221,29 +1175,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "刪除"
-          }
-        }
-      }
-    },
-    "Device Connected": {
-      "extractionState": "manual",
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appareil connecté"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "设备已连接"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "裝置已連線"
           }
         }
       }
@@ -1767,29 +1698,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "請輸入裝置名稱"
-          }
-        }
-      }
-    },
-    "Failed to disconnect %@!": {
-      "extractionState": "manual",
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Impossible de déconnecter %@ !"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "无法断开与 \"%@\" 的连接!"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "無法斷開與 \"%@\" 的連線!"
           }
         }
       }
@@ -2509,29 +2417,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "永不"
-          }
-        }
-      }
-    },
-    "No Available Peers": {
-      "extractionState": "manual",
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aucun autre Mac disponible"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "没有可用的接收端"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "沒有可用的接收端"
           }
         }
       }
@@ -3631,75 +3516,6 @@
         }
       }
     },
-    "Transmission Failed": {
-      "extractionState": "manual",
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Échec de la transmission"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "传送设备失败"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "傳送裝置失敗"
-          }
-        }
-      }
-    },
-    "Transmit to...": {
-      "extractionState": "manual",
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Transmettre à…"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "将设备传送至..."
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "將裝置傳送至..."
-          }
-        }
-      }
-    },
-    "Transmitting": {
-      "extractionState": "manual",
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Transmission"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "正在传送设备"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "正在傳送裝置"
-          }
-        }
-      }
-    },
     "Try to get the battery usage of any Bluetooth device that AirBattery Plus can find\n\nWARNING: This is a BETA feature and may cause unexpected errors!": {
       "extractionState": "manual",
       "localizations": {
@@ -3926,29 +3742,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "60分鐘後"
-          }
-        }
-      }
-    },
-    "cannot connect to your device!": {
-      "extractionState": "manual",
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "impossible de se connecter à votre appareil !"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "无法连接指定的设备!"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "無法連線指定的裝置!"
           }
         }
       }

@@ -320,7 +320,7 @@ struct NearcastView: View {
                 SToggle("Enable Nearcast", isOn: $nearCast)
                     .onChange(of: nearCast) { newValue in
                         if newValue {
-                            if ncGroupID != "" && isGroudIDValid(id: ncGroupID) {
+                            if ncGroupID != "" && isGroupIDValid(id: ncGroupID) {
                                 netcastService.resume()
                             } else {
                                 DispatchQueue.main.async { nearCast = false; ncGroupID = "" }
@@ -351,7 +351,7 @@ struct NearcastView: View {
                     .buttonStyle(.plain)
                     .disabled(nearCast)
                     Button(action: {
-                        if ncGroupID != "" && isGroudIDValid(id: ncGroupID) {
+                        if ncGroupID != "" && isGroupIDValid(id: ncGroupID) {
                             copyToClipboard(ncGroupID)
                             _ = createAlert(title: "Group ID Copied".local,
                                             message: String(format: "Group ID has been copied to the clipboard.".local, ncGroupID),
