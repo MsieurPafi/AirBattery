@@ -2,11 +2,15 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
-## Unreleased
+## 1.7.4 — 2026-10-25 (pre-release)
 
 ### New
 
 - **iPhone Duo icon** (model `iPhone19,4`), drawn after the one iOS shows on the phone itself. It used the generic iPhone icon.
+
+### Note
+
+- **New iPhone and no Apple Watch?** The Watch battery is read through the iPhone over USB or Wi-Fi, not Bluetooth. Plug the new iPhone into the Mac once, tap "Trust", and in Finder enable "Show this iPhone when on Wi-Fi".
 
 ## 1.7.3 — 2026-10-22 (pre-release)
 
