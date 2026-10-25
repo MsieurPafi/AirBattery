@@ -750,3 +750,20 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Échecs :** —
 **Testé sur appareil réel :** lecture des journaux système sur le Mac de Côme.
 **Prochaine étape :** au choix de Côme : analyse de l'app, renommage du dépôt, mises à jour GitHub / CI, indexation par identifiant.
+
+---
+
+## 2026-10-25 (suite 13) — Dépôt renommé `AirBattery-Plus`
+
+**Contexte :** macOS 27.0.1 (26A434), `main` @ `c4d3701`. Branche `chore/repo-rename`.
+
+**Fait :**
+- Récapitulatif des tâches fait avec Côme ; ordre proposé : renommage, analyse de l'app, indexation par identifiant (avec tests unitaires), mises à jour et CI. Côme commence par le renommage.
+- `gh repo rename AirBattery-Plus --repo MsieurPafi/AirBattery --yes` → `MsieurPafi/AirBattery-Plus`, toujours fork de `lihaoyun6/AirBattery`. D-024.
+- Remote `origin` de `src/` → `https://github.com/MsieurPafi/AirBattery-Plus.git` (`git fetch` OK).
+- Liens mis à jour : `Credits.rtf` (Base, fr, zh-Hans, zh-Hant), guide EN et FR (prise en main, dépannage), `CONTRIBUTING.md`, `CLAUDE.md`. Les README utilisent des liens relatifs (rien à changer).
+- Vérification : nouvelles adresses en 200, anciennes en 301 vers les nouvelles (dépôt et page de la release v1.9.0).
+
+**Échecs :** —
+**Testé sur appareil réel :** sans objet (les crédits de l'app installée garderont l'ancien lien, redirigé, jusqu'à la prochaine version).
+**Prochaine étape :** analyse de l'app.

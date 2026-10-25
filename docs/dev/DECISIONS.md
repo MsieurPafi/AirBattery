@@ -198,3 +198,11 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 **Pourquoi :** captures reproductibles sans toucher aux réglages de l'utilisateur ; absent des builds Release.
 **Conséquences :** pour refaire les captures : build Debug, `open "…/AirBattery Plus.app" --args -demoDevices YES -AppleLanguages "(en)"`, retirer et rajouter les widgets (sinon ils gardent leur ancien instantané, la demande de rechargement venant d'une autre copie de l'app), captures sur un écran Retina. Le popover en mode clair se capture **par zone** sur fond clair, puis se découpe : en capture « fenêtre », le verre est rendu sans ce qu'il y a derrière (gris neutre). Procédure détaillée dans `CONTRIBUTING.md`.
 **Validée par Côme :** oui (2026-10-25)
+
+## D-024 — Dépôt renommé `MsieurPafi/AirBattery-Plus`   (2026-10-25, statut : acceptée)
+**Contexte :** le dépôt s'appelait encore `MsieurPafi/AirBattery`, comme l'app d'origine, alors que l'app s'appelle AirBattery Plus (D-017). Côme a proposé « AirBattery Plus » ; GitHub n'accepte pas d'espace.
+**Options envisagées :** `AirBattery-Plus` / `AirBatteryPlus` / `airbattery-plus`.
+**Décision :** `AirBattery-Plus`, choisi par Côme : se lit comme le nom de l'app et correspond aux noms des DMG (`AirBattery-Plus-x.y.z.dmg`). Renommé avec `gh repo rename` ; le dépôt reste un fork de `lihaoyun6/AirBattery`.
+**Pourquoi :** cohérence du nom partout, avant de mettre en place les mises à jour et l'intégration continue, dont les adresses dépendent du nom du dépôt.
+**Conséquences :** GitHub redirige les anciennes adresses (vérifié : 301 vers le nouveau nom, y compris pour les pages de release). Mis à jour : remote `origin` de `src/`, crédits de l'app (4 langues), guide (EN et FR), `CONTRIBUTING.md`, `CLAUDE.md` (commandes `gh … --repo`). Laissés tels quels : les anciennes entrées du journal et des décisions (D-010 cite encore l'ancien nom), les notes des releases déjà publiées. Bundle IDs, réglages et schéma d'URL inchangés. Ne jamais recréer un dépôt nommé `MsieurPafi/AirBattery` : il casserait les redirections.
+**Validée par Côme :** oui (2026-10-25)

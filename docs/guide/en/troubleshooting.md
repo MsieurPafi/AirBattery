@@ -30,4 +30,4 @@ Launch AirBattery Plus. If the widget still looks stuck: **Settings â€º Widget â
 macOS caches app icons. It refreshes on its own, or after you log out.
 
 **Something else is wrong.**
-Open an issue on [GitHub](https://github.com/MsieurPafi/AirBattery/issues) (in English or French) with your macOS version, the app version and, if you can, the app's logs (see [Permissions and privacy](permissions-privacy.md#logs)).
+Open an issue on [GitHub](https://github.com/MsieurPafi/AirBattery-Plus/issues) (in English or French) with your macOS version, the app version and, if you can, the app's logs (see [Permissions and privacy](permissions-privacy.md#logs)).

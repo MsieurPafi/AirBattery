@@ -9,7 +9,7 @@
 
 ## Install
 
-1. Download the DMG from the [releases page](https://github.com/MsieurPafi/AirBattery/releases). Each release lists the file's SHA-256 checksum.
+1. Download the DMG from the [releases page](https://github.com/MsieurPafi/AirBattery-Plus/releases). Each release lists the file's SHA-256 checksum.
 2. Open the DMG and drag **AirBattery Plus** to Applications.
 3. The app is not notarized by Apple: on first launch, macOS blocks it. Open **System Settings › Privacy & Security**, scroll down and click **Open Anyway** next to AirBattery Plus.
 
