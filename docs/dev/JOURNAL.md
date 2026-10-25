@@ -982,3 +982,21 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Testé sur appareil réel :** oui (copie de test sur le Mac de Côme).
 **Prochaine étape :** release 1.10.0 (PR 1 à 5 et 7 depuis 1.9.0).
+
+---
+
+## 2026-10-25 (suite 22) — Release 1.10.0 (pre-release)
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1. PR #43 fusionnée avec l'accord de Côme (`main` @ `767e1a6`). Branche `release/1.10.0`.
+
+**Fait :**
+- `45190bb` : version 1.10.0 (`CURRENT_PROJECT_VERSION` 1100, qui reste supérieur à 190). Changelog réorganisé en Corrections, Performances, Changements et Sécurité : les entrées s'étaient accumulées PR après PR sous un seul titre.
+- Build Release propre : 1.10.0 (1100), pas de `SUFeedURL`, `codesign --verify --deep --strict` OK, `fr.lproj` présent, aucune trace du mode démo, nouveau `logReader.sh`, `BTTool`/`InfoButton` absents, `ideviceinfo 1.4.0`, `abtp --help` OK.
+- DMG depuis un dossier temporaire du scratchpad, `hdiutil verify` OK ; copies de build (Release, DMG, Debug) désenregistrées et `build/DerivedData-release` supprimé avant l'installation.
+- Test de Côme : 1.10.0 installée, « tout fonctionne », y compris la checklist : appareils, « Ouvrir à la connexion » (une seule entrée dans Réglages Système), widget.
+- **Vérification avant publication** (procédure depuis la suite 11) : PlistBuddy sur `/Applications` → 1.10.0 (1100), `fr.lproj` présent, processus lancé à 18:41, widget 1.10.0 enregistré, aucun nouveau rapport de plantage.
+- Tag `v1.10.0` sur `45190bb`. Pre-release publiée : https://github.com/MsieurPafi/AirBattery-Plus/releases/tag/v1.10.0. SHA-256 `1b3e22e6145a097883572a81a65a5ce7f1d665ff3f7356cbc88faf2fe85bd77f`, identique après retéléchargement.
+
+**Échecs :** —
+**Testé sur appareil réel :** oui, par Côme.
+**Prochaine étape :** au choix de Côme : mises à jour depuis GitHub / CI ; Nearcast v2 (#41).
