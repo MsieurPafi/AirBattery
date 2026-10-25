@@ -19,7 +19,14 @@ struct iBattery {
 }
 
 class InternalBattery {
-    static var status: iBattery = getPowerState()
+    // Written on the main thread twice a second, read from background threads (widget data,
+    // Nearcast, AppleScript): unsynchronized, it is the same kind of race as upstream #215.
+    private static let statusLock = NSLock()
+    private static var _status: iBattery = getPowerState()
+    static var status: iBattery {
+        get { statusLock.lock(); defer { statusLock.unlock() }; return _status }
+        set { statusLock.lock(); defer { statusLock.unlock() }; _status = newValue }
+    }
     
     var name: String?
     var timeToFull: Int?

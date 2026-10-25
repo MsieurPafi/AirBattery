@@ -38,13 +38,16 @@ class BTDBattery {
     }
     
     static func getConnected(mac: Bool = false) -> [String]{
-        guard var bluetoothDevices = IOBluetoothDevice.pairedDevices() as? [IOBluetoothDevice] else { return [] }
-        bluetoothDevices = bluetoothDevices.filter({ $0.isConnected() })
-        if mac {
-            let devices = bluetoothDevices.map({ ($0.addressString ?? "").uppercased().replacingOccurrences(of: "-", with: ":") })
-            return devices.filter({ $0 != "" })
+        // Called from background threads: IOBluetooth objects stay on the main thread
+        return onMainThread {
+            guard var bluetoothDevices = IOBluetoothDevice.pairedDevices() as? [IOBluetoothDevice] else { return [] }
+            bluetoothDevices = bluetoothDevices.filter({ $0.isConnected() })
+            if mac {
+                let devices = bluetoothDevices.map({ ($0.addressString ?? "").uppercased().replacingOccurrences(of: "-", with: ":") })
+                return devices.filter({ $0 != "" })
+            }
+            return bluetoothDevices.map({ $0.name ?? "" }).filter({ $0 != "" })
         }
-        return bluetoothDevices.map({ $0.name ?? "" }).filter({ $0 != "" })
     }
     
     static func getOtherDevice(last: String = "10m", timeout: Int = 0) {

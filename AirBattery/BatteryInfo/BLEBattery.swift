@@ -201,6 +201,8 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
     /// cycle kept the Mac from sleeping (upstream #132).
     private var knownNonBatteryPeripherals: Set<UUID> = []
     private var batteryPeripherals: Set<UUID> = []
+    /// BLE devices macOS keeps connected (HID mice and keyboards), found by readConnectedPeripherals.
+    private var systemConnectedPeripherals: Set<UUID> = []
     private var iosConnectionPolicy: IOSBLEConnectionPolicy
     private var iosServicesRemaining: [UUID: Int] = [:]
     private var iosReadsRemaining: [UUID: Int] = [:]
@@ -282,6 +284,7 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
                 if now - device.lastUpdate < refreshAge { continue }
             }
             retainPeripheral(peripheral)
+            systemConnectedPeripherals.insert(identifier)
             if peripheral.state == .connected {
                 // Still connected from a previous read: just read the level again.
                 let level = peripheral.services?
@@ -362,7 +365,12 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
     
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         peripheral.delegate = self
-        peripheral.discoverServices(nil)
+        // A device macOS keeps connected only needs its battery service
+        if systemConnectedPeripherals.contains(peripheral.identifier) {
+            peripheral.discoverServices([CBUUID(string: "180F")])
+        } else {
+            peripheral.discoverServices(nil)
+        }
     }
 
     func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
@@ -401,6 +409,11 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
                             if iosConnectionPolicy.isAuthorized(peripheral.identifier) {
                                 if let device = AirBatteryModel.getByID(peripheral.identifier.uuidString) {
                                     if now - device.lastUpdate > refreshAge { connectIOSPeripheral(peripheral) }
+                                } else if let device = AirBatteryModel.getByName(deviceName) {
+                                    // Read over USB or Wi-Fi (by its UDID): Bluetooth only takes over
+                                    // when that source has gone quiet. Connecting every minute anyway
+                                    // made both sources re-read the iPhone (AUDIT-2026-10-25, 1.6).
+                                    if now - device.lastUpdate > 3 * Double(60 * updateInterval) { connectIOSPeripheral(peripheral) }
                                 } else {
                                     connectIOSPeripheral(peripheral)
                                 }
@@ -485,7 +498,10 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
             iosServicesRemaining[identifier, default: 1] -= 1
             finishIOSConnectionIfReady(peripheral)
         }
-        if clear && !isIOSConnection {
+        // Releasing the peripheral closes the app's connection. Keep it for devices macOS
+        // keeps connected anyway (an MX mouse): reconnecting them every minute fired the
+        // app's own Bluetooth connect handler each time (AUDIT-2026-10-25, 1.1).
+        if clear && !isIOSConnection && !systemConnectedPeripherals.contains(identifier) {
             if let index = peripherals.firstIndex(of: peripheral) { peripherals.remove(at: index) }
         }
         
@@ -526,7 +542,9 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
                 }
                 bleDevicesLevel[deviceName] = data[0]
                 if var device = AirBatteryModel.getByName(deviceName) {
-                    device.deviceID = peripheral.identifier.uuidString
+                    // Keep the UDID of an iPhone or iPad also read over USB or Wi-Fi: that source
+                    // finds it by this ID, and would otherwise re-read it every 15 s.
+                    if !isIOSConnection { device.deviceID = peripheral.identifier.uuidString }
                     device.batteryLevel = level
                     device.lastUpdate = now
                     if charging != -1 { device.isCharging = charging }

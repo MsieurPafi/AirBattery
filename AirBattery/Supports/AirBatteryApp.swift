@@ -361,12 +361,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
         }
     }
     
+    /// Last time a connection was handled, by Bluetooth address (main thread only).
+    private var lastConnectHandled: [String: Date] = [:]
+
     @objc func deviceIsConnected(notification: IOBluetoothUserNotification, fromDevice device: IOBluetoothDevice) {
         if readBTHID {
             let now = Date()
             if now.timeIntervalSince(startTime) >= 10 {
                 if let name = device.name, let macAdd = device.addressString {
                     if AirBatteryModel.checkIfBlocked(name: name) { return }
+                    // A device reconnecting in a loop must not start a full read each time
+                    // (system_profiler, logs): at most one per device and per minute.
+                    if let last = lastConnectHandled[macAdd], now.timeIntervalSince(last) < 60 { return }
+                    lastConnectHandled[macAdd] = now
                     //if let prefix = getFirstNCharacters(of: macAdd, count: 8) {
                         Log.bluetooth.notice("\(name) (\(macAdd)) connected")
                         // Read everything from the IOBluetoothDevice here on the main thread.

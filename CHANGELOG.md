@@ -15,6 +15,10 @@ Changes in this fork compared with the official [AirBattery](https://github.com/
 - `abtp`: the minutes since the last update were negative in `--json`; `--csv` now quotes device names and gives levels as numbers.
 - The Bluetooth and HID scans were started by their timers with an invalid argument.
 
+- **Less Bluetooth traffic**: the app no longer reconnects every minute to Bluetooth LE mice and keyboards that macOS keeps connected (such as a Logitech MX): it just reads their level again. With "Discover iOS devices via Bluetooth", an iPhone also read over USB or Wi-Fi is no longer re-read over Bluetooth every minute, nor over USB/Wi-Fi every 15 s. Each reconnection used to start a full read (`system_profiler`, logs).
+- A device reconnecting in a loop starts at most one full read per minute.
+- Possible crashes: Bluetooth devices are now read on the main thread only, and the Mac's battery status is protected against concurrent access (same kind of crash as upstream #215).
+
 ### Security
 
 - **Nearcast**: data from another Mac can no longer be written outside the Nearcast folder, files are written atomically, a peer can no longer make this Mac connect a Bluetooth device, and unknown commands are no longer echoed back (that echo could be used to forge notifications). A stronger Nearcast protocol is planned.
