@@ -71,5 +71,6 @@ Réactivées par D-026 (désactivées de la 1.7.0 à la 1.10.0, D-004) :
 ## Outils de développement
 
 - Mode démo (builds Debug, `-demoDevices YES`, D-023) pour les captures d'écran.
+- Intégration continue (D-027) : `.github/workflows/ci.yml` (image `xcode-27`), contrôles rapides dans `scripts/ci-checks.sh`, `swift test`, builds Debug et Release non signés. Ne publie rien.
 - Essais d'une copie de test : désenregistrer ensuite son widget (`pluginkit -r`, `lsregister -u`). Pour tester `abtp` ou les URL, l'enregistrer temporairement comme gestionnaire du schéma (JOURNAL 2026-10-25 suite 21).
 
