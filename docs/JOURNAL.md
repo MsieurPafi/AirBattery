@@ -609,3 +609,22 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Testé sur appareil réel :** oui, par Claude (journalisation sur le Mac de Côme).
 **Pistes ouvertes :** vérifier dans la prochaine release que l'app installée n'a pas la même erreur d'autorisation des notifications.
 **Prochaine étape :** PR, fusion par Côme.
+
+---
+
+## 2026-10-25 (suite 6) — Fenêtre du Dock en Liquid Glass
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, `main` @ `9971a5b`. Branche `ui/liquid-glass-dock-alerts`.
+
+**Fait :**
+- Alertes : `NSAlert` standard (`createAlert` + `runModal`), déjà en Liquid Glass avec le SDK 27 : vérifié sur capture de Côme (astuce « Displaying AirBattery Plus on the Dock… »). Rien à changer.
+- Fenêtre du Dock (`applicationShouldHandleReopen`) : `NSGlassEffectView` (18 pt), ombre, géométrie du popover (`ListMetrics.dockHeaderTopSpacing` = marge du popover + 2,5 pt). D-020.
+- 1er essai : hauteur mesurée par `fittingSize` avant affichage → 72 pt (liste vide jusqu'au `onAppear`) ; la fenêtre grandissait ensuite vers le bas et était coupée par le bas de l'écran (capture de Côme, écran externe).
+- 2e essai : `sizingOptions = []` + mesure dans la fenêtre → 0 pt (journal : `estimated height 72.000000, fitted 0.000000, frame {{1951, 76}, {353, 0}}`) : fenêtre réduite à un trait.
+- 3e essai (retenu) : formule de hauteur existante + marges Liquid Glass, `sizingOptions = []`, fenêtre bornée à l'écran visible. Journal : `Dock window frame {{1938, 76}, {353, 237}}`. Validé par Côme sur les écrans interne et externe.
+- Observation : la fenêtre À propos et l'alerte de la copie de build montraient l'**ancienne icône verte**, alors que le Finder, `NSRunningApplication.icon` et le catalogue compilé ont la nouvelle. Hypothèse : cache d'icônes de macOS pour cette copie. À confirmer sur l'app installée.
+
+**Échecs :** voir les essais 1 et 2 ci-dessus.
+**Testé sur appareil réel :** oui, par Côme.
+**Pistes ouvertes :** icône de l'À propos (ci-dessus).
+**Prochaine étape :** PR, fusion par Côme.
