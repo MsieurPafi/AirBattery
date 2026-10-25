@@ -21,7 +21,9 @@
 	<false/>
 	<key>OSAScriptingDefinition</key>
 	<string>Scriptable</string>
-	<key>SUEnableAutomaticChecks</key>
-	<false/>
+	<key>SUFeedURL</key>
+	<string>https://raw.githubusercontent.com/MsieurPafi/AirBattery-Plus/main/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>uUnzqQIUgDEL6VMjBtNE8PfnsYDMrS8Tx/Kr6w8R7H8=</string>
 </dict>
 </plist>

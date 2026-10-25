@@ -96,6 +96,14 @@ The bundled libimobiledevice tools are built by `scripts/build-libimobiledevice.
 - **The app** is in English and French, with Chinese (simplified and traditional) translations that are out of date: updates are welcome. Translations live in String Catalogs (`AirBattery/Localizable.xcstrings`, `AirBattery/InfoPlist.xcstrings`): open them in Xcode to see, language by language, which phrases are missing.
 - **The user guide** is written in English (`docs/guide/en/`) and mirrored in French (`docs/guide/fr/`), like the README (`README.fr.md`). A change to either updates both languages in the same pull request.
 
+## Releases
+
+Maintainer only: updates are signed with the project's EdDSA key, which stays in the maintainer's keychain.
+
+1. Bump `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` (Sparkle compares the latter), and turn *Unreleased* in `CHANGELOG.md` into a `## X.Y.Z` section.
+2. Build in Release, make `AirBattery-Plus-X.Y.Z.dmg` (the app and an Applications shortcut) and attach it to the GitHub release `vX.Y.Z`.
+3. `scripts/update-appcast.sh AirBattery-Plus-X.Y.Z.dmg` adds the version to `appcast.xml`, signed, with its changelog section as release notes. Commit it and get it onto `main`: installed copies read the feed from there, so the update is offered only once the DMG is online.
+
 ## License
 
 By contributing, you agree that your work is published under the [AGPL-3.0](LICENSE), like the rest of the project.

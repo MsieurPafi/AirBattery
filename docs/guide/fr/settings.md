@@ -9,6 +9,7 @@ Ouvrez les réglages avec ⚙︎ en haut de la liste des appareils. Les valeurs 
 - **Ouvrir à la connexion** [désactivé] : ouvrir l'app à l'ouverture de session.
 - **Afficher AirBattery Plus** : Dock, Barre des menus, Les deux ou Aucun [Barre des menus]. Voir [Utiliser l'app](using-the-app.md#affichage).
 - **Outil en ligne de commande** : installe ou supprime `abtp` ([Ligne de commande](command-line.md)).
+- **Mise à jour › Rechercher automatiquement les mises à jour** : demandé au deuxième lancement de l'app. **Télécharger automatiquement les mises à jour** les installe sans demander d'abord. **Rechercher des mises à jour…** (en bas des réglages) vérifie tout de suite. Voir [Prise en main](getting-started.md#mise-à-jour).
 
 ## Barre des menus et Dock
 

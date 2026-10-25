@@ -11,7 +11,7 @@ Carte du code, à enrichir au fil des sessions. Point de départ : relevé du 19
 | AirBatteryHelper | `AirBatteryHelper/` | Lancement au login : inscrit par `LoginItem` (`AirBatteryApp.swift`), via `SMAppService.loginItem` sur macOS 13+ et `SMLoginItemSetEnabled` sur macOS 12 | |
 | abt | `abt/` | CLI, produit `abtp` (D-017) | |
 
-Réglages : `MACOSX_DEPLOYMENT_TARGET = 12.0` (D-007), `SWIFT_VERSION = 5.0`, hardened runtime. Dépendances SPM : Sparkle 2.6.2 (désactivé), MultipeerKit 0.4.0, swift-argument-parser 1.5.0.
+Réglages : `MACOSX_DEPLOYMENT_TARGET = 12.0` (D-007), `SWIFT_VERSION = 5.0`, hardened runtime. Dépendances SPM : Sparkle 2.6.2 (D-026), MultipeerKit 0.4.0, swift-argument-parser 1.5.0.
 
 Dossier `Shared/` (groupe synchronisé, compilé dans les 4 targets) :
 - `AppIdentifiers.swift` (D-006) ;
@@ -63,7 +63,10 @@ Les crédits (`*.lproj/Credits.rtf`) et `wificonnection.c` mentionnent toujours 
 
 ## Mises à jour (Sparkle)
 
-Désactivées (D-004, `994dca4`) : flag `updatesEnabled = false` dans `Supports/Sparkle.swift`. L'updater n'est jamais démarré, l'UI est masquée, `Info.plist` n'a plus de `SUFeedURL` ni de `SUPublicEDKey`.
+Réactivées par D-026 (désactivées de la 1.7.0 à la 1.10.0, D-004) :
+- `Info.plist` : `SUFeedURL` = `https://raw.githubusercontent.com/MsieurPafi/AirBattery-Plus/main/appcast.xml`, `SUPublicEDKey` = clé du fork. Pas de `SUEnableAutomaticChecks` : Sparkle demande l'autorisation au deuxième lancement.
+- `Supports/Sparkle.swift` : `updatesEnabled` (désormais `true`) démarre l'updater (`AirBatteryApp.swift`) et affiche « Mise à jour » et « Rechercher des mises à jour… » dans les réglages généraux.
+- `appcast.xml` à la racine, mis à jour par `scripts/update-appcast.sh <dmg>` (`generate_appcast` de Sparkle, clé lue dans le trousseau, notes tirées de `CHANGELOG.md`). Procédure : `CONTRIBUTING.md` § Releases.
 
 ## Outils de développement
 

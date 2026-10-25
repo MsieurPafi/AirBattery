@@ -26,7 +26,7 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 **Conséquences :** à vérifier empiriquement : enregistrement du widget WidgetKit avec une signature gratuite ou ad hoc.
 **Validée par Côme :** oui (brief initial)
 
-## D-004 — Sparkle désactivé   (2026-10-21, statut : acceptée)
+## D-004 — Sparkle désactivé   (2026-10-21, statut : remplacée par D-026)
 **Contexte :** `Info.plist` pointe vers l'appcast et la clé EdDSA de l'auteur : une éventuelle 1.6.4 officielle remplacerait le fork, avec une signature valide.
 **Décision :** retirer le flux de mises à jour, désactiver les vérifications automatiques et masquer le bouton dans l'UI. `appcast.xml` reste dans le repo mais n'est plus utilisé.
 **Conséquences :** pas de mise à jour automatique. Réactivation future avec une clé EdDSA propre au fork.
@@ -233,3 +233,23 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 - L'indexation « tout identifiant » reste possible plus tard, avec une table d'alias par source (IDEAS).
 **Validée par Côme :** plan validé (« dans l'ordre que tu as suggéré ») ; le changement de portée par rapport au plan lui est signalé dans le résumé de la PR.
 
+
+## D-026 — Mises à jour par Sparkle, avec la clé et l'appcast du fork   (2026-10-25, statut : acceptée ; remplace D-004)
+**Contexte :** Sparkle était désactivé depuis la 1.7.0 (D-004) pour que le flux de l'auteur ne remplace pas le fork. Côme veut des mises à jour depuis le dépôt GitHub (IDEAS).
+**Options envisagées :** A. simple vérification des releases GitHub avec une notification, installation à la main / B. Sparkle, avec une clé EdDSA et un appcast propres au fork / C. B dans GitHub Actions (CI pas encore en place).
+**Décision :** B, choisie par Côme (« Go with Sparkle (B) »).
+- Clé EdDSA générée sur le Mac de Côme avec son accord : `generate_keys --account io.github.msieurpafi.AirBattery`. Clé privée dans son trousseau de session, **à sauvegarder par Côme** (`generate_keys --account io.github.msieurpafi.AirBattery -x <fichier>`, puis dans un gestionnaire de mots de passe, et suppression du fichier). Clé publique `uUnzqQIUgDEL6VMjBtNE8PfnsYDMrS8Tx/Kr6w8R7H8=`, dans `SUPublicEDKey`.
+- Flux : `appcast.xml` sur `main`, servi par `raw.githubusercontent.com`. L'adresse « latest » de GitHub ne convient pas : toutes les releases sont des pre-releases.
+- Mise à jour du flux par `scripts/update-appcast.sh <dmg>` : `generate_appcast` de Sparkle 2.6.2, sans deltas, en gardant toutes les entrées (`--maximum-versions 0`), notes de version tirées de la section du `CHANGELOG.md`.
+- Vérifications automatiques : pas de `SUEnableAutomaticChecks` dans `Info.plist`, donc Sparkle demande l'autorisation au deuxième lancement (comportement par défaut). Pas de profil système envoyé (`SUEnableSystemProfiling` absent).
+- `SUVerifyUpdateBeforeExtraction` et `SURequireSignedFeed` n'existent pas dans Sparkle 2.6.2 (absents des sources) : pas utilisés. Mettre à jour Sparkle demanderait l'accord de Côme (dépendance).
+
+**Vérifié (2026-10-25) :**
+- `generate_appcast` ne signe pas une entrée si l'app du DMG n'a pas de `SUPublicEDKey` (DMG de la 1.10.0 : `enclosure` sans `sparkle:edSignature`, sans message d'erreur). Le script échoue dans ce cas.
+- Il refuse une app dont la signature de code est invalide (« The app failed Apple Code Signing checks », -67030).
+- Une deuxième version ajoutée garde la première, avec son adresse d'origine.
+
+**À vérifier sur le Mac de Côme :** une mise à jour livrée par Sparkle de bout en bout, et le comportement de Gatekeeper sur l'app installée (non notarisée, D-003). Il faut deux versions : la première avec Sparkle, installée à la main, puis la suivante proposée par Sparkle.
+**Pourquoi :** installation en un clic, vérifiée par une signature propre au fork, sans service tiers. La signature de code de l'équipe gratuite reste la même d'une version à l'autre.
+**Conséquences :** la clé privée devient critique : perdue, plus aucune mise à jour ne peut être livrée aux copies installées (il faudrait une installation à la main avec une nouvelle clé) ; volée, quelqu'un pourrait signer une mise à jour, mais il lui faudrait aussi écrire sur `main`. L'app accède à internet (GitHub) : documentation de confidentialité mise à jour. Une release n'est proposée qu'une fois `appcast.xml` fusionné dans `main`, après la publication du DMG. Pour revenir en arrière : `updatesEnabled = false` et retrait de `SUFeedURL`, comme D-004.
+**Validée par Côme :** oui (2026-10-25)

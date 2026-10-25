@@ -9,6 +9,7 @@ Open the settings with ⚙︎ at the top of the device list. Default values are 
 - **Launch at Login** [off].
 - **Show AirBattery Plus**: Dock, Menu Bar, Both or None [Menu Bar]. See [Using the app](using-the-app.md#where-it-shows).
 - **Command Line Tool**: installs or removes `abtp` ([Command line](command-line.md)).
+- **Update › Automatically check for updates**: asked on the app's second launch. **Automatically download updates** installs them without asking first. **Check for Updates…** (bottom of the settings) checks now. See [Getting started](getting-started.md#update).
 
 ## Menu Bar & Dock
 

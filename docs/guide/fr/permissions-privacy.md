@@ -16,7 +16,7 @@ Comme l'AirBattery d'origine, l'app n'est pas en bac à sable (*sandbox*) : ell
 ## Ce qui reste sur votre Mac
 
 - Les niveaux de batterie et les noms des appareils sont enregistrés uniquement sur votre Mac, pour les widgets et `abtp`.
-- AirBattery Plus n'envoie rien sur internet : ni statistiques d'usage, ni mise à jour automatique.
+- AirBattery Plus n'envoie aucune statistique d'usage. Son seul accès à internet est la recherche de mises à jour : elle télécharge la liste des versions depuis GitHub (`appcast.xml` dans ce dépôt), automatiquement si vous l'avez accepté, ou quand vous cliquez sur **Rechercher des mises à jour…**, puis la nouvelle version si vous l'installez. GitHub voit ces requêtes comme n'importe quel téléchargement (votre adresse IP, et la version de l'app dans l'en-tête User-Agent ; aucune information sur le système n'est envoyée). Désactivez **Réglages › Général › Mise à jour › Rechercher automatiquement les mises à jour** pour ne jamais vérifier de vous-même.
 - Avec Nearcast, les niveaux sont partagés avec vos autres Mac sur le réseau local, chiffrés avec votre identifiant de groupe.
 
 ## Journaux
