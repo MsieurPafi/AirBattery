@@ -1118,3 +1118,20 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Décisions :** D-027 (ajout)
 **Prochaine étape :** vérifier sur cette PR que la fusion est bloquée tant que le CI n'est pas passé.
+
+## 2026-10-25 (suite 31) — Batterie du Mac lue sur notification
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, `main` @ `130d548`. Branche `perf/power-source-notifications`. Ordre choisi par Côme : batterie du Mac sur notification, puis accessoires Magic relus moins souvent, puis #210 si pas trop complexe ; indexation par identifiant seul mise de côté ; grosse étude de Nearcast v2 ensuite.
+
+**Fait :**
+- `PowerSourceMonitor` (`AirBatteryApp.swift`) : `IOPSNotificationCreateRunLoopSource` sur la boucle principale (`commonModes`), `NSProcessInfoPowerStateDidChange`, `NSWorkspace.didWakeNotification`, minuterie de secours de 60 s (tolérance 10 s). Chaque lecture poste `.internalBatteryChanged`.
+- `mainBatteryView` : plus de lecture de la batterie toutes les secondes (`mainTimer`) ; mise à jour sur `.internalBatteryChanged`, à l'apparition et sur `onChange` des réglages d'affichage et des valeurs de test (`test_*`).
+- Mesure avec `top -l 4 -s 60 -pid … -stats pid,cpu,idlew,time` (3 min) :
+  - 1.11.1 installée (lancée depuis 30 min) : réveils au repos 29, 29, 31, 31 par minute ; temps CPU 14,65 → 15,19 s (0,18 s/min).
+  - build Release de la branche (lancé 20 s avant) : réveils 0, 0, 0, 1 ; temps CPU 0,55 → 1,05 s (0,17 s/min).
+  - Le temps CPU ne baisse pas : il vient surtout du reste (`system_profiler`, scans). Le gain porte sur les réveils.
+- Pas de notification pendant 90 s de `log stream --level debug` : attendu, le Mac était sur secteur, bloqué à 80 % et pas en charge (`pmset -g batt`). Le message de débogage « Power source changed » sert à le vérifier au prochain test.
+- Côme a vu son app quittée environ 4 min pendant la mesure ; 1.11.1 relancée, widget de `/Applications` seul enregistré, copies de build désenregistrées.
+
+**Testé sur appareil réel :** non (débrancher et rebrancher le chargeur : à faire par Côme au test de la prochaine version).
+**Prochaine étape :** accessoires Magic relus moins souvent (fréquence à valider avec Côme).

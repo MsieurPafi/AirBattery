@@ -150,36 +150,46 @@ struct mainBatteryView: View {
             }
         }
         .onReceive(dockTimer) { t in refreshPinnedBar() }
-        .onReceive(mainTimer) { t in
-            if item.hasBattery {
-                // One read per second (it was read twice, ~15 IOKit properties each time)
-                if intBattOnStatusBar && test_debug {
-                    InternalBattery.status = iBattery(hasBattery: test_hasib, isCharging: !test_full, isCharged: false, acPowered: test_ac, timeLeft: "", batteryLevel: test_iblevel)
+        // Refreshed when the battery changes (PowerSourceMonitor) or a display setting does,
+        // instead of reading the battery every second.
+        .onReceive(NotificationCenter.default.publisher(for: .internalBatteryChanged)) { _ in update() }
+        .onAppear { update() }
+        .onChange(of: intBattOnStatusBar) { _ in update() }
+        .onChange(of: batteryPercent) { _ in update() }
+        .onChange(of: hideLevel) { _ in update() }
+        .onChange(of: test_debug) { _ in update() }
+        .onChange(of: test_hasib) { _ in update() }
+        .onChange(of: test_ac) { _ in update() }
+        .onChange(of: test_full) { _ in update() }
+        .onChange(of: test_iblevel) { _ in update() }
+    }
+
+    private func update() {
+        if item.hasBattery {
+            if intBattOnStatusBar && test_debug {
+                InternalBattery.status = iBattery(hasBattery: test_hasib, isCharging: !test_full, isCharged: false, acPowered: test_ac, timeLeft: "", batteryLevel: test_iblevel)
+            }
+            let width = statusBarItem.button?.frame.size.width
+            if intBattOnStatusBar {
+                item = InternalBattery.status
+                if batteryPercent != "outside" {
+                    if width != 42 { setStatusBar(width: 42) }
                 } else {
-                    InternalBattery.status = getPowerState()
-                }
-                let width = statusBarItem.button?.frame.size.width
-                if intBattOnStatusBar {
-                    item = InternalBattery.status
-                    if batteryPercent != "outside" {
+                    if item.batteryLevel > hideLevel {
                         if width != 42 { setStatusBar(width: 42) }
                     } else {
-                        if item.batteryLevel > hideLevel {
-                            if width != 42 { setStatusBar(width: 42) }
-                        } else {
-                            if width != 76 { setStatusBar(width: 76) }
-                        }
+                        if width != 76 { setStatusBar(width: 76) }
                     }
-                } else {
-                    if width != 36 { setStatusBar(width: 36) }
                 }
             } else {
-                if test_debug {
-                    let width = statusBarItem.button?.frame.size.width
-                    if width != 36 { setStatusBar(width: 36) }
-                    InternalBattery.status = iBattery(hasBattery: test_hasib, isCharging: !test_full, isCharged: false, acPowered: test_ac, timeLeft: "", batteryLevel: test_iblevel)
-                    item = InternalBattery.status
-                }
+                if width != 36 { setStatusBar(width: 36) }
+            }
+        } else {
+            if test_debug {
+                let width = statusBarItem.button?.frame.size.width
+                if width != 36 { setStatusBar(width: 36) }
+                InternalBattery.status = iBattery(hasBattery: test_hasib, isCharging: !test_full, isCharged: false, acPowered: test_ac, timeLeft: "", batteryLevel: test_iblevel)
+                item = InternalBattery.status
             }
         }
     }
