@@ -23,6 +23,9 @@ Il a été trouvé par **Rechercher plus d'appareils BLE**. Refusez, puis masque
 **Un ⚠️ s'affiche devant un appareil.**
 Il ne s'est pas manifesté depuis plus de dix minutes : il est peut-être éteint, en veille ou hors de portée.
 
+**Les alertes de batterie ne s'affichent pas.**
+Vérifiez que les notifications sont autorisées pour AirBattery Plus dans **Réglages Système › Notifications**. Depuis la 1.10.0, l'app vous prévient si vous enregistrez une alerte alors qu'elles sont désactivées.
+
 **Un widget indique que l'app n'est pas lancée.**
 Ouvrez AirBattery Plus. Si le widget semble encore figé : **Réglages › Widget › Recharger tous les widgets**.
 

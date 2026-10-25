@@ -23,6 +23,9 @@ It was found by **Discover more BLE devices**. Decline, then hide that device or
 **There's a ⚠️ next to a device.**
 It hasn't reported for more than ten minutes: it may be off, asleep or out of range.
 
+**Battery alerts don't show.**
+Check that notifications are allowed for AirBattery Plus in **System Settings › Notifications**. Since 1.10.0, the app warns you when you save an alert while they're turned off.
+
 **A widget says the app is not running.**
 Launch AirBattery Plus. If the widget still looks stuck: **Settings › Widget › Reload All Widgets**.
 
