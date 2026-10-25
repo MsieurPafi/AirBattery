@@ -9,7 +9,7 @@ import SwiftUI
 import Sparkle
 
 // Updates are disabled in this fork until it has its own appcast and EdDSA key.
-// The updater is never started and its UI is hidden. See docs/DECISIONS.md (D-004).
+// The updater is never started and its UI is hidden. See docs/dev/DECISIONS.md (D-004).
 let updatesEnabled = false
 
 // This view model class publishes when new updates can be checked by the user

@@ -635,3 +635,20 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 - Correctifs : `popover` reçoit sa liste dès l'initialisation (`State(initialValue:)`), ce qui permet de mesurer la fenêtre du Dock avec `fittingSize` ; marge du bas 9 pt pour le popover (le popover système en masque ~2), 6 puis 8 pt pour la fenêtre du Dock (3 pt mesurés avec 6). Mesures finales : popover 5/5 pt, fenêtre du Dock 6/5 pt (côté/bas). Validé par Côme. D-020 mise à jour.
 - Au lancement de la copie de test, l'iPhone apparaissait avec l'icône Bluetooth (appareil BLE générique nommé « iPhone ») avant d'être reconnu : noté dans IDEAS (indexation par nom).
 - Copie de build désenregistrée, 1.8.0 relancée (seul widget enregistré).
+
+---
+
+## 2026-10-25 (suite 7) — Documentation, étape 1 : structure
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, `main` @ `5e8600c`. Branche `docs/restructure`.
+
+**Fait :**
+- État des lieux et recommandations présentés à Côme ; tout validé → D-021.
+- Documentation de travail déplacée dans `docs/dev/` (`git mv`, historique conservé) ; références mises à jour dans `CLAUDE.md`, `Sparkle.swift`, `InternalBattery.swift`, `CHANGELOG.md`. Les anciennes entrées de ce journal gardent les chemins `docs/…` d'origine.
+- Guide utilisateur anglais `docs/guide/en/` (8 pages : démarrage, appareils, utilisation, Nearcast, `abtp`, réglages, autorisations et confidentialité, dépannage), rédigé d'après le code : valeurs par défaut des `@AppStorage`, textes des réglages, comportement des widgets et de `abtp`. Corrections faites en relisant le code : le menu « Transmit to… » est commenté (retiré du guide) ; le widget mono-appareil se règle par « Edit Widget » à partir de macOS 14 (le réglage n'existe que sous macOS 12–13) ; statut `=` de `abtp` quand la charge est en pause ; aucune requête internet dans le code (vérifié).
+- `README.md` raccourci en vitrine ; `CONTRIBUTING.md` (signaler un bogue, compiler, pièges du widget et de l'accès réseau local, organisation du projet, PR, traductions, licence).
+- Liens relatifs vérifiés par script : aucun lien cassé. Les liens vers la version française seront ajoutés à l'étape 2.
+
+**Échecs :** —
+**Testé sur appareil réel :** sans objet (documentation).
+**Prochaine étape :** relecture par Côme, puis étape 2 (traduction française).
