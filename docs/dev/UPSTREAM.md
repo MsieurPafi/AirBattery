@@ -20,7 +20,7 @@ Les têtes de PR de l'archive locale sont disponibles dans `archive/pr/<N>` (`gi
 | #211 | Mode d'énergie | hors périmètre | cf. IDEAS.md |
 | #200 | Liquid Glass | **non repris**, inspiration seulement (D-012) | Mélange l'interface et d'autres sujets (lancement au login via `SMAppService.loginItem`, cible de déploiement, widgets), dont une partie entre en conflit avec `main`. Applique `glassEffect` sur des panneaux par-dessus le verre du popover (verre sur verre) avec des rayons fixes (5/10 pt), sans traiter la concentricité. Ses changements de lancement au login et de widgets restent à évaluer séparément. |
 | #191 | Souris Roccat | à évaluer | |
-| #170 | Traduction française | à évaluer | |
+| #170 | Traduction française | **repris en partie** (D-022) | 149 phrases reprises sur les clés actuelles et relues, 63 ajoutées ; correctif « %d mins ago » repris ; `fr.lproj/Credits.rtf` refait à partir des crédits actuels. Auteur crédité (`Co-authored-by`). |
 | #164 | CLI `supported` | à évaluer | |
 | #202 | « Update Supports.swift » | à évaluer | |
 

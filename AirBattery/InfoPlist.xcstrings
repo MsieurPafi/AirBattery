@@ -1,0 +1,54 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "NSBluetoothAlwaysUsageDescription": {
+      "comment": "Permission prompt shown by macOS",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AirBattery Plus utilise le Bluetooth pour lire la batterie de vos appareils et accessoires."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AirBattery Plus 使用蓝牙来获取周边设备的电池信息"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AirBattery Plus 使用藍芽來獲取周邊裝置的電池資訊"
+          }
+        }
+      }
+    },
+    "NSLocalNetworkUsageDescription": {
+      "comment": "Permission prompt shown by macOS",
+      "extractionState": "extracted_with_value",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AirBattery Plus lit la batterie de vos appareils sur le réseau local."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AirBattery Plus 会通过局域网络来获取周边设备的电池信息"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AirBattery Plus 會透過區域網絡來獲取周邊裝置的電池資訊"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

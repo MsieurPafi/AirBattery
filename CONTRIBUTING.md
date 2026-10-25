@@ -70,7 +70,7 @@ The bundled libimobiledevice tools are built by `scripts/build-libimobiledevice.
 
 ## Translations
 
-- **The app** is in English, with Chinese (simplified and traditional) translations that are out of date: updates are welcome.
+- **The app** is in English and French, with Chinese (simplified and traditional) translations that are out of date: updates are welcome. Translations live in String Catalogs (`AirBattery/Localizable.xcstrings`, `AirBattery/InfoPlist.xcstrings`): open them in Xcode to see, language by language, which phrases are missing.
 - **The user guide** is written in English (`docs/guide/en/`) and mirrored in French (`docs/guide/fr/`), like the README (`README.fr.md`). A change to either updates both languages in the same pull request.
 
 ## License

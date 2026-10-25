@@ -4,50 +4,50 @@
 
 Ouvrez les réglages avec ⚙︎ en haut de la liste des appareils. Les valeurs par défaut sont entre crochets.
 
-## General
+## Général
 
-- **Launch at Login** [désactivé] : ouvrir l'app à l'ouverture de session.
-- **Show AirBattery Plus** : Dock, Menu Bar, Both ou None [Menu Bar]. Voir [Utiliser l'app](using-the-app.md#affichage).
-- **Command Line Tool** : installe ou supprime `abtp` ([Ligne de commande](command-line.md)).
+- **Ouvrir à la connexion** [désactivé] : ouvrir l'app à l'ouverture de session.
+- **Afficher AirBattery Plus** : Dock, Barre des menus, Les deux ou Aucun [Barre des menus]. Voir [Utiliser l'app](using-the-app.md#affichage).
+- **Outil en ligne de commande** : installe ou supprime `abtp` ([Ligne de commande](command-line.md)).
 
-## Menu Bar & Dock
+## Barre des menus et Dock
 
 Barre des menus :
 
-- **Dynamic Battery Icon** [activé] : l'icône de la barre des menus affiche la batterie de ce Mac.
-- **Colorful Battery Icon**, **Battery Icon Style** (macOS ou iOS), **Show Percentage** (masqué, dans l'icône ou à côté).
-- **Remove Offline Device** [après 20 min] : les appareils qui ne se manifestent plus quittent la liste.
-- **Sort Devices** [Default] : par nom, batterie la plus faible ou la plus élevée d'abord. S'applique aussi à l'icône du Dock et aux widgets.
-- **Hide percentage when above** [90 %] : à côté des icônes de batterie, le pourcentage est masqué au-dessus de ce niveau.
+- **Icône de batterie dynamique** [activé] : l'icône de la barre des menus affiche la batterie de ce Mac.
+- **Icône de batterie en couleur**, **Style de l'icône de batterie** (macOS ou iOS), **Afficher le pourcentage** (masqué, dans l'icône ou à côté).
+- **Retirer les appareils hors ligne** [après 20 min] : les appareils qui ne se manifestent plus quittent la liste.
+- **Trier les appareils** [Par défaut] : par nom, batterie la plus faible ou la plus élevée d'abord. S'applique aussi à l'icône du Dock et aux widgets.
+- **Masquer le pourcentage au-dessus de** [90 %] : à côté des icônes de batterie, le pourcentage est masqué au-dessus de ce niveau.
 
 Dock :
 
-- **Appearance** : automatique, clair ou sombre.
-- **Built-in Battery Style** : affiche la batterie de ce Mac dans l'icône du Dock sous forme d'icône ou de pourcentage, ou la masque.
-- **Carousel Mode** [activé] : l'icône du Dock fait défiler tous vos appareils.
+- **Apparence** : automatique, clair ou sombre.
+- **Batterie interne** : affiche la batterie de ce Mac dans l'icône du Dock sous forme d'icône ou de pourcentage, ou la masque.
+- **Mode carrousel** [activé] : l'icône du Dock fait défiler tous vos appareils.
 
-## Nearbility
+## Proximité
 
 Les sources de lecture des batteries (détails dans [Appareils pris en charge](devices.md)) :
 
-- **Discover iOS devices via Network** [activé] : iPhone, iPad, Apple Watch en USB ou en Wi-Fi.
-- **Discover iOS devices via Bluetooth** [désactivé], avec **Authorized iOS Bluetooth Devices › Manage**.
-- **Discover BT and BLE devices** [activé], **Discover more BT devices** [activé], **Discover more BLE devices** [désactivé, bêta].
-- **Apple Pencil from your iPad** [désactivé, bêta].
-- **Refresh Interval (min)** [1] : fréquence de lecture des batteries. Relancez l'app pour appliquer un changement.
-- **Earbud Merging Threshold** [5] : en dessous de cet écart, les écouteurs gauche et droit s'affichent comme un seul appareil.
+- **Rechercher les appareils iOS sur le réseau** [activé] : iPhone, iPad, Apple Watch en USB ou en Wi-Fi.
+- **Rechercher les appareils iOS en Bluetooth** [désactivé], avec **Appareils iOS autorisés en Bluetooth › Gérer**.
+- **Rechercher les appareils BT et BLE** [activé], **Rechercher plus d'appareils BT** [activé], **Rechercher plus d'appareils BLE** [désactivé, bêta].
+- **Apple Pencil par votre iPad** [désactivé, bêta].
+- **Fréquence d'actualisation (min)** [1] : fréquence de lecture des batteries. Relancez l'app pour appliquer un changement.
+- **Seuil de regroupement des écouteurs** [5] : en dessous de cet écart, les écouteurs gauche et droit s'affichent comme un seul appareil.
 
 ## Nearcast
 
-Activation de Nearcast et Group ID : voir [Nearcast](nearcast.md). **Peer Info** affiche l'identifiant de ce Mac dans le groupe.
+Activation de Nearcast et identifiant de groupe : voir [Nearcast](nearcast.md). **Ce Mac** affiche l'identifiant de ce Mac dans le groupe.
 
 ## Widget
 
-- **Reverse Device List** : inverse l'ordre de la liste.
-- **Refresh Interval** : identique à Nearbility [par défaut], ou laissé à macOS.
-- **Single Device Widget** (macOS 12 et 13 seulement).
-- **Reload All Widgets** : si un widget semble figé.
+- **Inverser l'ordre des appareils** : inverse l'ordre de la liste.
+- **Fréquence d'actualisation** : « Comme Proximité » [par défaut] ou « Défini par macOS ».
+- **Widget à un seul appareil** (macOS 12 et 13 seulement).
+- **Recharger tous les widgets** : si un widget semble figé.
 
-## Blocklist
+## Liste de blocage
 
-Les appareils de cette liste sont masqués. Avec **Allowlist Mode**, la liste fonctionne à l'inverse : seuls les appareils listés sont affichés.
+Les appareils de cette liste sont masqués. Avec **Mode liste d'autorisation**, la liste fonctionne à l'inverse : seuls les appareils listés sont affichés.

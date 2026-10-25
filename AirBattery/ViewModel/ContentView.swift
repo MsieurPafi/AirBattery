@@ -558,11 +558,11 @@ struct popover: View {
                                                         .foregroundColor(.secondary)
                                                 } else {
                                                     if allDevices[index].realUpdate != 0.0 {
-                                                        Text("\(Int((Date().timeIntervalSince1970 - allDevices[index].realUpdate) / 60))"+" mins ago".local)
+                                                        Text(String(format: "%d mins ago".local, Int((Date().timeIntervalSince1970 - allDevices[index].realUpdate) / 60)))
                                                             .font(.system(size: 11, weight: .medium))
                                                             .foregroundColor(.secondary)
                                                     } else {
-                                                        Text("\(Int((Date().timeIntervalSince1970 - allDevices[index].lastUpdate) / 60))"+" mins ago".local)
+                                                        Text(String(format: "%d mins ago".local, Int((Date().timeIntervalSince1970 - allDevices[index].lastUpdate) / 60)))
                                                             .font(.system(size: 11, weight: .medium))
                                                             .foregroundColor(.secondary)
                                                     }
@@ -913,7 +913,7 @@ struct nearcastView: View {
                         if overStackNC == mainIndex && overStack == index {
                             Spacer()
                             HStack(spacing: 3) {
-                                Text("\(Int((Date().timeIntervalSince1970 - devices[index].lastUpdate) / 60))"+" mins ago".local)
+                                Text(String(format: "%d mins ago".local, Int((Date().timeIntervalSince1970 - devices[index].lastUpdate) / 60)))
                                     .font(.system(size: 11))
                                 if devices[index].hasBattery {
                                     Spacer().frame(width: 1)

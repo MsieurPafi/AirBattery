@@ -6,7 +6,7 @@
 
 ## Installation
 
-**Settings › General › Command Line Tool › Install**, puis saisissez votre mot de passe administrateur : cela crée le lien `/usr/local/bin/abtp`. **Uninstall** le supprime.
+**Réglages › Général › Outil en ligne de commande › Installer**, puis saisissez votre mot de passe administrateur : cela crée le lien `/usr/local/bin/abtp`. **Désinstaller** le supprime.
 
 Jusqu'à la version 1.7.4, l'outil s'installait sous le nom `airbattery`, le même que celui de l'app officielle. L'installation d'`abtp` supprime cet ancien lien s'il appartient à AirBattery Plus, jamais s'il appartient à l'app officielle.
 

@@ -4,6 +4,10 @@ Changes in this fork compared with the official [AirBattery](https://github.com/
 
 ## Unreleased
 
+### New
+
+- **French translation** of the app, from upstream [#170](https://github.com/lihaoyun6/AirBattery/pull/170) by leo1425, reviewed and completed. The app follows the language set in macOS, and can be set per app in System Settings › General › Language & Region.
+
 ### Changes
 
 - **Liquid Glass Dock window** on macOS 26 and later: the window opened from the Dock icon now matches the menu bar popover (glass, rounded corners, lists that follow them).

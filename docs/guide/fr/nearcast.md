@@ -6,14 +6,14 @@ Nearcast partage les niveaux de batterie entre vos Mac sur un même réseau loca
 
 ## Mise en place
 
-1. Sur le premier Mac, ouvrez **Settings › Nearcast** et cliquez sur **+** à côté de **Group ID** pour créer un identifiant.
-2. Copiez-le avec le bouton de copie, puis saisissez-le ou collez-le dans **Group ID** sur chacun de vos autres Mac.
-3. Activez **Enable Nearcast** sur chaque Mac.
+1. Sur le premier Mac, ouvrez **Réglages › Nearcast** et cliquez sur **+** à côté du champ **Identifiant de groupe** pour créer un identifiant.
+2. Copiez-le avec le bouton de copie, puis saisissez-le ou collez-le dans le champ **Identifiant de groupe** sur chacun de vos autres Mac.
+3. Activez **Activer Nearcast** sur chaque Mac.
 
-Le Group ID ne peut être modifié que lorsque Nearcast est désactivé. ↻ en crée un nouveau : il faut alors le saisir de nouveau sur vos autres Mac.
+L'identifiant de groupe ne peut être modifié que lorsque Nearcast est désactivé. ↻ en crée un nouveau : il faut alors le saisir de nouveau sur vos autres Mac.
 
 ## Bon à savoir
 
-- Les données envoyées par Nearcast sont chiffrées avec une clé tirée du Group ID. Ne le communiquez à personne en dehors de vos propres Mac.
+- Les données envoyées par Nearcast sont chiffrées avec une clé tirée de l'identifiant de groupe. Ne le communiquez à personne en dehors de vos propres Mac.
 - Chaque Mac a besoin de l'accès au réseau local (voir [Autorisations et confidentialité](permissions-privacy.md)).
 - Ne mettez pas trop de Mac dans un même groupe : chacun échange avec tous les autres.
