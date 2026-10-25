@@ -1098,3 +1098,13 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Décisions :** D-027
 **Testé sur appareil réel :** sans objet.
 **Prochaine étape :** premier passage du workflow sur la PR.
+
+## 2026-10-25 (suite 29) — Premier passage du CI, fusion
+
+**Fait :**
+- Auto-fix de l'app Claude activé par Côme pour la PR #52 (relance de la session en cas d'échec du CI ; ne fusionne rien).
+- Premier run (`40221352590`, PR #52) : **succès en 3 min 20 s** (18:27:45 → 18:31:04 UTC) sur l'image `xcode-27` : macOS 27.0.1, Xcode 27.1. Toutes les étapes en succès : contrôles rapides (« All checks passed. »), `swift test` (12 tests), builds Debug et Release non signés, contrôle du produit.
+- PR #52 (CI) et #51 (README) fusionnées avec l'accord de Côme (`main` @ `e7bb70b`). Runs sur `main` déclenchés par les deux fusions ; le second annule le premier (`concurrency`, voulu).
+
+**Décisions :** D-027
+**Prochaine étape :** au choix de Côme : Nearcast v2 (#41) ; pistes de l'analyse (batterie du Mac sur notification, relecture des accessoires Magic moins fréquente, indexation par identifiant seul).
