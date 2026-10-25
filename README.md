@@ -23,7 +23,8 @@
 - **Battery alerts** when a device runs low or finishes charging.
 - **Nearcast**: the batteries of your other Macs and their devices, encrypted on your local network.
 - **`abtp`** command line tool, with JSON and CSV output.
-- Liquid Glass design on macOS 26 and later. Nothing is sent over the internet.
+- **In-app updates**, signed by the project. No analytics: the app's only internet access is the update check ([Privacy](docs/guide/en/permissions-privacy.md)).
+- Liquid Glass design on macOS 26 and later.
 
 ## Install
 
