@@ -18,7 +18,7 @@ class CommandLineTool {
             if error == nil {
                 completion?()
             } else {
-                print("Error executing command: \(String(describing: error))")
+                Log.app.error("Command line tool script failed: \(String(describing: error), privacy: .public)")
             }
         }
     }

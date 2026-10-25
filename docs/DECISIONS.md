@@ -152,3 +152,11 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 **Pourquoi :** on reconnaît la famille AirBattery, mais la couleur et le « + » distinguent le fork d'un coup d'œil, même à 32 px (à 16 px le « + » disparaît, la couleur suffit). Icon Composer est le format attendu par macOS 26+.
 **Conséquences :** une seule géométrie à modifier dans le script. Le rendu Liquid Glass n'a été vérifié que via `NSWorkspace.icon(forFile:)` sur macOS 27.0.1 ; l'affichage sur macOS 12–25 n'est pas testé (pas de machine). Retour arrière : revert du commit.
 **Validée par Côme :** oui (choix de B2, 2026-10-25)
+
+## D-019 — Journalisation unifiée (`os.Logger`)   (2026-10-25, statut : acceptée)
+**Contexte :** l'app écrivait ses messages avec `print()` (51 appels) et `NSLog()` (3). `print()` va sur la sortie standard, perdue quand l'app est lancée depuis le Finder : aucun de ces messages n'était lisible pour diagnostiquer un problème chez Côme. Le `print` de démarrage de Nearcast affichait en clair le Group ID, secret dont est dérivée la clé de chiffrement.
+**Options envisagées :** A. `NSLog` partout / B. `os.Logger`, une catégorie par domaine.
+**Décision :** B. `Shared/Log.swift` : sous-système `io.github.msieurpafi.AirBattery`, catégories `app`, `data`, `ble`, `bluetooth`, `idevice`, `magic`, `nearcast`, `process`. Niveaux : `notice` pour le cycle de vie (conservé sur disque), `error` pour les échecs, `debug` pour les messages fréquents (réception Nearcast, commandes d'URL). Noms d'appareils, adresses et chemins restent privés (masqués par défaut) ; seuls les réglages, noms d'outils et messages d'erreur sont publics. Le Group ID Nearcast n'est plus journalisé. Nouveau : un avertissement quand un outil externe dépasse son délai (`comptest`, `logReader.sh`…), sans ses arguments (identifiants d'appareils). Les `print` de `abtp` restent : c'est la sortie de la commande.
+**Pourquoi :** messages visibles par `log show` après coup, filtrables par catégorie, sans coût notable.
+**Conséquences :** lecture : `/usr/bin/log show --last 1h --predicate 'subsystem == "io.github.msieurpafi.AirBattery"'` (ajouter `--debug` à `log stream` pour le niveau debug). Les noms d'appareils apparaissent comme `<private>` hors Xcode.
+**Validée par Côme :** oui (demande du 2026-10-25)

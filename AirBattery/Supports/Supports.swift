@@ -222,6 +222,9 @@ public func process(path: String, arguments: [String], timeout: Int = 0) -> Stri
     if timeout != 0 {
         DispatchQueue.global().asyncAfter(deadline: .now() + .seconds(timeout)) {
             if task.isRunning {
+                // Name the tool, or the script run by bash; never the arguments (device IDs)
+                let tool = ((path.hasSuffix("/bash") ? arguments.first ?? path : path) as NSString).lastPathComponent
+                Log.process.warning("\(tool, privacy: .public) timed out after \(timeout, privacy: .public) s")
                 task.terminate()
                 // Escalate if still running shortly after terminate
                 DispatchQueue.global().asyncAfter(deadline: .now() + .milliseconds(400)) {
@@ -237,7 +240,7 @@ public func process(path: String, arguments: [String], timeout: Int = 0) -> Stri
     do {
         try task.run()
     } catch let error {
-        print("\(error.localizedDescription)")
+        Log.process.error("Could not launch \((path as NSString).lastPathComponent, privacy: .public): \(error.localizedDescription, privacy: .public)")
         return nil
     }
 
@@ -298,7 +301,7 @@ func createNotification(title: String, message: String, alertSound: Bool = true,
 
     UNUserNotificationCenter.current().add(request) { error in
         if let error = error {
-            print("Notification failed to send：\(error.localizedDescription)")
+            Log.app.error("Notification failed to send: \(error.localizedDescription, privacy: .public)")
         }
     }
 }
@@ -480,7 +483,7 @@ func encryptString(_ string: String, password: String) -> String? {
         let sealedBox = try AES.GCM.seal(stringData, using: key)
         return sealedBox.combined?.base64EncodedString()
     } catch {
-        print("Encryption error: \(error)")
+        Log.nearcast.error("Encryption error: \(String(describing: error), privacy: .public)")
         return nil
     }
 }
@@ -494,7 +497,7 @@ func decryptString(_ string: String, password: String) -> String? {
         let decryptedData = try AES.GCM.open(sealedBox, using: key)
         return String(data: decryptedData, encoding: .utf8)
     } catch {
-        print("Decryption error: \(error)")
+        Log.nearcast.error("Decryption error: \(String(describing: error), privacy: .public)")
         return nil
     }
 }
@@ -517,7 +520,7 @@ func getFiles(withExtension fileExtension: String, in directory: URL) -> [URL] {
         let filteredFiles = filesAndDirectories.filter { $0.pathExtension == fileExtension }
         return filteredFiles
     } catch {
-        print("Failed to get contents of directory: \(error)")
+        Log.data.error("Failed to list \(directory.path): \(String(describing: error), privacy: .public)")
         return []
     }
 }

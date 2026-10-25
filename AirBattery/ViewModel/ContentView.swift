@@ -226,7 +226,7 @@ struct MultiBatteryView: View {
                     let message = NCMessage(id: String(ncGroupID.prefix(15)), sender: systemUUID ?? deviceName, command: "", content: data)
                     netcastService.sendMessage(message)
                 } catch {
-                    print("Write JSON error：\(error)")
+                    Log.data.error("Write JSON error: \(String(describing: error), privacy: .public)")
                 }
             }
         }

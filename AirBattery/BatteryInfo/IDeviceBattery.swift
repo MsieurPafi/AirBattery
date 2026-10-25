@@ -23,7 +23,7 @@ class IDeviceBattery {
         scanTimer = Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { [weak self] _ in
             self?.scanDevices()
         }
-        print("ℹ️ Start scanning iDevice devices...")
+        Log.idevice.notice("Start scanning iPhone, iPad and Watch")
         scanDevices()
     }
     
@@ -41,7 +41,7 @@ class IDeviceBattery {
                     if let json = try? JSONSerialization.jsonObject(with: Data(result.utf8), options: []) as? [String: Any] {
                         if let level = json["level"] as? Int, let model = json["model"] as? String, let vendor = json["vendor"] as? String {
                             let status = (json["status"] as? Int) ?? 0
-                            print("ℹ️ Pencil of \(d.deviceName): \(result)")
+                            Log.idevice.debug("Pencil of \(d.deviceName): \(result)")
                             AirBatteryModel.updateDevice(Device(deviceID: "Pencil_"+d.deviceID, deviceType: vendor == "Apple" ? "ApplePencil" : "Pencil", deviceName: vendor == "Apple" ? "Apple Pencil".local : "Pencil".local, deviceModel: model, batteryLevel: level, isCharging: status, parentName: d.deviceName, lastUpdate: Date().timeIntervalSince1970))
                         }
                     }
@@ -109,11 +109,11 @@ class IDeviceBattery {
                                let watchBattery = IDeviceBattery.parseBattery(w) {
                                 AirBatteryModel.updateDevice(Device(deviceID: watchID, deviceType: "Watch", deviceName: watchName, deviceModel: watchModel, batteryLevel: watchBattery.level, isCharging: watchBattery.charging ? 1 : 0, parentName: deviceName, lastUpdate: lastUpdate))
                             } else {
-                                print("⚠️ Could not parse Watch battery info for \(deviceName)")
+                                Log.idevice.error("Could not parse Watch battery info for \(deviceName)")
                             }
                         }
                     } else {
-                        print("⚠️ Could not parse battery info for \(deviceName)")
+                        Log.idevice.error("Could not parse battery info for \(deviceName)")
                     }
                 }
             }

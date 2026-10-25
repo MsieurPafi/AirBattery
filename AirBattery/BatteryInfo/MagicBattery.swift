@@ -42,7 +42,7 @@ class MagicBattery {
     func startScan() {
         //let interval = TimeInterval(59.0 * updateInterval)
         //scanTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(scanDevices), userInfo: nil, repeats: true)
-        print("ℹ️ Start scanning Magic devices...")
+        Log.magic.notice("Start scanning Magic devices")
         scanDevices()
     }
     

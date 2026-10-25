@@ -204,7 +204,7 @@ class AirBatteryModel {
             let jsonData = try JSONEncoder().encode(devices)
             try jsonData.write(to: getJsonURL(), options: .atomic)
         } catch {
-            print("Write JSON error：\(error)")
+            Log.data.error("Write JSON error: \(String(describing: error), privacy: .public)")
         }
         if Bundle.main.bundleIdentifier == AppIdentifiers.app { exportForTools(devices) }
     }
@@ -227,7 +227,7 @@ class AirBatteryModel {
             for url in getFiles(withExtension: "json", in: ncFolder) { nearcastDevices += ncGetAll(url: url) }
             try JSONEncoder().encode(nearcastDevices).write(to: folder.appendingPathComponent("nearcast.json"), options: .atomic)
         } catch {
-            print("Export JSON error：\(error)")
+            Log.data.error("Export JSON error: \(String(describing: error), privacy: .public)")
         }
     }
     
@@ -237,7 +237,7 @@ class AirBatteryModel {
             let list = try JSONDecoder().decode([Device].self, from: jsonData)
             return list
         } catch {
-            print("Read JSON error：\(error)")
+            Log.data.error("Read JSON error: \(String(describing: error), privacy: .public)")
         }
         return []
     }
