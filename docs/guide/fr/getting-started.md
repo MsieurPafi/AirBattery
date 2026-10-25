@@ -34,3 +34,7 @@ AirBattery Plus demande quelques autorisations. Leur raison d'être est expliqu�
 Par défaut, l'app s'affiche dans la barre des menus. Cliquez sur son icône pour voir vos appareils. Pour l'afficher aussi dans le Dock, ou seulement là, voir **Réglages › Général › Afficher AirBattery Plus**.
 
 La plupart des appareils apparaissent d'eux-mêmes. Un iPhone, un iPad ou une Apple Watch demandent une étape de plus : voir [Appareils pris en charge](devices.md#iphone-ipad-et-apple-watch).
+
+## Langue
+
+AirBattery Plus est en français et en anglais (et en chinois, avec une traduction plus ancienne). Elle suit les langues choisies dans **Réglages Système › Général › Langue et région**, et à défaut s'affiche en anglais. Pour lui donner une autre langue qu'au reste du système, ajoutez-la dans la section **Applications** du même panneau.
