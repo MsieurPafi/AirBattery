@@ -380,7 +380,11 @@ func getMonoNum(_ num: Int, count: Int = 3, bold: Bool = false) -> String {
 func ib2ab(_ ib: iBattery) -> Device {
     @AppStorage("machineType") var machineType = "mac"
     @AppStorage("deviceName") var deviceName = "Mac"
-    return Device(hasBattery: ib.hasBattery, deviceID: "@MacInternalBattery", deviceType: machineType, deviceName: deviceName, deviceModel: macID, batteryLevel: ib.batteryLevel, isCharging: ib.isCharging ? 1 : 0, isCharged: ib.isCharged, acPowered: ib.acPowered, lowPower: ib.lowPower, lastUpdate: Double(Date().timeIntervalSince1970))
+    var name = deviceName
+    #if DEBUG
+    if DemoDevices.enabled { name = DemoDevices.macName }
+    #endif
+    return Device(hasBattery: ib.hasBattery, deviceID: "@MacInternalBattery", deviceType: machineType, deviceName: name, deviceModel: macID, batteryLevel: ib.batteryLevel, isCharging: ib.isCharging ? 1 : 0, isCharged: ib.isCharged, acPowered: ib.acPowered, lowPower: ib.lowPower, lastUpdate: Double(Date().timeIntervalSince1970))
 }
 
 func sliceList(data: [Device], length: Int, count: Int) -> [Device] {

@@ -191,3 +191,10 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 - « il y a X min » : `"%d mins ago"` devient une seule chaîne de format (correctif de #170), au lieu d'un nombre collé à `" mins ago"`. Pour le chinois, la traduction existante est recomposée mécaniquement (`%d 分钟前`, `%d 分鐘前`), sans autre retouche.
 - Crédits en français : `fr.lproj/Credits.rtf`, dérivé de la version anglaise (code page 1252 et police déclarée en latin : avec le jeu de caractères chinois d'origine, les accents disparaissaient).
 **Validée par Côme :** oui (relecture de l'app en français, 2026-10-25)
+
+## D-023 — Mode démo pour les captures d'écran (builds Debug)   (2026-10-25, statut : acceptée)
+**Contexte :** D-021, point 5 : captures d'écran avec des noms d'appareils neutres. Le menu de débogage crée des appareils fictifs un par un, à la main, sans masquer les vrais ni renommer le Mac.
+**Décision :** `DemoDevices` (`AirBatteryModel.swift`), compilé seulement en Debug (`#if DEBUG`) : lancé avec `-demoDevices YES`, l'app affiche huit appareils fictifs (iPhone 16 Pro, Apple Watch, iPad Pro, Apple Pencil, AirPods Pro, Magic Keyboard, Magic Mouse), rafraîchis chaque minute, masque tous les autres (`checkIfBlocked`) et nomme le Mac « MacBook Pro » (`ib2ab`). Les noms ne doivent pas reprendre ceux de vrais appareils : l'app indexe les appareils par nom (le vrai « iPhone » de Côme écrasait un « iPhone » de démo au premier essai).
+**Pourquoi :** captures reproductibles sans toucher aux réglages de l'utilisateur ; absent des builds Release.
+**Conséquences :** pour refaire les captures : build Debug, `open "…/AirBattery Plus.app" --args -demoDevices YES -AppleLanguages "(en)"`, retirer et rajouter les widgets (sinon ils gardent leur ancien instantané, la demande de rechargement venant d'une autre copie de l'app), captures sur un écran Retina. Le popover en mode clair se capture **par zone** sur fond clair, puis se découpe : en capture « fenêtre », le verre est rendu sans ce qu'il y a derrière (gris neutre). Procédure détaillée dans `CONTRIBUTING.md`.
+**Validée par Côme :** oui (2026-10-25)

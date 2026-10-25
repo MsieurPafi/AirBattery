@@ -273,6 +273,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
         btdBattery.startScan()
         MagicBattery.shared.startScan()
         IDeviceBattery.shared.startScan()
+        #if DEBUG
+        DemoDevices.start()
+        #endif
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             AirBatteryModel.writeData()
