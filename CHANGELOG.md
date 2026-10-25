@@ -2,36 +2,42 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
-## Unreleased
+## 1.10.0 — 2026-10-25 (pre-release)
+
+Fixes from a full audit of the app (performance, security, code quality).
 
 ### Fixes
 
-- **Fewer crash risks**: a Mac battery reporting a zero capacity, an empty Bluetooth report from `system_profiler`, unexpected values in the battery registry or in hand-edited settings, an AppleScript call without a device name, a malformed Nearcast group ID.
+- **Fewer crash risks**: a Mac battery reporting a zero capacity, an empty Bluetooth report from `system_profiler`, unexpected values in the battery registry or in hand-edited settings, an AppleScript call without a device name, a malformed Nearcast group ID. Bluetooth devices are now read on the main thread only, and the Mac's battery status is protected against concurrent access (same kind of crash as upstream [#215](https://github.com/lihaoyun6/AirBattery/issues/215)).
+- **Battery alerts, pins and hidden devices keep working when the app's language changes**: the AirPods case was saved as "(Case)" in English and is now shown as "(boîtier)" in French, so lists saved before 1.9.0 no longer matched it.
+- **Two iPhones (or iPads, Watches) with the same name are shown as two devices** instead of overwriting each other. A device that reports the same ID under a new name stays one device, and the two forms of Bluetooth addresses (`aa-bb-…`, `AA:BB:…`) are recognized as one.
+- **"Discover more BT devices" works again for devices reported in the Bluetooth logs** (third-party headphones and speakers): since upstream PR [#163](https://github.com/lihaoyun6/AirBattery/pull/163), the log reader passed malformed options and dates to `log show`, which rejected them, so it read nothing. It now reads at most the last 10 minutes of logs and escapes device names.
 - **"Remove Offline Device › Never"** now works (it did nothing).
 - **Launch at login** shows its real state, also when the app was opened by hand, and uses the current macOS API on macOS 13 and later. The existing login item is kept.
 - When you save a battery alert while notifications are turned off for the app, it now says so and offers to open the notification settings.
 - One Bluetooth device with an unreadable level no longer hides the devices after it.
-- IOKit references were leaked at each scan of Magic accessories.
 - `abtp`: the minutes since the last update were negative in `--json`; `--csv` now quotes device names and gives levels as numbers.
-- The Bluetooth and HID scans were started by their timers with an invalid argument.
 
-- **Less Bluetooth traffic**: the app no longer reconnects every minute to Bluetooth LE mice and keyboards that macOS keeps connected (such as a Logitech MX): it just reads their level again. With "Discover iOS devices via Bluetooth", an iPhone also read over USB or Wi-Fi is no longer re-read over Bluetooth every minute, nor over USB/Wi-Fi every 15 s. Each reconnection used to start a full read (`system_profiler`, logs).
-- A device reconnecting in a loop starts at most one full read per minute.
-- **"Discover more BT devices" works again for devices reported in the Bluetooth logs** (third-party headphones and speakers): since upstream PR #163, the log reader passed malformed options and dates to `log show`, which rejected them, so it read nothing. It now reads at most the last 10 minutes of logs, escapes device names, and only runs `system_profiler` when it needs it.
-- Possible crashes: Bluetooth devices are now read on the main thread only, and the Mac's battery status is protected against concurrent access (same kind of crash as upstream #215).
+### Performance
 
-- **Less background work**: the widgets' data is only rewritten, and the widgets reloaded, when something they show changes (or every 5 minutes); `system_profiler` no longer runs on the main thread; the Mac's battery is read once per second instead of twice; background tasks no longer depend on the Dock icon's view; timers allow macOS to group their wakeups. Measured over 6 minutes: about a third fewer `system_profiler` runs and 70% fewer widget reloads.
-- **External tools can no longer hang**: every tool gets a timeout (20 s by default), a timed-out script is stopped with its children, and error output can no longer block a tool. iPhone/iPad scans no longer overlap, devices that can't be read are retried once per refresh interval instead of every 15 s, and the Apple Pencil is read once per interval instead of at every scan.
+- **Less Bluetooth traffic**: the app no longer reconnects every minute to Bluetooth LE mice and keyboards that macOS keeps connected (such as a Logitech MX): it just reads their level again. With "Discover iOS devices via Bluetooth", an iPhone also read over USB or Wi-Fi is no longer re-read over Bluetooth every minute, nor over USB/Wi-Fi every 15 s. A device reconnecting in a loop starts at most one full read per minute.
+- **Less background work**: the widgets' data is only rewritten, and the widgets reloaded, when something they show changes (or every 5 minutes); `system_profiler` no longer runs on the main thread; the Mac's battery is read once per second instead of twice; timers let macOS group their wakeups. Measured over 6 minutes: about a third fewer `system_profiler` runs and 70% fewer widget reloads.
+- **External tools can no longer hang**: every tool gets a timeout (20 s by default), a timed-out script is stopped with its children, and error output can no longer block a tool. iPhone/iPad scans no longer overlap, devices that can't be read are retried once per refresh interval instead of every 15 s, and the Apple Pencil is read once per interval.
+- IOKit references were leaked at each scan of Magic accessories; the Bluetooth and HID scans were started by their timers with an invalid argument.
 
-- **Battery alerts, pins and hidden devices keep working when the app's language changes**: the AirPods case was saved as "(Case)" in English and is now shown as "(boîtier)" in French, so lists saved before 1.9.0 no longer matched it.
-- **Two iPhones (or iPads, Watches) with the same name are shown as two devices** instead of overwriting each other. A device that reports the same ID under a new name stays one device, and the two forms of Bluetooth addresses (`aa-bb-…`, `AA:BB:…`) are recognized as one.
+### Changes
 
 - The URL command `airbattery-plus://reloadwidgets` is accepted with this spelling (the original misspelled `reloadwingets` still works).
 - About 660 lines of unused code removed (old features left commented out, unused helpers and views).
+- Unit tests for the device matching and parsing logic (`swift test`).
 
 ### Security
 
-- **Nearcast**: data from another Mac can no longer be written outside the Nearcast folder, files are written atomically, a peer can no longer make this Mac connect a Bluetooth device, and unknown commands are no longer echoed back (that echo could be used to forge notifications). A stronger Nearcast protocol is planned.
+- **Nearcast**: data from another Mac can no longer be written outside the Nearcast folder, files are written atomically, a peer can no longer make this Mac connect a Bluetooth device, and unknown commands are no longer echoed back (that echo could be used to forge notifications). A stronger Nearcast protocol is planned ([#41](https://github.com/MsieurPafi/AirBattery-Plus/issues/41)).
+
+### Note
+
+- After the update, macOS asks again for local network access: allow it.
 
 ## 1.9.0 — 2026-10-25 (pre-release)
 
