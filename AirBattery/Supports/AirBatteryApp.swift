@@ -158,7 +158,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
                     menuX = menuX < visibleFrame.origin.x ? visibleFrame.origin.x + 20 : menuX + 10
                     menuY = max(menuY - menuHeight/2, visibleFrame.origin.y)
                 default:
-                    print("⚠️ Failed to get Dock orientation!")
+                    Log.app.error("Failed to get Dock orientation")
                 }
             }
             contentView.frame = NSRect(x: menuX, y: menuY, width: 352, height: menuHeight)
@@ -222,9 +222,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
         if !fd.fileExists(atPath: ncFolder.path) {
             do {
                 try fd.createDirectory(at: ncFolder, withIntermediateDirectories: true, attributes: nil)
-                print("ℹ️ Folder created at: \(ncFolder.path)")
+                Log.nearcast.notice("Nearcast folder created at \(ncFolder.path)")
             } catch {
-                print("⚠️ Failed to create folder: \(error)")
+                Log.nearcast.error("Failed to create the Nearcast folder: \(String(describing: error), privacy: .public)")
             }
         } else {
             let oldFiles = getFiles(withExtension: "json", in: ncFolder)
@@ -237,13 +237,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
         NSAppleEventManager.shared().setEventHandler(self, andSelector: #selector(handleURLEvent(_:replyEvent:)), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
         //if let window = NSApplication.shared.windows.first { window.close() }
         launchAtLogin = NSWorkspace.shared.runningApplications.contains { $0.bundleIdentifier == AppIdentifiers.helper }
-        print("⚙️ Launch AirBattery at login = \(launchAtLogin)")
-        print("⚙️ Icon mode = \(showOn)")
+        Log.app.notice("Launch at login: \(self.launchAtLogin, privacy: .public)")
+        Log.app.notice("Icon mode: \(self.showOn, privacy: .public)")
         if ncGroupID != "" { if nearCast { netcastService.resume() } }
         if let result = process(path: "/usr/sbin/system_profiler", arguments: ["SPBluetoothDataType", "-json"]) { SPBluetoothDataModel.shared.data = result }
         
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            if let error = error { print("⚠️ Notification authorization denied: \(error.localizedDescription)") }
+            if let error = error { Log.app.error("Notification authorization denied: \(error.localizedDescription, privacy: .public)") }
         }
         UNUserNotificationCenter.current().delegate = self
         
@@ -343,7 +343,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
                 if let name = device.name, let macAdd = device.addressString {
                     if AirBatteryModel.checkIfBlocked(name: name) { return }
                     //if let prefix = getFirstNCharacters(of: macAdd, count: 8) {
-                        print("ℹ️ \(name) (\(macAdd)) connected")
+                        Log.bluetooth.notice("\(name) (\(macAdd)) connected")
                         // Read everything from the IOBluetoothDevice here on the main thread.
                         // Capturing the device in the background closure crashed with
                         // "pointer being freed was not allocated" when the closure released it
@@ -428,13 +428,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
             if url.scheme == AppIdentifiers.urlScheme {
                 switch url.host {
                 case "writedata" :
-                    print("Writing data to disk...")
+                    Log.app.debug("URL command: write data")
                     AirBatteryModel.writeData()
                 case "reloadwingets" :
-                    print("Reloading all widgets...")
+                    Log.app.debug("URL command: reload widgets")
                     AirBatteryModel.writeData()
                     WidgetCenter.shared.reloadAllTimelines()
-                default: print("Unknow command!")
+                default: Log.app.error("Unknown URL command: \(url.host ?? "", privacy: .public)")
                 }
             }
         }
@@ -563,12 +563,12 @@ func ensureLoginItem(enabled: Bool) -> Bool {
             }
             return true
         } catch {
-            NSLog("[AirBattery] SMAppService register/unregister failed: \(error.localizedDescription)")
+            Log.app.error("SMAppService register/unregister failed: \(error.localizedDescription, privacy: .public)")
             return false
         }
     } else {
         let ok = SMLoginItemSetEnabled(helperBundleIdentifier as CFString, enabled)
-        if !ok { NSLog("[AirBattery] SMLoginItemSetEnabled failed for \(helperBundleIdentifier)") }
+        if !ok { Log.app.error("SMLoginItemSetEnabled failed for \(helperBundleIdentifier, privacy: .public)") }
         return ok
     }
 }

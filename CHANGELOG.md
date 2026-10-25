@@ -2,6 +2,12 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
+## Unreleased
+
+### Changes
+
+- **Diagnostic messages now go to the macOS unified log** (subsystem `io.github.msieurpafi.AirBattery`), so they can be read in Console or with `log show` even when the app was opened from Finder. Device names and addresses stay private. The Nearcast group ID is no longer printed.
+
 ## 1.8.0 — 2026-10-25 (pre-release)
 
 ### Changes

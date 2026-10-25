@@ -17,7 +17,7 @@ class BTDBattery {
     func startScan() {
         let interval = TimeInterval(59 * updateInterval)
         scanTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(scanDevices), userInfo: nil, repeats: true)
-        print("ℹ️ Start scanning Bluetooth HID devices...")
+        Log.bluetooth.notice("Start scanning Bluetooth HID devices")
         scanDevices(longScan: true)
     }
     
@@ -73,7 +73,7 @@ class BTDBattery {
                   let time = d["time"] as? String,
                   let level = d["level"] as? Int,
                   let statusText = d["status"] as? String else {
-                print("⚠️ Skipping malformed Bluetooth log entry: \(d)")
+                Log.bluetooth.error("Skipping malformed Bluetooth log entry: \(d)")
                 continue
             }
             var name = (d["name"] as? String) ?? ""

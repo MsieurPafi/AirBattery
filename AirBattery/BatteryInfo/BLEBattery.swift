@@ -240,7 +240,7 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
         // spends in active scanning. Devices connected to the Mac are read elsewhere.
         let interval = TimeInterval(60 * updateInterval)
         scanTimer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(scan), userInfo: nil, repeats: true)
-        print("ℹ️ Start scanning BLE devices...")
+        Log.ble.notice("Start scanning BLE devices")
         // 立即启动一次扫描
         scan(longScan: true)
     }

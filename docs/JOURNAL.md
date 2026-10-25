@@ -592,3 +592,20 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Échecs :** —
 **Testé sur appareil réel :** oui, par Côme.
 **Prochaine étape :** au choix de Côme : app et doc FR/EN, mises à jour GitHub / CI, `os.Logger`, fenêtre Dock et alertes en Liquid Glass.
+
+---
+
+## 2026-10-25 (suite 5) — Journalisation unifiée (`os.Logger`)
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, `main` @ `44c77c9`. Branche `chore/os-logger`.
+
+**Fait :**
+- Inventaire : 51 `print` et 3 `NSLog` dans l'app ; 4 `print` dans `abtp` (sortie de la commande, conservés) ; rien dans le widget et le helper.
+- `Shared/Log.swift` (8 catégories) et migration de tous les appels (D-019). Le Group ID Nearcast n'est plus journalisé. Nouvel avertissement `process` quand un outil dépasse son délai (nom de l'outil ou du script, jamais ses arguments).
+- Échec de compilation à la première tentative : `reference to property 'launchAtLogin' in closure requires explicit use of 'self'` (l'interpolation de `Logger` est une fermeture) → `self.` ajouté. Avertissements de compilation inchangés (6, `kIOMasterPortDefault`, préexistants).
+- Test (~1 min, copie de build à la place de la 1.8.0, puis 1.8.0 relancée et widget réenregistré) : `log stream --level debug --predicate 'subsystem == "io.github.msieurpafi.AirBattery"'` montre `Launch at login: true`, `Icon mode: sbar`, le démarrage des scans `ble`, `bluetooth`, `magic`, `idevice`, et une erreur `Notification authorization denied: Notifications are not allowed for this application` (copie de build, chemin différent de l'app installée).
+
+**Échecs :** `open -g "airbattery-plus://writedata"` pendant le test n'a rien journalisé : l'URL a sans doute été confiée à l'app de `/Applications` (gestionnaire du schéma enregistré) plutôt qu'à la copie de build. Non approfondi.
+**Testé sur appareil réel :** oui, par Claude (journalisation sur le Mac de Côme).
+**Pistes ouvertes :** vérifier dans la prochaine release que l'app installée n'a pas la même erreur d'autorisation des notifications.
+**Prochaine étape :** PR, fusion par Côme.
