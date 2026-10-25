@@ -64,7 +64,7 @@ Every pull request and every push to `main` runs [`.github/workflows/ci.yml`](.g
 - `swift test`.
 - Debug and Release builds, unsigned.
 
-CI publishes nothing: releases are still built and signed on the maintainer's Mac (see [Releases](#releases)).
+`main` only accepts pull requests whose CI passed (a GitHub ruleset; no direct pushes, no force pushes). CI publishes nothing: releases are still built and signed on the maintainer's Mac (see [Releases](#releases)).
 
 ### Screenshots
 
