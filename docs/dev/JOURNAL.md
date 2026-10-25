@@ -729,3 +729,24 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Testé sur appareil réel :** oui, par Côme (après la correction ci-dessus).
 **Prochaine étape :** au choix de Côme : mises à jour depuis GitHub / CI ; indexation des appareils par identifiant ; observation « connected » chaque minute (IDEAS).
+
+---
+
+## 2026-10-25 (suite 12) — Fréquence du widget ; deux tâches ajoutées
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, `main` @ `6d02f11`, 1.9.0 installée. Branche `docs/session-2026-10-25-b`.
+
+**Fait :**
+- Crashs : aucun nouveau rapport (derniers : `comptest` le 2026-10-22 à 12:52, avant le correctif).
+- Question de Côme : la fréquence du widget dépend-elle de la « Fréquence d'actualisation » de Proximité ? **Oui.**
+  - App : `widgetViewTimer` (`Supports.swift`) toutes les `60 × updateInterval` s appelle `WidgetCenter.shared.reloadAllTimelines()`, sauf si le réglage du widget vaut « Défini par macOS » (`widgetInterval == -1`). `widgetDataTimer` (toutes les `24 × updateInterval` s) relance `system_profiler`, relit les accessoires Magic et réécrit `data.json`.
+  - `updateInterval` est lu **une fois au lancement** (constantes globales) : un changement demande de relancer l'app, comme l'indique déjà le réglage.
+  - Les minuteries sont rattachées à la vue de l'icône du Dock (`MultiBatteryView`), installée même en mode « barre des menus » : elles tournent quel que soit l'affichage choisi.
+  - Widget : une seule entrée, politique `.atEnd` ; il ne se rafraîchit pas de lui-même à intervalle fixe.
+  - Vérification : journaux de `chronod`, `record reload` pour `widget.battery.part3` à hh:mm:18 chaque minute (16:56 → 17:01).
+  - Guide (EN et FR, page Réglages) complété en conséquence.
+- `IDEAS.md` : question marquée résolue ; ajout de deux tâches demandées par Côme : renommer le dépôt GitHub (liste de ce qu'il faudra mettre à jour) et une grande analyse de l'app (performances, sécurité, qualité, journaux), avec les pistes déjà connues.
+
+**Échecs :** —
+**Testé sur appareil réel :** lecture des journaux système sur le Mac de Côme.
+**Prochaine étape :** au choix de Côme : analyse de l'app, renommage du dépôt, mises à jour GitHub / CI, indexation par identifiant.
