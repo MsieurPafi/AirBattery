@@ -1135,3 +1135,17 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Testé sur appareil réel :** non (débrancher et rebrancher le chargeur : à faire par Côme au test de la prochaine version).
 **Prochaine étape :** accessoires Magic relus moins souvent (fréquence à valider avec Côme).
+
+## 2026-10-25 (suite 32) — Accessoires relus une fois par intervalle ; issue #56
+
+**Contexte :** branche `perf/accessories-per-interval`, partie de `perf/power-source-notifications` (PR #55, pas encore fusionnée).
+
+**Fait :**
+- Issue [#56](https://github.com/MsieurPafi/AirBattery-Plus/issues/56) créée avec l'accord de Côme : indexation par identifiant seul, mise de côté (renvoi vers D-025). IDEAS y renvoie.
+- `Scheduler` : `system_profiler` + accessoires (`MagicBattery.scanDevices`) toutes les `min(intervalle, 300 s)` au lieu de 0,4 × intervalle ; écriture des données des widgets gardée à 0,4 × intervalle. Fréquence validée par Côme (« once per refresh interval »).
+- Plafond de 5 min ajouté après relecture : l'intervalle va jusqu'à 99 min (`SSteper … max: 99`) et « Retirer l'appareil hors ligne » commence à 20 min (`disappearTime`) ; sans plafond, un accessoire aurait disparu entre deux lectures dès 21 min d'intervalle (avant : dès 50 min). Les accessoires restent lus au lancement (`MagicBattery.startScan`) et à chaque connexion (`deviceIsConnected`).
+- Mesure (PID distincts « from system_profiler » dans les journaux de `bluetoothd`, 6 min, après 2 min de stabilisation) : 1.11.1 installée 17 (20:41:30–20:47:30) ; build Release de la branche 10 (20:49:56–20:55:56). Un premier comptage de la référence englobait le relancement de l'app (20) puis une fenêtre trop courte (boucle d'attente en syntaxe bash sous zsh : « condition expected: < ») : refait.
+- App de Côme arrêtée environ 9 min pour la mesure ; 1.11.1 relancée, widget de `/Applications` seul enregistré.
+
+**Testé sur appareil réel :** non (rien de visible : niveaux des accessoires mis à jour moins souvent).
+**Prochaine étape :** #210, après évaluation de sa complexité.

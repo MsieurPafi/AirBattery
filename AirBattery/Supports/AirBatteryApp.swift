@@ -606,8 +606,15 @@ final class Scheduler {
         every(interval) {
             if widgetInterval != -1 && AirBatteryModel.takeWidgetReloadNeeded() { WidgetCenter.shared.reloadAllTimelines() }
         }
-        // system_profiler and the Magic accessories, then the widgets' data (24 s by default)
-        every(interval * 0.4) { self.refreshData() }
+        // system_profiler and the accessories (Magic and other Bluetooth): once per interval,
+        // at most 5 min apart so they never look offline ("Remove Offline Device" starts at
+        // 20 min, and the interval goes up to 99 min). Their levels move by 1% in hours, and a
+        // newly connected device is read right away (deviceIsConnected). It ran every
+        // 0.4 × interval, i.e. every 24 s by default.
+        every(min(interval, 300)) { self.refreshAccessories() }
+        // Widgets' data, written only when something shown changed (24 s by default), so it is
+        // fresh before each widget reload.
+        every(interval * 0.4) { self.dataQueue.async { AirBatteryModel.writeData() } }
         every(interval + Double(Int(arc4random_uniform(19)) - 9)) { self.broadcastNearcast() }
     }
 
@@ -618,7 +625,7 @@ final class Scheduler {
         timers.append(timer)
     }
 
-    private func refreshData() {
+    private func refreshAccessories() {
         // Serial queue: a slow system_profiler (after wake) can't pile up runs
         dataQueue.async {
             SPBluetoothDataModel.shared.refreshData(completion: { _ in
