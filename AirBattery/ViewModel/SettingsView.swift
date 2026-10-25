@@ -672,7 +672,7 @@ struct DebugView: View {
                                 Button(action: {
                                     isPresented = false
                                 }, label: {
-                                    Text("Cancle").frame(width: 50)
+                                    Text("Cancel").frame(width: 50)
                                 })
                                 Button(action: {
                                     let device = Device(deviceID: deviceID, deviceType: deviceType, deviceName: deviceName, batteryLevel: batteryLevel, isCharging: isCharging ? 1 : (fullCharged ? 5 : 0), lowPower: lowPower, parentName: parentName,lastUpdate: Date().timeIntervalSince1970)

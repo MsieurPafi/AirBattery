@@ -13,4 +13,4 @@ AirBattery Plus affiche la batterie de votre Mac et des appareils qui l'entouren
 7. [Autorisations et confidentialité](permissions-privacy.md) : ce que l'app demande, et ce qui reste sur votre Mac.
 8. [Dépannage](troubleshooting.md) : un appareil manque, un iPhone ou une Apple Watch n'apparaît pas, etc.
 
-L'app est pour l'instant en anglais : les noms des réglages sont donc donnés en anglais. Les nouveautés de chaque version sont dans le [journal des modifications](../../../CHANGELOG.md) (en anglais).
+Les réglages sont nommés comme dans l'app en français. Les nouveautés de chaque version sont dans le [journal des modifications](../../../CHANGELOG.md) (en anglais).

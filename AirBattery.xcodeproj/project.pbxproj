@@ -18,7 +18,7 @@
 		18347DCE2B88417500A78DF6 /* BatteryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18347DCD2B88417500A78DF6 /* BatteryView.swift */; };
 		1841D4512AA6071C0022A1BE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1841D4502AA6071C0022A1BE /* ContentView.swift */; };
 		1841D4562AA6071D0022A1BE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1841D4552AA6071D0022A1BE /* Preview Assets.xcassets */; };
-		1841D4782AA8DEF20022A1BE /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1841D47A2AA8DEF20022A1BE /* Localizable.strings */; };
+		1841D4782AA8DEF20022A1BE /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F1C0A1B2C3D4E5F60718293C /* Localizable.xcstrings */; };
 		1841D47D2AAA20F80022A1BE /* InternalBattery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1841D47C2AAA20F80022A1BE /* InternalBattery.swift */; };
 		1841D4812AAA28880022A1BE /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1841D4802AAA28880022A1BE /* SettingsView.swift */; };
 		184ADEDA2DDB2C8A004791F0 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = 184ADED92DDB2C8A004791F0 /* ArgumentParser */; };
@@ -49,10 +49,10 @@
 		18892AA22B82F0880017377E /* AirBatteryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18F615F82B76439300873AA4 /* AirBatteryModel.swift */; };
 		18892AA32B82F09C0017377E /* InternalBattery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1841D47C2AAA20F80022A1BE /* InternalBattery.swift */; };
 		1895851B2B724DCD00108E5C /* IDeviceBattery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1895851A2B724DCD00108E5C /* IDeviceBattery.swift */; };
-		189BD5E92BDE69660056D06C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 189BD5EB2BDE69660056D06C /* InfoPlist.strings */; };
+		189BD5E92BDE69660056D06C /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F1C0A1B2C3D4E5F60718293D /* InfoPlist.xcstrings */; };
 		18A0A9CB2AAE07EA00975B81 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 18A0A9CD2AAE07EA00975B81 /* Credits.rtf */; };
 		18B8E5C62B8329C500A20D03 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1841D4522AA6071D0022A1BE /* Assets.xcassets */; };
-		18B8E5C72B83C32100A20D03 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1841D47A2AA8DEF20022A1BE /* Localizable.strings */; };
+		18B8E5C72B83C32100A20D03 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F1C0A1B2C3D4E5F60718293C /* Localizable.xcstrings */; };
 		18B8E5C92B83C9AD00A20D03 /* BatteryWidget2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B8E5C82B83C9AD00A20D03 /* BatteryWidget2.swift */; };
 		18BBC0672C16F4F900D9FE76 /* MultipeerKit in Frameworks */ = {isa = PBXBuildFile; productRef = 18BBC0662C16F4F900D9FE76 /* MultipeerKit */; };
 		18E6E36E2C0BA6A800A666CE /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 18E6E36D2C0BA6A800A666CE /* Sparkle */; };
@@ -132,7 +132,6 @@
 		1841D4502AA6071C0022A1BE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		1841D4522AA6071D0022A1BE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1841D4552AA6071D0022A1BE /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		1841D47B2AA8DF0B0022A1BE /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		1841D47C2AAA20F80022A1BE /* InternalBattery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalBattery.swift; sourceTree = "<group>"; };
 		1841D4802AAA28880022A1BE /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		184ADED12DDB2B37004791F0 /* abtp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = abtp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -159,10 +158,7 @@
 		18892A952B81F8330017377E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		18892A962B81F8330017377E /* widget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = widget.entitlements; sourceTree = "<group>"; };
 		1893984B2DF73D6800E7C32E /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = "zh-Hant"; path = "zh-Hant.lproj/Credits.rtf"; sourceTree = "<group>"; };
-		1893984C2DF73D8100E7C32E /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
-		1893984D2DF73DF000E7C32E /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		1895851A2B724DCD00108E5C /* IDeviceBattery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IDeviceBattery.swift; sourceTree = "<group>"; };
-		189BD5EA2BDE69660056D06C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		18A0A9CC2AAE07EA00975B81 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = "zh-Hans"; path = "zh-Hans.lproj/Credits.rtf"; sourceTree = "<group>"; };
 		18B8E5C82B83C9AD00A20D03 /* BatteryWidget2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryWidget2.swift; sourceTree = "<group>"; };
 		18C7CFDE2AAF842E005898EF /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = Base; path = Base.lproj/Credits.rtf; sourceTree = "<group>"; };
@@ -170,6 +166,9 @@
 		18F615F22B763DD800873AA4 /* BLEBattery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEBattery.swift; sourceTree = "<group>"; };
 		18F615F82B76439300873AA4 /* AirBatteryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirBatteryModel.swift; sourceTree = "<group>"; };
 		F1C0A1B2C3D4E5F60718293A /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
+		F1C0A1B2C3D4E5F60718293C /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		F1C0A1B2C3D4E5F60718293D /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
+		F1C0A1B2C3D4E5F60718293E /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = fr; path = fr.lproj/Credits.rtf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -237,7 +236,6 @@
 		1841D4422AA6071C0022A1BE = {
 			isa = PBXGroup;
 			children = (
-				189BD5EB2BDE69660056D06C /* InfoPlist.strings */,
 				180A51B72B84DC3700CF2D15 /* libimobiledevice */,
 				1841D44D2AA6071C0022A1BE /* AirBattery */,
 				18892A8C2B81F8320017377E /* widget */,
@@ -271,7 +269,8 @@
 				1841D4522AA6071D0022A1BE /* Assets.xcassets */,
 				186671CC2B791CF700D4D27B /* Info.plist */,
 				18283DB22B8583A4009B1B13 /* AirBattery.entitlements */,
-				1841D47A2AA8DEF20022A1BE /* Localizable.strings */,
+				F1C0A1B2C3D4E5F60718293C /* Localizable.xcstrings */,
+				F1C0A1B2C3D4E5F60718293D /* InfoPlist.xcstrings */,
 				1841D4542AA6071D0022A1BE /* Preview Content */,
 			);
 			path = AirBattery;
@@ -479,6 +478,7 @@
 				Base,
 				"zh-Hans",
 				"zh-Hant",
+				fr,
 			);
 			mainGroup = 1841D4422AA6071C0022A1BE;
 			packageReferences = (
@@ -513,8 +513,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				1841D4562AA6071D0022A1BE /* Preview Assets.xcassets in Resources */,
-				189BD5E92BDE69660056D06C /* InfoPlist.strings in Resources */,
-				1841D4782AA8DEF20022A1BE /* Localizable.strings in Resources */,
+				189BD5E92BDE69660056D06C /* InfoPlist.xcstrings in Resources */,
+				1841D4782AA8DEF20022A1BE /* Localizable.xcstrings in Resources */,
 				180A51B82B84DC3700CF2D15 /* libimobiledevice in Resources */,
 				184ADF0A2DDB6C9F004791F0 /* logReader.sh in Resources */,
 				184ADF0B2DDB6C9F004791F0 /* Scriptable.sdef in Resources */,
@@ -529,7 +529,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				18B8E5C62B8329C500A20D03 /* Assets.xcassets in Resources */,
-				18B8E5C72B83C32100A20D03 /* Localizable.strings in Resources */,
+				18B8E5C72B83C32100A20D03 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -608,31 +608,13 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		1841D47A2AA8DEF20022A1BE /* Localizable.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				1841D47B2AA8DF0B0022A1BE /* zh-Hans */,
-				1893984D2DF73DF000E7C32E /* zh-Hant */,
-			);
-			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
-		189BD5EB2BDE69660056D06C /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				189BD5EA2BDE69660056D06C /* zh-Hans */,
-				1893984C2DF73D8100E7C32E /* zh-Hant */,
-			);
-			name = InfoPlist.strings;
-			path = AirBattery;
-			sourceTree = "<group>";
-		};
 		18A0A9CD2AAE07EA00975B81 /* Credits.rtf */ = {
 			isa = PBXVariantGroup;
 			children = (
 				18A0A9CC2AAE07EA00975B81 /* zh-Hans */,
 				18C7CFDE2AAF842E005898EF /* Base */,
 				1893984B2DF73D6800E7C32E /* zh-Hant */,
+				F1C0A1B2C3D4E5F60718293E /* fr */,
 			);
 			name = Credits.rtf;
 			sourceTree = "<group>";

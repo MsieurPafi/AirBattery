@@ -31,6 +31,6 @@ AirBattery Plus demande quelques autorisations. Leur raison d'être est expliqu�
 - **Réseau local** : pour l'iPhone, l'iPad et l'Apple Watch en Wi-Fi, et pour Nearcast.
 - **Notifications** : pour les alertes de batterie.
 
-Par défaut, l'app s'affiche dans la barre des menus. Cliquez sur son icône pour voir vos appareils. Pour l'afficher aussi dans le Dock, ou seulement là, voir **Settings › General › Show AirBattery Plus**.
+Par défaut, l'app s'affiche dans la barre des menus. Cliquez sur son icône pour voir vos appareils. Pour l'afficher aussi dans le Dock, ou seulement là, voir **Réglages › Général › Afficher AirBattery Plus**.
 
 La plupart des appareils apparaissent d'eux-mêmes. Un iPhone, un iPad ou une Apple Watch demandent une étape de plus : voir [Appareils pris en charge](devices.md#iphone-ipad-et-apple-watch).

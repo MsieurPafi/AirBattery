@@ -12,19 +12,19 @@ Branchez une fois l'iPhone ou l'iPad au Mac avec un câble et touchez **Se fier*
 La Watch est lue par l'intermédiaire de son iPhone. Branchez une fois le nouvel iPhone avec un câble, touchez **Se fier** et cochez **Afficher cet iPhone en Wi-Fi**.
 
 **Mon iPhone n'est pas en Wi-Fi.**
-Utilisez **Discover iOS devices via Bluetooth** et autorisez-le dans **Manage** (iPhone et iPad cellulaire seulement, sans l'Apple Watch).
+Utilisez **Rechercher les appareils iOS en Bluetooth** et autorisez-le dans **Gérer** (iPhone et iPad cellulaire seulement, sans l'Apple Watch).
 
 **Un accessoire Bluetooth manque.**
-Activez **Discover more BT devices**, puis déconnectez et reconnectez l'accessoire. S'il manque toujours, essayez **Discover more BLE devices** (bêta).
+Activez **Rechercher plus d'appareils BT**, puis déconnectez et reconnectez l'accessoire. S'il manque toujours, essayez **Rechercher plus d'appareils BLE** (bêta).
 
 **Un appareil qui n'est pas à moi demande un jumelage.**
-Il a été trouvé par **Discover more BLE devices**. Refusez, puis masquez cet appareil ou ajoutez-le à la liste de blocage.
+Il a été trouvé par **Rechercher plus d'appareils BLE**. Refusez, puis masquez cet appareil ou ajoutez-le à la liste de blocage.
 
 **Un ⚠️ s'affiche devant un appareil.**
 Il ne s'est pas manifesté depuis plus de dix minutes : il est peut-être éteint, en veille ou hors de portée.
 
 **Un widget indique que l'app n'est pas lancée.**
-Ouvrez AirBattery Plus. Si le widget semble encore figé : **Settings › Widget › Reload All Widgets**.
+Ouvrez AirBattery Plus. Si le widget semble encore figé : **Réglages › Widget › Recharger tous les widgets**.
 
 **Après une mise à jour, l'ancienne icône s'affiche encore.**
 macOS garde les icônes des apps en cache. Elles se rafraîchissent d'elles-mêmes, ou à la prochaine ouverture de session.

@@ -669,3 +669,26 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Échecs :** —
 **Testé sur appareil réel :** sans objet.
 **Prochaine étape :** relecture par Côme (français), puis étape 3 : app en français à partir de la PR upstream #170 + String Catalog.
+
+---
+
+## 2026-10-25 (suite 9) — Documentation, étape 3 : l'app en français, String Catalogs
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, `main` @ `a1ae6cb` (PR #29 fusionnée avec l'accord de Côme). Branche `feat/french-localization`.
+
+**Fait :**
+- Inventaire : `Localizable.strings` partagé par l'app et le widget (zh-Hans, zh-Hant : 177 phrases), `InfoPlist.strings` (2), `Credits.rtf` ; `LOCALIZATION_PREFERS_STRING_CATALOGS` et `SWIFT_EMIT_LOC_STRINGS` déjà actifs. PR #170 (leo1425) : 149 phrases sur d'anciennes clés.
+- « il y a X min » en une seule chaîne de format (`"%d mins ago"`, correctif de #170). Faute de frappe `"Cancle"` corrigée en `"Cancel"` (menu de débogage).
+- Catalogues créés par script (`.strings` convertis avec `plutil`, clés de #170 renommées), puis `xcrun xcstringstool sync` avec les `.stringsdata` de l'app et du widget : +37 phrases extraites du code. 17 phrases absentes du code retirées, 12 marquées « ne pas traduire ». Contrôle des spécificateurs de format (`%@`, `%d`, `%lld`) : identiques dans toutes les langues.
+- Traduction française complète (186 phrases) et relue ; `InfoPlist.xcstrings` (demandes Bluetooth et réseau local en français) ; `fr.lproj/Credits.rtf`. D-022.
+- Projet : `fr` dans `knownRegions`, références des catalogues à la place des groupes de variantes `.strings`. Build OK : `fr.lproj` dans l'app et le widget (186 phrases, `InfoPlist.strings`, `Credits.rtf`) ; chinois toujours compilé (160 phrases).
+- Test de Côme sur la copie de build (macOS en `fr-FR`) : « parfait ». Copie de build désenregistrée, 1.8.0 relancée.
+- Guide français : noms des réglages remplacés par leurs noms français (d'après le catalogue), liens et ancres revérifiés.
+- Questions de Côme : comment l'app choisit sa langue (préférences de langue de macOS, puis anglais ; réglage par app possible) ; la fréquence du widget dépend-elle de celle de Proximité (notée dans IDEAS, non creusée à sa demande).
+
+**Échecs :**
+- Crédits français : premier rendu sans la phrase d'accroche ni « Dérivé d' » : la police était déclarée avec `\fcharset134` (chinois), qui écrase la code page 1252 → `\fcharset0`.
+- `grep -rnF … --include='*.swift'` comptait aussi les `.strings` (`grep` est un alias d'`ugrep`, qui ignore `--include` ici) : vérification refaite en Python.
+
+**Testé sur appareil réel :** oui, par Côme (app en français).
+**Prochaine étape :** PR ; puis étape 4 (captures d'écran) et une release.
