@@ -23,7 +23,8 @@
 - **Alertes de batterie** quand un appareil est presque vide ou a fini de charger.
 - **Nearcast** : la batterie de vos autres Mac et de leurs appareils, chiffrée sur votre réseau local.
 - Outil en ligne de commande **`abtp`**, avec sortie JSON et CSV.
-- Interface Liquid Glass sur macOS 26 et plus récent. Rien n'est envoyé sur internet.
+- **Mises à jour intégrées**, signées par le projet. Aucune statistique d'usage : le seul accès à internet de l'app est la recherche de mises à jour ([Confidentialité](docs/guide/fr/permissions-privacy.md)).
+- Interface Liquid Glass sur macOS 26 et plus récent.
 
 ## Installation
 
