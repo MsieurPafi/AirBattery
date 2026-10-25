@@ -1,6 +1,6 @@
 # Supported devices
 
-[Guide](README.md)
+[Guide](README.md) · [Français](../fr/devices.md)
 
 AirBattery Plus reads batteries through several sources. Each one can be turned on or off in **Settings › Nearbility**.
 

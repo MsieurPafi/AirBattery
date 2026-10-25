@@ -652,3 +652,20 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Échecs :** —
 **Testé sur appareil réel :** sans objet (documentation).
 **Prochaine étape :** relecture par Côme, puis étape 2 (traduction française).
+
+---
+
+## 2026-10-25 (suite 8) — Documentation, étape 2 : traduction française
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, `main` @ `c86a341` (PR #28 fusionnée avec l'accord de Côme). Branche `docs/french`.
+
+**Fait :**
+- `README.fr.md` et `docs/guide/fr/` (9 pages, mêmes noms de fichiers que l'anglais pour que les paires soient évidentes). Liens de langue dans les deux sens sur chaque page ; lien « Français » dans l'en-tête du `README.md` ; `CONTRIBUTING.md` mis à jour (règle des deux langues).
+- Termes système en français tels que macOS et iOS les affichent (« Réglages Système › Confidentialité et sécurité », « Ouvrir quand même », « Se fier », « Afficher cet iPhone en Wi-Fi », « Partage de connexion », « Modifier le widget »). Les réglages de l'app restent nommés en anglais, comme elle les affiche aujourd'hui : à passer en français à l'étape 3 avec la traduction de l'app.
+- Typographie française par script : espace insécable avant « : ; ! ? » et avant « % », hors blocs et extraits de code (84 lignes).
+- Petite correction de l'anglais : mention « in English or French » pour les issues.
+- Vérification par script : aucun lien relatif ni ancre cassés (ancres générées à la manière de GitHub), mêmes pages en anglais et en français.
+
+**Échecs :** —
+**Testé sur appareil réel :** sans objet.
+**Prochaine étape :** relecture par Côme (français), puis étape 3 : app en français à partir de la PR upstream #170 + String Catalog.

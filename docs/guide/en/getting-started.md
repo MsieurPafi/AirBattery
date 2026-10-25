@@ -1,6 +1,6 @@
 # Getting started
 
-[Guide](README.md)
+[Guide](README.md) · [Français](../fr/getting-started.md)
 
 ## Requirements
 

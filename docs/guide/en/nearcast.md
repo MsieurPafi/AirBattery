@@ -1,6 +1,6 @@
 # Nearcast
 
-[Guide](README.md)
+[Guide](README.md) · [Français](../fr/nearcast.md)
 
 Nearcast shares battery levels between your Macs on the same local network. Each Mac shows the batteries of the others, and of their devices, in a section of its own list. Battery alerts are also forwarded to the other Macs.
 
