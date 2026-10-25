@@ -144,3 +144,11 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 **Pourquoi :** un nom unique évite toute confusion avec l'app officielle installée à côté ; garder les identifiants techniques évite de faire perdre leurs réglages et la position de leurs icônes aux utilisateurs actuels.
 **Conséquences :** les traductions chinoises sont indexées par la phrase anglaise : quand une phrase change, sa clé chinoise est mise à jour et le nom propre remplacé dans la traduction, sans autre retouche. Les scripts ou raccourcis de quelqu'un qui tapait `airbattery` pour le fork doivent passer à `abtp`.
 **Validée par Côme :** oui (2026-10-25)
+
+## D-018 — Icône de l'app : maquette B2, au format Icon Composer   (2026-10-25, statut : acceptée)
+**Contexte :** l'icône du fork était celle de l'app officielle (carré vert, éclair blanc), en simples PNG : impossible de distinguer les deux apps dans le Dock, et pas d'icône Liquid Glass sur macOS 26+ (upstream #187). D-017 en a fait un sujet à part.
+**Options envisagées :** six maquettes soumises à Côme le 2026-10-25 : A (même icône + « + »), B1 (bleu), B2 (vert → turquoise + « + »), C1 (anneaux, un par appareil), C2 (batterie dont la borne est un « + »).
+**Décision :** **B2**, choisie par Côme. Fond en dégradé vertical `#8DEFB2` → `#13A6A0`, éclair et « + » blancs. Fichier Icon Composer `AirBattery/AppIcon.icon` (écrit à la main : `icon.json` + calques SVG, sans passer par l'interface d'Icon Composer), ajouté aux ressources de l'app ; `actool` (Xcode 27.1) en tire les variantes claire, sombre et teintée et un `AppIcon.icns`. Les PNG de `AppIcon.appiconset` sont remplacés par la version plate (macOS 12–25, en-tête du README). Les SVG viennent de `scripts/icon/make-icon-artwork.py`, les PNG de `scripts/icon/export-pngs.swift`.
+**Pourquoi :** on reconnaît la famille AirBattery, mais la couleur et le « + » distinguent le fork d'un coup d'œil, même à 32 px (à 16 px le « + » disparaît, la couleur suffit). Icon Composer est le format attendu par macOS 26+.
+**Conséquences :** une seule géométrie à modifier dans le script. Le rendu Liquid Glass n'a été vérifié que via `NSWorkspace.icon(forFile:)` sur macOS 27.0.1 ; l'affichage sur macOS 12–25 n'est pas testé (pas de machine). Retour arrière : revert du commit.
+**Validée par Côme :** oui (choix de B2, 2026-10-25)
