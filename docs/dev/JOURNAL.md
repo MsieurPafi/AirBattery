@@ -826,3 +826,29 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Échecs :** premier build → `'@discardableResult' attribute cannot be applied to this declaration` (attribut de l'ancienne fonction resté au-dessus du nouveau type), corrigé.
 **Testé sur appareil réel :** en partie. Non testés : bascule de « Ouvrir à la connexion » (à faire avec le DMG, sinon l'inscription pointerait vers la copie de test) ; boîte de dialogue des notifications (il faudrait les désactiver).
 **Prochaine étape :** PR 2 (Bluetooth : reconnexion de la MX, anti-rebond, IOBluetooth sur le fil principal, verrou de `InternalBattery.status`).
+
+---
+
+## 2026-10-25 (suite 16) — Analyse, PR 2 : Bluetooth
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, `main` @ `0c3e575` (PR #36 fusionnée avec l'accord de Côme). Branche `fix/bluetooth-reconnects`.
+
+**Fait :**
+- **Souris MX** (AUDIT 1.1) : `didConnect` découvrait tous les services, et le premier service non batterie retirait le périphérique de `peripherals`, ce qui fermait la connexion de l'app. Désormais, pour les périphériques que macOS garde connectés (`systemConnectedPeripherals`, rempli par `readConnectedPeripherals`), seul `180F` est découvert et la référence est gardée : aux cycles suivants, simple `readValue`.
+- **Premier essai insuffisant** : `bluetoothd` montrait encore une connexion de l'app par minute. Les sessions dans le journal de `bluetoothd` (`… from session "io.github.msieurpafi.AirBattery-central-…"`) ont montré que la MX n'était plus reconnectée (`CharacteristicReadValue`), mais que l'**iPhone autorisé en Bluetooth** l'était (`ideviceOverBLE` = 1 chez Côme).
+  - La piste iPhone de la relecture qualité était donc juste pour cette partie. Mon premier verdict (« la souris seule ») était incomplet ; voir l'entrée de la suite 14 et AUDIT 1.1.
+- **iPhone** (AUDIT 1.6) :
+  - la lecture BLE ne remplace plus le `deviceID` (UDID) d'un iPhone ou iPad déjà connu ;
+  - si l'appareil est connu sous un autre identifiant, donc tenu à jour par USB/Wi-Fi, la connexion BLE n'a lieu que si cette source est muette depuis 3 intervalles.
+- **Anti-rebond** dans `deviceIsConnected` : au plus un traitement par adresse et par minute.
+- **IOBluetooth sur le fil principal** (AUDIT 1.5) : `MagicBattery.getIOBTBattery` et `BTDBattery.getConnected` passent par `onMainThread` (nouveau, `Supports.swift`) et n'en sortent que des valeurs simples. Pas de risque d'interblocage relevé : `LogReader` libère son verrou avant de travailler, et aucun appel n'a lieu sous le verrou du modèle.
+- `InternalBattery.status` protégé par un `NSLock`.
+- **Mesure sur le Mac de Côme** (copie de test, 4 min, puis 1.9.0 relancée et widget réenregistré) :
+  - aucun « connected » (1 par minute avant) ;
+  - connexions BLE de l'app seulement au lancement, puis 8 lectures de valeur ;
+  - iPhone et Watch gardent leur UDID et sont relus environ une fois par minute ;
+  - 0 erreur.
+
+**Échecs :** premier correctif insuffisant (voir ci-dessus).
+**Testé sur appareil réel :** oui (mesures sur le Mac de Côme).
+**Prochaine étape :** PR 3 (`logReader.sh`).

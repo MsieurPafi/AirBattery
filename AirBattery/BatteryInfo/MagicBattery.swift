@@ -344,23 +344,20 @@ class MagicBattery {
     }
     
     func getIOBTBattery() {
-        if let devices = IOBluetoothDevice.pairedDevices() as? [IOBluetoothDevice] {
-            for device in devices {
-                let name = device.name
-                let address = device.addressString
-                let connected = device.isConnected()
-                //let usb = device.getValue(forKey: "isPluggedOverUSB") as! Bool ?? false
-                
-                if connected && !device.isAppleDevice {
-                    if let battery = device.getValue(forKey: "batteryPercentSingle") as? Int, let name = name, let address = address, battery != 0 {
-                        let type = getDeviceType(address.replacingOccurrences(of: "-", with: ":").uppercased(),"")
-                        AirBatteryModel.updateDevice(Device(deviceID: address, deviceType: type, deviceName: name, batteryLevel: battery, isCharging: 0, lastUpdate: Date().timeIntervalSince1970))
-                    }
-                    //let left = device.getValue(forKey: "batteryPercentLeft") as? Int
-                    //let right = device.getValue(forKey: "batteryPercentRight") as? Int
-                    //let _case = device.getValue(forKey: "batteryPercentCase") as? Int
-                }
+        // IOBluetoothDevice objects are only read on the main thread (see deviceIsConnected):
+        // only plain values leave it (AUDIT-2026-10-25, 1.5).
+        let readings: [(name: String, address: String, battery: Int)] = onMainThread {
+            guard let devices = IOBluetoothDevice.pairedDevices() as? [IOBluetoothDevice] else { return [] }
+            return devices.compactMap { device in
+                guard device.isConnected(), !device.isAppleDevice,
+                      let battery = device.getValue(forKey: "batteryPercentSingle") as? Int, battery != 0,
+                      let name = device.name, let address = device.addressString else { return nil }
+                return (name, address, battery)
             }
+        }
+        for reading in readings {
+            let type = getDeviceType(reading.address.replacingOccurrences(of: "-", with: ":").uppercased(), "")
+            AirBatteryModel.updateDevice(Device(deviceID: reading.address, deviceType: type, deviceName: reading.name, batteryLevel: reading.battery, isCharging: 0, lastUpdate: Date().timeIntervalSince1970))
         }
     }
 }
