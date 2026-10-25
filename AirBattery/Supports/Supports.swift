@@ -421,7 +421,7 @@ func getMacDeviceType() -> String {
     guard let result = process(path: "/usr/sbin/system_profiler", arguments: ["SPHardwareDataType", "-json"]) else { return "Mac" }
     if let json = try? JSONSerialization.jsonObject(with: Data(result.utf8), options: []) as? [String: Any],
        let SPHardwareDataTypeRaw = json["SPHardwareDataType"] as? [Any],
-       let SPHardwareDataType = SPHardwareDataTypeRaw[0] as? [String: Any],
+       let SPHardwareDataType = SPHardwareDataTypeRaw.first as? [String: Any],
        let model = SPHardwareDataType["machine_name"] as? String{
         return model.lowercased().replacingOccurrences(of: " ", with: "")
     }
@@ -470,17 +470,18 @@ func getFirstNCharacters(of string: String, count: Int) -> String? {
     return String(substring)
 }
 
-func generateSymmetricKey(password: String) -> SymmetricKey {
-    let pass = substring(from: password, start: 15, length: 8)
+/// Nil for a malformed Group ID (it could come from a hand-edited setting).
+func generateSymmetricKey(password: String) -> SymmetricKey? {
+    guard isGroudIDValid(id: password), let pass = substring(from: password, start: 15, length: 8) else { return nil }
     let salt = String(password.prefix(15))
-    let passwordData = Data(pass!.utf8)
-    let saltData = salt.data(using: .utf8)!
+    let passwordData = Data(pass.utf8)
+    let saltData = Data(salt.utf8)
     let derivedKey = HKDF<SHA256>.deriveKey(inputKeyMaterial: SymmetricKey(data: passwordData), salt: saltData, info: Data(), outputByteCount: 32)
     return derivedKey
 }
 
 func encryptString(_ string: String, password: String) -> String? {
-    let key = generateSymmetricKey(password: password)
+    guard let key = generateSymmetricKey(password: password) else { return nil }
     let stringData = Data(string.utf8)
     
     do {
@@ -493,7 +494,7 @@ func encryptString(_ string: String, password: String) -> String? {
 }
 
 func decryptString(_ string: String, password: String) -> String? {
-    let key = generateSymmetricKey(password: password)
+    guard let key = generateSymmetricKey(password: password) else { return nil }
     
     do {
         guard let data = Data(base64Encoded: string) else { return nil }

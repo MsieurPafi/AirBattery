@@ -24,7 +24,8 @@ extension Device {
             status = "-"
         }
         let stamp = realUpdate != 0.0 ? realUpdate : lastUpdate
-        let min = Int((stamp - Double(Date().timeIntervalSince1970)) / 60)
+        // Minutes since the last update
+        let min = Int((Date().timeIntervalSince1970 - stamp) / 60)
         return item(
             device: deviceName,
             level: batteryLevel,
@@ -97,7 +98,9 @@ struct airbattery: ParsableCommand {
         var joined = rows.joined(separator: "\n") + "\n"
         
         if csv {
-            print(joined.replacingOccurrences(of: "\t", with: ","))
+            // RFC 4180: quote every field, double the quotes inside a name
+            let quote = { (field: String) in "\"" + field.replacingOccurrences(of: "\"", with: "\"\"") + "\"" }
+            print((["Device,Level,Status"] + items.map { "\(quote($0.device)),\($0.level),\(quote($0.status))" }).joined(separator: "\n"))
             return
         }
         

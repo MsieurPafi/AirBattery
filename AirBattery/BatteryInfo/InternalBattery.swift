@@ -41,8 +41,9 @@ class InternalBattery {
 
     var charge: Double? {
         get {
+            // A zero capacity (seen on degraded batteries) would give an infinite level
             if let current = self.currentCapacity,
-               let max = self.maxCapacity {
+               let max = self.maxCapacity, max > 0 {
                 return (Double(current) / Double(max)) * 100.0
             }
             return nil
@@ -225,7 +226,8 @@ class InternalFinder {
 
     fileprivate func getTemperature() -> Double? {
         if let value = IORegistryEntryCreateCFProperty(self.serviceInternal, "Temperature" as CFString, kCFAllocatorDefault, 0) {
-            return value.takeRetainedValue() as! Double / 100.0
+            guard let temperature = value.takeRetainedValue() as? Double else { return nil }
+            return temperature / 100.0
         }
 
         return nil
@@ -249,7 +251,7 @@ class InternalFinder {
 
     fileprivate func getManufactureDate() -> Date? {
         if let value = IORegistryEntryCreateCFProperty(self.serviceInternal, "ManufactureDate" as CFString, kCFAllocatorDefault, 0) {
-            let date = value.takeRetainedValue() as! Int
+            guard let date = value.takeRetainedValue() as? Int else { return nil }
 
             let day = date & 31
             let month = (date >> 5) & 15

@@ -793,3 +793,36 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Testé sur appareil réel :** mesures et journaux sur le Mac de Côme ; aucune correction appliquée.
 **Pistes ouvertes :** vérifier les notifications dans Réglages Système (Côme) ; choisir l'ordre des corrections.
 **Prochaine étape :** PR 1 du plan (correctifs rapides) si Côme valide.
+
+---
+
+## 2026-10-25 (suite 15) — Analyse, PR 1 : correctifs rapides
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, `main` @ `4cc6f76` (PR #35 fusionnée, plan validé par Côme : « dans l'ordre que tu as suggéré »). Branche `fix/audit-quick-wins`. Côme a réactivé les notifications d'AirBattery Plus dans Réglages Système (elles étaient désactivées).
+
+**Fait (renvois à `AUDIT-2026-10-25.md`) :**
+- Plantages (1.5) :
+  - `charge` refuse une capacité nulle ; `as!` → `as?` sur `Temperature` et `ManufactureDate`.
+  - `SPBluetoothDataTypeRaw[0]` → `.first` (7 endroits + `SPHardwareDataType`) ; entrées de `device_connected` en `guard … as? … else { continue }`.
+  - Réglages lus par `ud.stringArray`, et `as? Int ?? 20` pour `disappearTime`.
+  - AppleScript sans paramètre → -1.
+  - `generateSymmetricKey` renvoie un optionnel pour un Group ID invalide ; Nearcast ne reprend au lancement que si l'identifiant est valide.
+- « Jamais » : étiquette `Int(UInt32.max)` (type de la sélection).
+- `getOtherBTBattery` : `continue` au lieu de `return`.
+- `IOObjectRelease` de chaque objet de l'itérateur (4 boucles de `MagicBattery`).
+- Minuteries BLE et BTD : fermetures au lieu de `target/selector` (le `Timer` était passé comme `longScan`).
+- `abtp` : signe de l'âge des données, CSV RFC 4180 (noms entre guillemets, niveaux numériques).
+- « Apple Pencil » et « Pencil » ne passent plus par `.local` (noms = identifiants, 1.4).
+- Connexion au démarrage : type `LoginItem` (`SMAppService.loginItem(identifier: helper)` sur macOS 13+, `SMLoginItemSetEnabled` sur macOS 12) ; même helper qu'avant, pour ne pas créer une deuxième inscription. `ensureLoginItem` (`SMAppService.mainApp`, PR #161) et `registerDefaults`, inutilisés, sont supprimés. État lu au lancement : `true` chez Côme, donc l'inscription existante est bien reconnue.
+- Notifications refusées : boîte de dialogue à l'enregistrement d'une alerte, avec bouton vers Réglages Système › Notifications ; 3 phrases ajoutées au catalogue (EN, FR).
+- Nearcast, mesures d'attente :
+  - nom de fichier = `sender` seulement s'il est sûr (`^[A-Za-z0-9-]{1,64}$`), sinon SHA-256 ; écriture atomique ;
+  - plus de `BTTool.connect` à distance (type 254) ;
+  - plus de réponse aux commandes inconnues (l'oracle) ; commande journalisée en privé, tronquée à 32 caractères ;
+  - « Unknown Command » et « doesn't support command » retirés du catalogue.
+- Build Debug OK, sans nouvel avertissement. Les avertissements « switch must be exhaustive » des widgets existaient déjà.
+- Essai de 80 s sur le Mac de Côme (copie de test, puis 1.9.0 relancée et widget réenregistré) : appareils lus normalement, `abtp --csv` et `--json` corrects.
+
+**Échecs :** premier build → `'@discardableResult' attribute cannot be applied to this declaration` (attribut de l'ancienne fonction resté au-dessus du nouveau type), corrigé.
+**Testé sur appareil réel :** en partie. Non testés : bascule de « Ouvrir à la connexion » (à faire avec le DMG, sinon l'inscription pointerait vers la copie de test) ; boîte de dialogue des notifications (il faudrait les désactiver).
+**Prochaine étape :** PR 2 (Bluetooth : reconnexion de la MX, anti-rebond, IOBluetooth sur le fil principal, verrou de `InternalBattery.status`).
