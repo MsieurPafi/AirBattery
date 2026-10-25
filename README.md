@@ -2,7 +2,7 @@
 <p align="center">
 <img src="./AirBattery/Assets.xcassets/AppIcon.appiconset/icon_128x128@2x.png" width="200" height="200" />
 <h1 align="center">AirBattery Plus</h1>
-<h3 align="center">The battery of all your devices, in your Mac's menu bar, Dock and widgets.<br><a href="./README_zh.md">[中文版本 (original app)]</a></h3>
+<h3 align="center">The battery of all your devices, in your Mac's menu bar, Dock and widgets.<br><a href="./README.fr.md">[Français]</a> <a href="./README_zh.md">[中文版本 (original app)]</a></h3>
 </p>
 
 > [!NOTE]

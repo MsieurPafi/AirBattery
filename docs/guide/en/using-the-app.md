@@ -1,6 +1,6 @@
 # Using the app
 
-[Guide](README.md)
+[Guide](README.md) · [Français](../fr/using-the-app.md)
 
 ## Where it shows
 

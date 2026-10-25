@@ -71,7 +71,7 @@ The bundled libimobiledevice tools are built by `scripts/build-libimobiledevice.
 ## Translations
 
 - **The app** is in English, with Chinese (simplified and traditional) translations that are out of date: updates are welcome.
-- **The user guide** is written in English (`docs/guide/en/`). A French version will mirror it: a change to the guide updates both languages in the same pull request.
+- **The user guide** is written in English (`docs/guide/en/`) and mirrored in French (`docs/guide/fr/`), like the README (`README.fr.md`). A change to either updates both languages in the same pull request.
 
 ## License
 

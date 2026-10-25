@@ -1,6 +1,6 @@
 # Troubleshooting
 
-[Guide](README.md)
+[Guide](README.md) · [Français](../fr/troubleshooting.md)
 
 **macOS won't open the app.**
 It isn't notarized: allow it once in **System Settings › Privacy & Security › Open Anyway**.
@@ -30,4 +30,4 @@ Launch AirBattery Plus. If the widget still looks stuck: **Settings › Widget �
 macOS caches app icons. It refreshes on its own, or after you log out.
 
 **Something else is wrong.**
-Open an issue on [GitHub](https://github.com/MsieurPafi/AirBattery/issues) with your macOS version, the app version and, if you can, the app's logs (see [Permissions and privacy](permissions-privacy.md#logs)).
+Open an issue on [GitHub](https://github.com/MsieurPafi/AirBattery/issues) (in English or French) with your macOS version, the app version and, if you can, the app's logs (see [Permissions and privacy](permissions-privacy.md#logs)).

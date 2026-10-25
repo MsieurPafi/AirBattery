@@ -1,6 +1,6 @@
 # Permissions and privacy
 
-[Guide](README.md)
+[Guide](README.md) · [Français](../fr/permissions-privacy.md)
 
 ## What the app asks for
 

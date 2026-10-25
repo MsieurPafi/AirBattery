@@ -1,6 +1,6 @@
 # Settings
 
-[Guide](README.md)
+[Guide](README.md) · [Français](../fr/settings.md)
 
 Open the settings with ⚙︎ at the top of the device list. Default values are in brackets.
 

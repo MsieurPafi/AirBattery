@@ -1,5 +1,7 @@
 # AirBattery Plus user guide
 
+[Français](../fr/README.md)
+
 AirBattery Plus shows the battery of your Mac and of the devices around it in the menu bar, the Dock and widgets.
 
 1. [Getting started](getting-started.md): install, first launch, permissions.

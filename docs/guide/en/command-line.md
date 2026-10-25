@@ -1,6 +1,6 @@
 # Command line: `abtp`
 
-[Guide](README.md)
+[Guide](README.md) · [Français](../fr/command-line.md)
 
 `abtp` prints the batteries AirBattery Plus knows about in a terminal, for scripts or a status bar tool. The app must be running.
 
