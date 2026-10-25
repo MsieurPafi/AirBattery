@@ -94,7 +94,7 @@ struct GeneralView: View {
             }
             SGroupBox {
                 SButton("Command Line Tool", buttonTitle: cltInstalled ? "Uninstall" : "Install",
-                        tips: "After installation, you can run \"airbattery\" in yor terminal to list all devices.") {
+                        tips: "After installation, you can run \"abtp\" in your terminal to list all devices.") {
                     if cltInstalled {
                         CommandLineTool.uninstall { updateCTL() }
                     } else {

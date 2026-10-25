@@ -43,7 +43,7 @@ struct item: Codable, Equatable {
 
 
 struct airbattery: ParsableCommand {
-    static var configuration = CommandConfiguration(version: "0.1.0")
+    static var configuration = CommandConfiguration(commandName: "abtp", abstract: "List the battery levels collected by AirBattery Plus.", version: "0.1.0")
     
     @Flag(name: .shortAndLong, help: "Including Nearcast devices")
     var nearcast: Bool = false

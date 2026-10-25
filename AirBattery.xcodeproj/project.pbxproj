@@ -38,7 +38,7 @@
 		184ADF0B2DDB6C9F004791F0 /* Scriptable.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 184ADEFB2DDB6C9F004791F0 /* Scriptable.sdef */; };
 		184ADF0C2DDB6C9F004791F0 /* Supports.swift in Sources */ = {isa = PBXBuildFile; fileRef = 184ADEFD2DDB6C9F004791F0 /* Supports.swift */; };
 		184ADF0D2DDB6C9F004791F0 /* Supports.swift in Sources */ = {isa = PBXBuildFile; fileRef = 184ADEFD2DDB6C9F004791F0 /* Supports.swift */; };
-		184ADF0E2DDB83EC004791F0 /* abt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 184ADED12DDB2B37004791F0 /* abt */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		184ADF0E2DDB83EC004791F0 /* abtp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 184ADED12DDB2B37004791F0 /* abtp */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		185AE80E2BA6041400FE1AA2 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185AE80D2BA6041400FE1AA2 /* main.swift */; };
 		185E382D2C2733B9005578EC /* BTDBattery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185E382C2C2733B9005578EC /* BTDBattery.swift */; };
 		18892A892B81F8320017377E /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18892A882B81F8320017377E /* WidgetKit.framework */; };
@@ -98,7 +98,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
-				184ADF0E2DDB83EC004791F0 /* abt in CopyFiles */,
+				184ADF0E2DDB83EC004791F0 /* abtp in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -134,7 +134,7 @@
 		1841D47B2AA8DF0B0022A1BE /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		1841D47C2AAA20F80022A1BE /* InternalBattery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalBattery.swift; sourceTree = "<group>"; };
 		1841D4802AAA28880022A1BE /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		184ADED12DDB2B37004791F0 /* abt */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = abt; sourceTree = BUILT_PRODUCTS_DIR; };
+		184ADED12DDB2B37004791F0 /* abtp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = abtp; sourceTree = BUILT_PRODUCTS_DIR; };
 		184ADEF32DDB6C9F004791F0 /* AirBatteryApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirBatteryApp.swift; sourceTree = "<group>"; };
 		184ADEF42DDB6C9F004791F0 /* AppleScript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleScript.swift; sourceTree = "<group>"; };
 		184ADEF52DDB6C9F004791F0 /* BTTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTTool.swift; sourceTree = "<group>"; };
@@ -253,7 +253,7 @@
 				1841D44B2AA6071C0022A1BE /* AirBattery.app */,
 				18892A862B81F8320017377E /* AirBatteryWidgetExtension.appex */,
 				18283DA12B854776009B1B13 /* AirBatteryHelper.app */,
-				184ADED12DDB2B37004791F0 /* abt */,
+				184ADED12DDB2B37004791F0 /* abtp */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -420,7 +420,7 @@
 				184ADED92DDB2C8A004791F0 /* ArgumentParser */,
 			);
 			productName = atb;
-			productReference = 184ADED12DDB2B37004791F0 /* abt */;
+			productReference = 184ADED12DDB2B37004791F0 /* abtp */;
 			productType = "com.apple.product-type.tool";
 		};
 		18892A852B81F8320017377E /* AirBatteryWidgetExtension */ = {
@@ -906,7 +906,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = abtp;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -922,7 +922,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = abtp;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

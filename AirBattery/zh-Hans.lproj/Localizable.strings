@@ -154,7 +154,7 @@
 "Command Line Tool" = "命令行工具";
 "Uninstall" = "卸载";
 "Install" = "安装";
-"After installation, you can run \"airbattery\" in yor terminal to list all devices." = "安装此工具后, 在命令行中执行\"airbattery\"即可列出所有设备.";
+"After installation, you can run \"abtp\" in your terminal to list all devices." = "安装此工具后, 在命令行中执行\"abtp\"即可列出所有设备.";
 "Scan only the iPhone and iPad that you explicitly authorize via Bluetooth." = "仅通过蓝牙扫描您明确授权的 iPhone 和 iPad.";
 "Authorized iOS Bluetooth Devices" = "已授权的 iOS 蓝牙设备";
 "Manage" = "管理";
