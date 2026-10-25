@@ -36,6 +36,7 @@ Nearcast : `Supports/Multipeer.swift` (MultipeerKit, `airbattery-nc`, AES-GCM + 
 
 - **Minuteries d'interface** (`Supports.swift`) : `mainTimer` (1 s, batterie du Mac et icône de la barre des menus) et `dockTimer` (5 s, Dock et épingles), avec tolérance.
 - **`Scheduler`** (`AirBatteryApp.swift`, démarré au lancement) : alertes (300 s), rechargement des widgets (intervalle de Proximité), `system_profiler` + accessoires Magic + données des widgets (0,4 × intervalle, file série hors du fil principal), diffusion Nearcast. Intervalles lus au lancement.
+- **`PowerSourceMonitor`** (`AirBatteryApp.swift`) : relit la batterie du Mac (`InternalBattery.status`) sur notification de macOS (`IOPSNotificationCreateRunLoopSource`, mode bas régime, sortie de veille), plus une lecture de secours toutes les 60 s, puis poste `.internalBatteryChanged`. L'icône de la barre des menus (`mainBatteryView`) se met à jour sur cette notification et quand un réglage d'affichage change, plus chaque seconde.
 - **Sources** : chacune a sa minuterie. BLE (intervalle), BTD (59 × intervalle s), iPhone/iPad (15 s, un scan à la fois, lectures limitées à une par intervalle).
 - **`process()`** (`Supports.swift`) : outils externes avec délai (20 s par défaut) ; à l'expiration, arrêt de l'arbre de processus (`terminateTree`) ; sortie d'erreur ignorée.
 

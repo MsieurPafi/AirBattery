@@ -11,6 +11,7 @@ import UserNotifications
 import IOBluetooth
 import Sparkle
 import ServiceManagement
+import IOKit.ps
 
 let fd = FileManager.default
 let ud = UserDefaults.standard
@@ -274,6 +275,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
         MagicBattery.shared.startScan()
         IDeviceBattery.shared.startScan()
         Scheduler.shared.start()
+        PowerSourceMonitor.shared.start()
         #if DEBUG
         DemoDevices.start()
         #endif
@@ -645,3 +647,46 @@ final class Scheduler {
         }
     }
 }
+
+extension Notification.Name {
+    /// Posted on the main thread after InternalBattery.status was read again.
+    static let internalBatteryChanged = Notification.Name("\(AppIdentifiers.app).internalBatteryChanged")
+}
+
+/// Reads the Mac's battery when macOS reports a change, instead of every second
+/// (AUDIT-2026-10-25, performance): power source changes (level, time left, charger),
+/// Low Power Mode, and wake from sleep. A slow timer is kept as a safety net.
+final class PowerSourceMonitor {
+    static let shared = PowerSourceMonitor()
+    private var source: CFRunLoopSource?
+    private var timer: Timer?
+
+    func start() {
+        guard source == nil else { return }
+        let context = Unmanaged.passUnretained(self).toOpaque()
+        if let source = IOPSNotificationCreateRunLoopSource({ context in
+            guard let context else { return }
+            Log.app.debug("Power source changed")
+            Unmanaged<PowerSourceMonitor>.fromOpaque(context).takeUnretainedValue().refresh()
+        }, context)?.takeRetainedValue() {
+            CFRunLoopAddSource(CFRunLoopGetMain(), source, .commonModes)
+            self.source = source
+        } else {
+            Log.app.error("No power source notifications: falling back to the timer")
+        }
+        NotificationCenter.default.addObserver(forName: .NSProcessInfoPowerStateDidChange, object: nil, queue: .main) { [weak self] _ in self?.refresh() }
+        NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { [weak self] _ in self?.refresh() }
+        let timer = Timer(timeInterval: 60, repeats: true) { [weak self] _ in self?.refresh() }
+        timer.tolerance = 10
+        RunLoop.main.add(timer, forMode: .common)
+        self.timer = timer
+        refresh()
+    }
+
+    /// Main thread only (run loop source, observers and timer are all on it).
+    func refresh() {
+        InternalBattery.status = getPowerState()
+        NotificationCenter.default.post(name: .internalBatteryChanged, object: nil)
+    }
+}
+

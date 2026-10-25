@@ -2,6 +2,12 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
+## Unreleased
+
+### Performance
+
+- **The Mac's battery is read when it changes** (level, time left, charger, Low Power Mode, wake from sleep) instead of every second. The menu bar icon follows a charger plugged in or out right away. Measured over 3 minutes: idle wakeups went from about 30 per minute to 0 or 1.
+
 ## 1.11.1 — 2026-10-25 (pre-release)
 
 ### Changes
