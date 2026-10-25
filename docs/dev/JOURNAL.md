@@ -852,3 +852,30 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Échecs :** premier correctif insuffisant (voir ci-dessus).
 **Testé sur appareil réel :** oui (mesures sur le Mac de Côme).
 **Prochaine étape :** PR 3 (`logReader.sh`).
+
+---
+
+## 2026-10-25 (suite 17) — Analyse, PR 3 : `logReader.sh`
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, `main` @ `5aeee19` (PR #37 fusionnée avec l'accord de Côme). Branche `fix/logreader`.
+
+**Fait :**
+- Journaux réels : 2 h → 3 303 lignes, 0 `Battery M`, 0 paire `0x001D Characteristic Value`. Le format n'est pas vérifiable chez Côme (pas d'appareil Bluetooth classique d'une autre marque), donc on garde le chemin. COMPAT note 13.
+- `logReader.sh`, mode « mac » :
+  - options de `log show` dans un tableau, `--info` au lieu de `--level info` ;
+  - lignes lues par `while IFS= read -r`, sans découpage ni expansion de motifs ;
+  - noms et types échappés pour le JSON (AUDIT, sécurité L1) ;
+  - `system_profiler` lancé seulement s'il y a des lignes à apparier ;
+  - variable `LOGREADER_SAMPLE` pour les tests.
+- `logReader.sh`, mode Pencil : chemin d'`idevicesyslog` mis entre guillemets. Il contient « AirBattery Plus.app » et ne tenait que grâce à l'ancien `IFS` global.
+- `LogReader` (Swift) : la date de départ est passée en 4e argument au lieu de `setenv("START_TS")` (course sur l'environnement, AUDIT 1.5) ; fenêtre bornée à 10 min.
+- **Second bogue trouvé en testant** : `log show --start` refusait le format de date de l'app, avec une espace avant le fuseau → format `yyyy-MM-dd HH:mm:ssZ`. Une valeur enregistrée dans l'ancien format ne se relit plus, et le cycle suivant utilise une fenêtre.
+- Tests :
+  - échantillon (`docs/dev/samples/logreader-mac-sample.log`) : JSON valide, appareil Apple exclu, guillemets échappés, `*` non développé ;
+  - journaux réels : 10 min → code 0, 3,5 s ; avec date de départ → code 0 ;
+  - Pencil avec un faux `idevicesyslog` dans un dossier à espace, en USB et en Wi-Fi : JSON correct ;
+  - copie de test 1 min sur le Mac de Côme : aucune erreur, `logReaderLastTS` réécrit au nouveau format (`2026-10-25 17:56:06+0100`), puis 1.9.0 relancée et widget réenregistré.
+
+**Échecs :** voir le second bogue ci-dessus.
+**Testé sur appareil réel :** script et app sur le Mac de Côme ; pas d'appareil concerné pour vérifier une lecture de batterie réelle.
+**Prochaine étape :** PR 4 (ordonnanceur et `process()`).
