@@ -536,3 +536,24 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Testé sur appareil réel :** oui, par Côme.
 **Pistes ouvertes :** identité du projet — liste de questions soumise à Côme (public ou non, « Plus » partout ou non, icône, nom de `abt`, copyright et crédits, traductions, liens upstream) ; rien d'écrit avant d'en avoir discuté (demande de Côme).
 **Prochaine étape :** discussion sur l'identité.
+
+---
+
+## 2026-10-25 (suite 2) — Identité « AirBattery Plus » : nom, textes, `abtp`, README
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, `main` @ `3a23eb3`. Branche `feat/identity-name`.
+
+**Fait :**
+- Réponses de Côme aux 7 questions → **D-017** (projet public sans promotion ; « Plus » partout ; `abtp` ; copyright et crédits ; liens vers l'original regroupés ; icône et traductions en sujets à part, ajoutés dans IDEAS « À faire »). D-002 marquée « nom remplacé par D-014, D-015 puis D-017 ».
+- Constat : la commande installée n'était pas `abt` mais **`airbattery`** (lien `/usr/local/bin/airbattery`, même nom que l'app officielle) ; `abt` n'était que le nom du fichier dans l'app.
+- `bfcd1b0` : « AirBattery Plus » dans les demandes d'autorisation (Bluetooth, réseau local), réglages, astuces, À propos (lien vers le fork + « Based on AirBattery by lihaoyun6 ») ; copyright `© 2024 lihaoyun6, © 2026 Côme Bouquet.` (sans « All rights reserved », contradictoire avec l'AGPL). Traductions chinoises : clés mises à jour, seul le nom remplacé dans le texte ; `plutil -lint` OK ; aucune clé contenant « AirBattery » orpheline sauf « Quit AirBattery Plus » (déjà inutilisée).
+- `e31d3db` : outil en ligne de commande renommé **`abtp`** (`PRODUCT_NAME = abtp`, lien `/usr/local/bin/abtp`, `commandName` et résumé dans `--help`). L'ancien lien `airbattery` est supprimé à l'installation ou la désinstallation **seulement** s'il pointe vers `…/AirBattery Plus.app/Contents/Resources/abt`. Vérifié : `abtp --help` et `abtp` (liste des appareils) depuis la copie de build. Installation/désinstallation **non testées** (mot de passe administrateur).
+- `534bcae` : README réécrit (en-tête, installation du fork seulement, `abtp`, Q&R à jour dont la Watch avec un nouvel iPhone et « Manage », crédits : lihaoyun6 et son lien de dons, #216 @R0cketBean, #214 @Moyuin-aka, #161–163 @barkleesanders, #177 @leo1425, callieskye, bibliothèques ; licence) ; bandeau en anglais sur `README_zh.md` ; 28 liens « upstream #N » dans le changelog ; entrée « Unreleased ».
+- Build Debug OK ; copie de build désenregistrée (seul le widget 1.7.4 de `/Applications` reste).
+
+**Échecs :** —
+**Testé sur appareil réel :** non (à faire par Côme : À propos, demandes d'autorisation, installation de `abtp`).
+**Pistes ouvertes :** l'alignement des colonnes de `abtp` est faux avec des noms accentués ou des emojis (préexistant) ; mention éventuelle de Claude Code dans les crédits du README (au choix de Côme, comme la ligne ChatGPT de l'original).
+**Prochaine étape :** relecture et test par Côme, puis fusion ; ensuite l'icône.
+
+**Ajout (2026-10-25, suite 2) :** test de Côme sur la copie de build : fenêtre À propos, installation de `abtp` depuis les réglages, `abtp`, `abtp --help`, désinstallation et textes des réglages jugés corrects. Ensuite : aucun lien `abtp` ni `airbattery` dans `/usr/local/bin`, copie de build désenregistrée, 1.7.4 de `/Applications` relancée (seul widget enregistré).

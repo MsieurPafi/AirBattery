@@ -5,6 +5,9 @@
 <h3 align="center">在 Mac 上获取你所有设备的电量信息并显示在Dock栏、状态栏上或小组件上!<br><a href="./README.md">[English Version]</a><br><a href="https://lihaoyun6.github.io/airbattery/">[软件主页]</a></h3> 
 </p>
 
+> [!NOTE]
+> This page describes the original [AirBattery](https://github.com/lihaoyun6/AirBattery) by lihaoyun6 and may be out of date for AirBattery Plus. The [English README](./README.md) covers this fork. Pull requests updating this page are welcome.
+
 ## 运行截图
 <p align="center">
 <picture>

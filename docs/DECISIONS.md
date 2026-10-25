@@ -12,7 +12,7 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 **Conséquences :** pas de canal de distribution (Homebrew, releases) pour l'instant (cf. upstream #212, #213).
 **Validée par Côme :** oui (brief initial)
 
-## D-002 — Nouveau bundle ID `io.github.msieurpafi`, nom « AirBattery » conservé   (2026-10-21, statut : acceptée)
+## D-002 — Nouveau bundle ID `io.github.msieurpafi`, nom « AirBattery » conservé   (2026-10-21, statut : acceptée ; nom remplacé par D-014, D-015 puis D-017)
 **Contexte :** le fork ne doit jamais partager réglages, containers ou mises à jour avec l'app officielle (`com.lihaoyun6.*`).
 **Options envisagées :** A. `io.github.msieurpafi` (profil GitHub) / B. `me.bouquetco` (domaine de Côme).
 **Décision :** A. Identifiants : `io.github.msieurpafi.AirBattery`, `io.github.msieurpafi.AirBattery.widget`, `io.github.msieurpafi.AirBatteryHelper`. Nom affiché inchangé.
@@ -130,3 +130,17 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 **Pourquoi :** reproductible, auditable, cohérent avec la cible de l'app, sans outillage supplémentaire.
 **Conséquences :** ~13 Mo de binaires embarqués (libcrypto ~10 Mo) ; licences dans `AirBattery/libimobiledevice/licenses/`, versions dans `VERSIONS.txt`. OpenSSL n'est pas reproductible au bit près d'une compilation à l'autre. Mettre à jour = changer les lignes `SOURCES` du script et relancer. Retour arrière : revert du commit `3cb0e62`.
 **Validée par Côme :** oui (2026-10-21)
+
+## D-017 — Identité « AirBattery Plus »   (2026-10-25, statut : acceptée)
+**Contexte :** D-014 et D-015 ont renommé l'app (nom affiché, produit), mais plusieurs textes visibles disent encore « AirBattery » (demandes d'autorisation, réglages, alertes, copyright), la commande installée s'appelle `airbattery` comme celle de l'app officielle, et le README renvoie vers la page et le Homebrew de l'officielle. Questions posées à Côme le 2026-10-25 (JOURNAL), réponses le même jour.
+**Options envisagées :** « Plus » seulement là où il sert à distinguer les deux apps / « Plus » partout. Pour la commande : garder `airbattery` / `abt` / `abtp`. Pour les liens vers l'original : les garder en tête du README / les regrouper dans une section de crédits.
+**Décision :**
+1. **Projet public** : le repo s'adresse à qui en a besoin, sans promotion. Complète D-001.
+2. **« AirBattery Plus » dans tous les textes visibles** : app, demandes d'autorisation (Bluetooth, réseau local), réglages, alertes, À propos, widget, README. **Identifiants techniques inchangés** : bundle IDs (D-002), module Swift `AirBattery` (D-015), clés de réglages, `autosaveName` des icônes de barre des menus, nom de la file série, chemins de données.
+3. **Commande `abtp`** : fichier `abtp` dans l'app, lien `/usr/local/bin/abtp`, nom affiché par `--help`. Un ancien lien `/usr/local/bin/airbattery` n'est supprimé que s'il pointe vers `AirBattery Plus.app` (celui de l'app officielle n'est jamais touché).
+4. **Copyright** `© 2024 lihaoyun6, © 2026 Côme Bouquet`. Crédits dans le README (original, auteurs des PR reprises, callieskye) et mention de l'original dans À propos.
+5. **Liens vers l'original** : la page d'accueil et le Homebrew de l'officielle quittent l'en-tête et l'installation du README ; l'original est cité en tête (« fork maintenu de AirBattery par lihaoyun6 ») et dans les crédits. `README_zh.md` est gardé tel quel, avec un bandeau en anglais (page de l'original, peut-être périmée, PR bienvenues). Les « upstream #N » du changelog deviennent des liens.
+6. **Hors de cette décision**, sujets à part (IDEAS, « À faire ») : l'icône de l'app (Icon Composer, évolution ou révolution, à choisir sur maquettes) ; l'app et la doc en français et en anglais, le chinois figé avec appel aux PR.
+**Pourquoi :** un nom unique évite toute confusion avec l'app officielle installée à côté ; garder les identifiants techniques évite de faire perdre leurs réglages et la position de leurs icônes aux utilisateurs actuels.
+**Conséquences :** les traductions chinoises sont indexées par la phrase anglaise : quand une phrase change, sa clé chinoise est mise à jour et le nom propre remplacé dans la traduction, sans autre retouche. Les scripts ou raccourcis de quelqu'un qui tapait `airbattery` pour le fork doivent passer à `abtp`.
+**Validée par Côme :** oui (2026-10-25)

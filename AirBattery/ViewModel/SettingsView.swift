@@ -63,7 +63,7 @@ struct GeneralView: View {
                         SMLoginItemSetEnabled(AppIdentifiers.helper as CFString, newValue)
                     }
                 Divider().opacity(0.5)
-                SPicker("Show AirBattery", selection: $showOn) {
+                SPicker("Show AirBattery Plus", selection: $showOn) {
                     Text("Dock").tag("dock")
                     Text("Menu Bar").tag("sbar")
                     Text("Both").tag("both")
@@ -88,13 +88,13 @@ struct GeneralView: View {
                         NSApp.setActivationPolicy(.accessory)
                     }
                     if newValue == "dock" || newValue == "both" {
-                        _ = createAlert(title: "AirBattery Tips".local, message: "Displaying AirBattery on the Dock will consume more power, it is better to use Menu Bar mode or Widgets.".local, button1: "OK").runModal()
+                        _ = createAlert(title: "AirBattery Plus Tips".local, message: "Displaying AirBattery Plus on the Dock will consume more power, it is better to use Menu Bar mode or Widgets.".local, button1: "OK").runModal()
                     }
                 }
             }
             SGroupBox {
                 SButton("Command Line Tool", buttonTitle: cltInstalled ? "Uninstall" : "Install",
-                        tips: "After installation, you can run \"airbattery\" in yor terminal to list all devices.") {
+                        tips: "After installation, you can run \"abtp\" in your terminal to list all devices.") {
                     if cltInstalled {
                         CommandLineTool.uninstall { updateCTL() }
                     } else {
@@ -169,11 +169,11 @@ struct NearbilityView: View {
                 Divider().opacity(0.5)
                 SToggle("Discover more BT devices", isOn: $readBTHID, tips: "Get the battery usage of more third-party Bluetooth devices\n\nBattery data will be updated when devices are reconnected to the Mac or the Mac wakes up.")
                 Divider().opacity(0.5)
-                SToggle("Discover more BLE devices", isOn: $readBLEDevice, tips: "Try to get the battery usage of any Bluetooth device that AirBattery can find\n\nWARNING: This is a BETA feature and may cause unexpected errors!")
+                SToggle("Discover more BLE devices", isOn: $readBLEDevice, tips: "Try to get the battery usage of any Bluetooth device that AirBattery Plus can find\n\nWARNING: This is a BETA feature and may cause unexpected errors!")
                     .foregroundColor(.orange)
                     .onChange(of: readBLEDevice) { newValue in
                         if newValue {
-                            _ = createAlert(title: "AirBattery Tips".local, message: "If you see a bluetooth pairing request from any device that isn't yours, add it to your blocklist!".local, button1: "OK").runModal()
+                            _ = createAlert(title: "AirBattery Plus Tips".local, message: "If you see a bluetooth pairing request from any device that isn't yours, add it to your blocklist!".local, button1: "OK").runModal()
                         }
                     }
                 Divider().opacity(0.5)
@@ -185,7 +185,7 @@ struct NearbilityView: View {
                     SSteper("Refresh Interval (min)", value: $updateInterval, min: 1, max: 99)
                     if updateDelay != updateInterval {
                         HStack {
-                            Text("Relaunch AirBattery to apply this change")
+                            Text("Relaunch AirBattery Plus to apply this change")
                                 .font(.footnote)
                                 .foregroundColor(.red)
                             Spacer()
@@ -193,7 +193,7 @@ struct NearbilityView: View {
                     }
                 }
                 Divider().opacity(0.5)
-                SSteper("Earbud Merging Threshold", value: $twsMerge, min: 1, max: 99, tips: "If the difference in battery usage between the left and right earbuds is less than this value, AirBattery will show them as one device.")
+                SSteper("Earbud Merging Threshold", value: $twsMerge, min: 1, max: 99, tips: "If the difference in battery usage between the left and right earbuds is less than this value, AirBattery Plus will show them as one device.")
             }
         }
         .sheet(isPresented: $showIOSBluetoothDevices) {
@@ -210,7 +210,7 @@ struct IOSBluetoothDevicesView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text("iOS Bluetooth Devices")
                 .font(.headline)
-            Text("AirBattery will only connect to devices authorized here. Pair only an iPhone or iPad you own; it may show a one-time system pairing request.")
+            Text("AirBattery Plus will only connect to devices authorized here. Pair only an iPhone or iPad you own; it may show a one-time system pairing request.")
                 .font(.footnote)
                 .foregroundColor(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
