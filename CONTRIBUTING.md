@@ -56,6 +56,16 @@ swift test
 
 Add tests in `Tests/AirBatteryCoreTests`, and move logic there when it can be tested without the app (parsing tool output, matching devices…).
 
+### Continuous integration
+
+Every pull request and every push to `main` runs [`.github/workflows/ci.yml`](.github/workflows/ci.yml) on macOS 27 with Xcode 27.1:
+
+- `scripts/ci-checks.sh`: scripts parse, property lists and String Catalogs are valid, every update in `appcast.xml` is signed, the bundle ID prefix matches `AppIdentifiers.prefix`, and `logReader.sh` reads its sample log. Run it locally before pushing.
+- `swift test`.
+- Debug and Release builds, unsigned.
+
+CI publishes nothing: releases are still built and signed on the maintainer's Mac (see [Releases](#releases)).
+
 ### Screenshots
 
 Debug builds have a demo mode with neutral devices, for screenshots: launch the app with `-demoDevices YES` (add `-AppleLanguages "(en)"` for English). Real devices are hidden and the Mac shows as "MacBook Pro".

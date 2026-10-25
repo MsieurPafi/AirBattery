@@ -1081,3 +1081,20 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Décisions :** D-026 complétée (vérification faite).
 **Testé sur appareil réel :** oui, par Côme.
 **Prochaine étape :** au choix de Côme : CI GitHub Actions ; Nearcast v2 (#41) ; pistes de l'analyse.
+
+## 2026-10-25 (suite 28) — Intégration continue (D-027)
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, `main` @ `37d2dd8`. Branche `ci/github-actions`. Avant cela, relecture de la doc à la demande de Côme : le README (EN/FR) disait encore « Rien n'est envoyé sur internet » → PR #51.
+
+**Fait :**
+- Images GitHub relues (`actions/runner-images`, `images/macos/`) : `xcode-27` (preview, annoncée dans actions/runner-images#14404) = macOS 27.0.1 (26A434), image 20261023, Xcode 27.1 (27A9275) par défaut, 27.0 et 27.2 RC aussi ; `macos-26` = macOS 26.6.2, Xcode 26.6 au plus. Dépôt public : minutes macOS gratuites.
+- Build Release non signé en local (`CODE_SIGNING_ALLOWED=NO`, `build/DerivedData-ci`) : OK, puis désenregistré et supprimé.
+- `scripts/ci-checks.sh` : passe en local. Échecs provoqués : entrée d'appcast sans signature → « Unsigned: 1.11.1 », sortie 1 ; préfixe modifié dans `AppIdentifiers.swift` → sortie 1. Fichiers remis en état avec `git checkout`.
+- `.github/workflows/ci.yml` ; docs : `CONTRIBUTING.md` § Continuous integration, `ARCHITECTURE.md`, `IDEAS.md`, D-027.
+
+**Échecs :**
+- Premier essai d'échec provoqué avec `sed '0,/…/s///'` : syntaxe GNU, sans effet avec le `sed` BSD de macOS (aucune signature retirée, contrôle passé). Refait en Python.
+
+**Décisions :** D-027
+**Testé sur appareil réel :** sans objet.
+**Prochaine étape :** premier passage du workflow sur la PR.

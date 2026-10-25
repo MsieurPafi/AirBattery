@@ -254,3 +254,18 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 **Pourquoi :** installation en un clic, vérifiée par une signature propre au fork, sans service tiers. La signature de code de l'équipe gratuite reste la même d'une version à l'autre.
 **Conséquences :** la clé privée devient critique : perdue, plus aucune mise à jour ne peut être livrée aux copies installées (il faudrait une installation à la main avec une nouvelle clé) ; volée, quelqu'un pourrait signer une mise à jour, mais il lui faudrait aussi écrire sur `main`. L'app accède à internet (GitHub) : documentation de confidentialité mise à jour. Une release n'est proposée qu'une fois `appcast.xml` fusionné dans `main`, après la publication du DMG. Pour revenir en arrière : `updatesEnabled = false` et retrait de `SUFeedURL`, comme D-004.
 **Validée par Côme :** oui (2026-10-25)
+
+## D-027 — Intégration continue : contrôles sur GitHub Actions, releases sur le Mac de Côme   (2026-10-25, statut : acceptée)
+**Contexte :** Côme a demandé l'intégration continue (IDEAS, 2026-10-21). Le dépôt est public : les runners macOS sont gratuits. GitHub propose l'image `xcode-27` (preview) : macOS 27.0.1 (26A434), Xcode 27.1 (27A9275) par défaut, les mêmes versions que le Mac de Côme. L'image `macos-26` n'a que Xcode 26.6.
+**Options envisagées :** A. contrôles seulement (tests, builds non signés) / B. A + releases construites par le CI / C. rien.
+**Décision :** A. Workflow `.github/workflows/ci.yml` sur chaque PR, chaque push sur `main` et à la demande :
+- `scripts/ci-checks.sh` (exécutable aussi en local) : scripts shell, plists et String Catalogs valides ; `appcast.xml` bien formé et toutes ses entrées signées ; `APP_ID_PREFIX` = `AppIdentifiers.prefix` ; `logReader.sh` sur `docs/dev/samples/logreader-mac-sample.log` (2 appareils, nom échappé) ;
+- `swift test` ;
+- builds Debug et Release avec `CODE_SIGNING_ALLOWED=NO` et `-onlyUsePackageVersionsFromResolvedFile` ;
+- contrôle du produit : version, `SUFeedURL`, `SUPublicEDKey`, widget, `ideviceinfo`, `abtp --help`.
+- `permissions: contents: read`, `actions/checkout` épinglé par SHA (`3d3c42e5…`, v7.0.1 du 2026-07-20), `persist-credentials: false`, pas de secret.
+
+**Pourquoi pas B :** un build du CI ne peut pas être signé avec le certificat de Côme (équipe gratuite : certificat et profils gérés par Xcode sur son Mac). Or Sparkle refuse une mise à jour dont la signature de code ne satisfait pas l'exigence de la version installée, qui cite ce certificat (JOURNAL suite 26) : une release signée ad hoc par le CI casserait les mises à jour. Il faudrait aussi confier la clé EdDSA au CI. À revoir avec un compte développeur payant (certificat Developer ID exportable, notarisation).
+**Vérifié en local :** `scripts/ci-checks.sh` passe, échoue bien sur une entrée d'appcast non signée et sur un préfixe différent ; build Release non signé OK.
+**Conséquences :** chaque PR montre son état de CI ; l'outil Auto-fix de l'app Claude peut s'en servir. L'image est en preview (peut être instable) : si elle disparaît ou casse, passer à son successeur (`macos-27` à sa sortie). Pour revenir en arrière : supprimer le fichier du workflow.
+**Validée par Côme :** oui (« Go intégration continue », 2026-10-25) ; périmètre A proposé dans la PR.
