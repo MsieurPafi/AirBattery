@@ -7,7 +7,7 @@
 | Permission | Why | Without it |
 | --- | --- | --- |
 | Bluetooth | Reads AirPods, Beats and Bluetooth accessories, and iPhones you authorize over Bluetooth | Only this Mac, iPhone/iPad/Watch over USB or Wi-Fi, and Nearcast |
-| Local network | iPhone, iPad and Apple Watch over Wi-Fi; Nearcast | No Wi-Fi devices, no Nearcast. macOS asks again after each update |
+| Local network | iPhone, iPad and Apple Watch over Wi-Fi; Nearcast | No Wi-Fi devices, no Nearcast. macOS asks again after most updates |
 | Notifications | Battery alerts | No alerts |
 | Administrator password | Only to install or remove the `abtp` command, which writes in `/usr/local/bin` | No `abtp` |
 

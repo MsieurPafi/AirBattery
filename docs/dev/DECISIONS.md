@@ -249,7 +249,8 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 - Il refuse une app dont la signature de code est invalide (« The app failed Apple Code Signing checks », -67030).
 - Une deuxième version ajoutée garde la première, avec son adresse d'origine.
 
-**À vérifier sur le Mac de Côme :** une mise à jour livrée par Sparkle de bout en bout, et le comportement de Gatekeeper sur l'app installée (non notarisée, D-003). Il faut deux versions : la première avec Sparkle, installée à la main, puis la suivante proposée par Sparkle.
+**Vérifié sur le Mac de Côme (2026-10-25, ajout) :** mise à jour 1.11.0 → 1.11.1 livrée par Sparkle de bout en bout, sans blocage de Gatekeeper (pas d'attribut de quarantaine) : COMPAT note 14. Exigence de signature de code à revérifier à chaque release (JOURNAL suite 26).
+**À vérifier sur le Mac de Côme (texte d'origine) :** une mise à jour livrée par Sparkle de bout en bout, et le comportement de Gatekeeper sur l'app installée (non notarisée, D-003). Il faut deux versions : la première avec Sparkle, installée à la main, puis la suivante proposée par Sparkle.
 **Pourquoi :** installation en un clic, vérifiée par une signature propre au fork, sans service tiers. La signature de code de l'équipe gratuite reste la même d'une version à l'autre.
 **Conséquences :** la clé privée devient critique : perdue, plus aucune mise à jour ne peut être livrée aux copies installées (il faudrait une installation à la main avec une nouvelle clé) ; volée, quelqu'un pourrait signer une mise à jour, mais il lui faudrait aussi écrire sur `main`. L'app accède à internet (GitHub) : documentation de confidentialité mise à jour. Une release n'est proposée qu'une fois `appcast.xml` fusionné dans `main`, après la publication du DMG. Pour revenir en arrière : `updatesEnabled = false` et retrait de `SUFeedURL`, comme D-004.
 **Validée par Côme :** oui (2026-10-25)
