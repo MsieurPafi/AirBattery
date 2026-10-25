@@ -692,3 +692,21 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Testé sur appareil réel :** oui, par Côme (app en français).
 **Prochaine étape :** PR ; puis étape 4 (captures d'écran) et une release.
+
+---
+
+## 2026-10-25 (suite 10) — Documentation, étape 4 : captures d'écran
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, `main` @ `7b6804c` (PR #30 fusionnée avec l'accord de Côme). Branche `docs/screenshots`.
+
+**Fait :**
+- Impossible de capturer l'écran moi-même (pas d'autorisation d'enregistrement de l'écran) : captures faites par Côme.
+- Mode démo Debug (`-demoDevices YES`, D-023) : huit appareils neutres, vrais appareils masqués, Mac nommé « MacBook Pro ».
+- 1er essai : les widgets montraient les vrais appareils (instantané gardé : la demande de rechargement venait de la copie de test) → widgets retirés et rajoutés. 2e essai : la ligne « iPhone » était le vrai iPhone Duo de Côme (indexation par nom) et les captures étaient en 1x (écran externe) → appareils de démo renommés (« iPhone 16 Pro », « iPad Pro »), captures refaites en 2x (mode HiDPI de BetterDisplay). Popover clair gris opaque (131/255) en capture « fenêtre », même sur fond blanc : le verre est rendu sans arrière-plan → capture par zone sur fond clair, découpe au masque arrondi (rayon 36 px en 2x, bord détecté au pixel).
+- `img/preview.png` et `img/preview_dark.png` recomposés (grand widget, popover, widgets moyen et petit, marges transparentes rognées), vérifiés sur fond blanc et sur le fond sombre de GitHub. Procédure dans `CONTRIBUTING.md`.
+- Observation non creusée (IDEAS) : « connected » journalisé environ une fois par minute dans la catégorie `bluetooth` pendant les tests.
+- Copie de test désenregistrée, 1.8.0 relancée avec les vrais appareils.
+
+**Échecs :** voir les trois essais ci-dessus.
+**Testé sur appareil réel :** oui (captures de Côme).
+**Prochaine étape :** PR, puis release 1.9.0.

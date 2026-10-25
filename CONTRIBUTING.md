@@ -46,6 +46,19 @@ Requirements: a recent Xcode (the project is developed with Xcode 27 on macOS 27
 - **Run one copy at a time.** Quit the installed AirBattery Plus (and the official AirBattery) before running a build: two instances scanning Bluetooth at once give misleading results.
 - **Local network access** is granted per binary: macOS asks again after each build.
 
+### Screenshots
+
+Debug builds have a demo mode with neutral devices, for screenshots: launch the app with `-demoDevices YES` (add `-AppleLanguages "(en)"` for English). Real devices are hidden and the Mac shows as "MacBook Pro".
+
+```bash
+open "build/DerivedData/Build/Products/Debug/AirBattery Plus.app" --args -demoDevices YES -AppleLanguages "(en)"
+```
+
+- Take them on a Retina screen, so they are at 2x.
+- Remove and add the widgets again: they keep their previous snapshot otherwise.
+- Windows and widgets: ⌘⇧4, Space, ⌥-click (transparent background, no shadow). The light-mode popover is the exception: capture its area over a light background, then cut it out along its rounded corners. A window capture renders its glass without what's behind it, as a flat gray.
+- `img/preview.png` and `img/preview_dark.png` combine the large widget, the popover, a medium and a small widget.
+
 ## Project layout
 
 | Folder | Contents |

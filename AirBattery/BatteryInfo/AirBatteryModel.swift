@@ -255,6 +255,9 @@ class AirBatteryModel {
     }
     
     static func checkIfBlocked(name: String) -> Bool {
+        #if DEBUG
+        if DemoDevices.enabled { return !DemoDevices.names.contains(name) }
+        #endif
         let whitelistMode = ud.bool(forKey: "whitelistMode")
         let blockedItems = (ud.object(forKey: "blockedDevices") as? [String]) ?? [String]()
         if (blockedItems.contains(name) && !whitelistMode) || (!blockedItems.contains(name) && whitelistMode) {
@@ -263,3 +266,43 @@ class AirBatteryModel {
         return false
     }
 }
+
+#if DEBUG
+/// Neutral devices for documentation screenshots, in Debug builds only (D-023).
+/// Launch with `-demoDevices YES`: real devices are hidden, the Mac shows as "MacBook Pro",
+/// and these devices are refreshed every minute so they never look offline. Their names must
+/// differ from the real devices': the app indexes devices by name, so a real "iPhone" would
+/// overwrite a demo "iPhone".
+enum DemoDevices {
+    static var enabled: Bool { UserDefaults.standard.bool(forKey: "demoDevices") }
+    static let macName = "MacBook Pro"
+
+    private static func devices() -> [Device] {
+        let now = Date().timeIntervalSince1970
+        let airPods = "AirPods Pro"
+        return [
+            Device(deviceID: "demo-iphone", deviceType: "iPhone", deviceName: "iPhone 16 Pro", deviceModel: "iPhone17,1", batteryLevel: 82, isCharging: 0, lastUpdate: now),
+            Device(deviceID: "demo-watch", deviceType: "Watch", deviceName: "Apple Watch", deviceModel: "Watch7,1", batteryLevel: 64, isCharging: 0, parentName: "iPhone 16 Pro", lastUpdate: now),
+            Device(deviceID: "demo-ipad", deviceType: "iPad", deviceName: "iPad Pro", deviceModel: "iPad16,3", batteryLevel: 57, isCharging: 1, lastUpdate: now),
+            Device(deviceID: "demo-pencil", deviceType: "ApplePencil", deviceName: "Apple Pencil", deviceModel: "333", batteryLevel: 91, isCharging: 0, parentName: "iPad Pro", lastUpdate: now),
+            Device(deviceID: "demo-airpods", deviceType: "ap_case", deviceName: airPods + " (Case)".local, deviceModel: "Airpods Pro 2", batteryLevel: 73, isCharging: 0, lastUpdate: now),
+            Device(deviceID: "demo-airpods_All", deviceType: "ap_pod_all", deviceName: airPods + " 🄻🅁", deviceModel: "Airpods Pro 2", batteryLevel: 48, isCharging: 0, parentName: airPods + " (Case)".local, lastUpdate: now),
+            Device(deviceID: "demo-keyboard", deviceType: "Keyboard", deviceName: "Magic Keyboard", batteryLevel: 36, isCharging: 0, lastUpdate: now),
+            Device(deviceID: "demo-mouse", deviceType: "MMouse", deviceName: "Magic Mouse", batteryLevel: 18, isCharging: 0, lastUpdate: now),
+        ]
+    }
+
+    static var names: [String] { devices().map { $0.deviceName } + [macName] }
+
+    private static var timer: Timer?
+
+    static func start() {
+        guard enabled else { return }
+        let refresh = { devices().forEach { AirBatteryModel.updateDevice($0) } }
+        refresh()
+        timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in refresh() }
+        Log.app.notice("Demo devices enabled")
+    }
+}
+#endif
+
