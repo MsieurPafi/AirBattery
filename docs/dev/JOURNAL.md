@@ -767,3 +767,29 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Échecs :** —
 **Testé sur appareil réel :** sans objet (les crédits de l'app installée garderont l'ancien lien, redirigé, jusqu'à la prochaine version).
 **Prochaine étape :** analyse de l'app.
+
+---
+
+## 2026-10-25 (suite 14) — Analyse de l'app (performances, sécurité, qualité, journaux)
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, `main` @ `ea88184` (PR #34 fusionnée avec l'accord de Côme), 1.9.0 installée. Branche `docs/audit-2026-10-25`.
+
+**Fait :**
+- Trois relectures du code en parallèle, par des agents en lecture seule : sécurité, performances et énergie, qualité et bogues.
+- Mesures sur la 1.9.0 : 0,46 % de CPU, 28 Mo, ~13 réveils/s, 0 `EXC_GUARD`, pas de zombie, ~150 lignes de journal en 20 min.
+- Constats principaux revérifiés par moi dans le code ou les journaux :
+  - **reconnexion de la souris MX chaque minute** : journaux de `bluetoothd` alignés sur les « connected » de l'app à hh:mm:20 ;
+  - **`logReader.sh` inopérant depuis `de55b38`** : `IFS=$'\n'` empêche le découpage des options, et `log show --level` sort en code 64 ;
+  - notifications refusées pour la 1.9.0 ;
+  - noms traduits (« (boîtier) ») utilisés comme identifiants ; « Apple Pencil » et « Pencil » absents du catalogue ;
+  - fuite IOKit dans `MagicBattery` ; division par zéro dans `InternalBattery.charge` ;
+  - « Jamais » inopérant ; connexion au démarrage par API dépréciée ;
+  - la lecture BLE remplace le `deviceID` de l'iPhone ;
+  - Nearcast : nom de fichier tiré de `sender`, clé de 8 caractères.
+- Divergence entre les relectures sur la cause des « connected » : la piste iPhone est réfutée par les journaux, c'est la souris.
+- Rapport priorisé avec un plan de 7 PR : `docs/dev/AUDIT-2026-10-25.md`. `IDEAS.md` mis à jour (analyse faite, « connected » expliqué, tri du widget déjà fait en 1.7.2).
+
+**Échecs :** —
+**Testé sur appareil réel :** mesures et journaux sur le Mac de Côme ; aucune correction appliquée.
+**Pistes ouvertes :** vérifier les notifications dans Réglages Système (Côme) ; choisir l'ordre des corrections.
+**Prochaine étape :** PR 1 du plan (correctifs rapides) si Côme valide.
