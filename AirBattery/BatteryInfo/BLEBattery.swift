@@ -705,40 +705,15 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
         UserDefaults.standard.set(authorizedIOSDevices, forKey: Self.authorizedIOSDevicesKey)
     }
     
-    func getLevel(_ name: String, _ side: String) -> UInt8{
-        //guard let result = process(path: "/usr/sbin/system_profiler", arguments: ["SPBluetoothDataType", "-json"]) else { return 255 }
-        if let json = try? JSONSerialization.jsonObject(with: Data(SPBluetoothDataModel.shared.data.utf8), options: []) as? [String: Any],
-        let SPBluetoothDataTypeRaw = json["SPBluetoothDataType"] as? [Any],
-        let SPBluetoothDataType = SPBluetoothDataTypeRaw.first as? [String: Any],
-        let device_connected = SPBluetoothDataType["device_connected"] as? [Any] {
-            for device in device_connected{
-                guard let d = device as? [String: Any] else { continue }
-                if let n = d.keys.first,n == name,let info = d[n] as? [String: Any] {
-                    if let level = info["device_batteryLevel"+side] as? String {
-                        return UInt8(level.replacingOccurrences(of: "%", with: "")) ?? 255
-                    }
-                }
-            }
-        }
-        return 255
+    func getLevel(_ name: String, _ side: String) -> UInt8 {
+        guard let device = SPBluetoothDataModel.shared.connectedDevices.first(where: { $0.name == name }),
+              let level = device.info["device_batteryLevel" + side] as? String else { return 255 }
+        return UInt8(level.replacingOccurrences(of: "%", with: "")) ?? 255
     }
     
-    func getType(_ name: String) -> String{
-        //guard let result = process(path: "/usr/sbin/system_profiler", arguments: ["SPBluetoothDataType", "-json"]) else { return "general_bt" }
-        if let json = try? JSONSerialization.jsonObject(with: Data(SPBluetoothDataModel.shared.data.utf8), options: []) as? [String: Any],
-        let SPBluetoothDataTypeRaw = json["SPBluetoothDataType"] as? [Any],
-        let SPBluetoothDataType = SPBluetoothDataTypeRaw.first as? [String: Any],
-        let device_connected = SPBluetoothDataType["device_connected"] as? [Any] {
-            for device in device_connected{
-                guard let d = device as? [String: Any] else { continue }
-                if let n = d.keys.first,n == name,let info = d[n] as? [String: Any] {
-                    if let type = info["device_minorType"] as? String {
-                        return type
-                    }
-                }
-            }
-        }
-        return "general_bt"
+    func getType(_ name: String) -> String {
+        let device = SPBluetoothDataModel.shared.connectedDevices.first { $0.name == name }
+        return device?.info["device_minorType"] as? String ?? "general_bt"
     }
     
     func getAirpods(peripheral: CBPeripheral, data: Data, messageType: String) {
@@ -809,25 +784,4 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
         }
     }
     
-    func getPaired() -> [String]{
-        var paired:[String] = []
-        //guard let result = process(path: "/usr/sbin/system_profiler", arguments: ["SPBluetoothDataType", "-json"]) else { return paired }
-        if let json = try? JSONSerialization.jsonObject(with: Data(SPBluetoothDataModel.shared.data.utf8), options: []) as? [String: Any],
-        let SPBluetoothDataTypeRaw = json["SPBluetoothDataType"] as? [Any],
-        let SPBluetoothDataType = SPBluetoothDataTypeRaw.first as? [String: Any]{
-            if let device_connected = SPBluetoothDataType["device_connected"] as? [Any]{
-                for device in device_connected{
-                    guard let d = device as? [String: Any] else { continue }
-                    if let key = d.keys.first { paired.append(key) }
-                }
-            }
-            if let device_connected = SPBluetoothDataType["device_not_connected"] as? [Any]{
-                for device in device_connected{
-                    guard let d = device as? [String: Any] else { continue }
-                    if let key = d.keys.first { paired.append(key) }
-                }
-            }
-        }
-        return paired
-    }
 }

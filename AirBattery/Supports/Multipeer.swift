@@ -52,23 +52,6 @@ class MultipeerService: ObservableObject {
                 case "trans":
                     Log.nearcast.debug("Device received")
                     return
-                    /*if let jsonString = decryptString(message.content, password: self.ncGroupID) {
-                        if let jsonData = jsonString.data(using: .utf8) {
-                            if let device = try? JSONDecoder().decode(btdDevice.self, from: jsonData) {
-                                let ret = BTTool.connect(mac: device.mac)
-                                if ret {
-                                    createNotification(title: "Device Connected".local,
-                                                       message: String(format: "%@ from %@".local, device.name, peer.name))
-                                } else {
-                                    if let message = self.createInfo(type: 254, title: "Connection Failed".local, info: String(format: "cannot connect to your device!".local, device.name), atta: device.mac) {
-                                        self.sendMessage(message, peerID: peer.id)
-                                    }
-                                }
-                            }
-                        } else {
-                            Log.nearcast.error("Failed to convert a JSON string to data")
-                        }
-                    }*/
                 case "notify":
                     Log.nearcast.debug("Info received")
                     if let jsonString = decryptString(message.content, password: self.ncGroupID) {
@@ -136,25 +119,10 @@ class MultipeerService: ObservableObject {
         }
     }
     
-    func refeshAll() {
+    func refreshAll() {
         Log.nearcast.debug("Pulling data")
         let message = NCMessage(id: String(ncGroupID.prefix(15)), sender: systemUUID ?? self.deviceName, command: "resend", content: "")
         self.sendMessage(message)
-    }
-    
-    func transDevice(device: Device, to name: String) {
-        do {
-            let btd = btdDevice(time: Date(), vid: "", pid: "", type: device.deviceType, mac: device.deviceID.replacingOccurrences(of: ":", with: "-").lowercased(), name: device.deviceName, level: device.batteryLevel)
-            let jsonData = try JSONEncoder().encode(btd)
-            guard let jsonString = String(data: jsonData, encoding: .utf8) else { return }
-            guard let data = encryptString(jsonString, password: self.ncGroupID) else { return }
-            let message = NCMessage(id: String(self.ncGroupID.prefix(15)), sender: systemUUID ?? self.deviceName, command: "trans", content: data)
-            for peer in transceiver.availablePeers.filter({ $0.name == name }) {
-                self.sendMessage(message, peerID: peer.id)
-            }
-        } catch {
-            Log.data.error("Write JSON error: \(String(describing: error), privacy: .public)")
-        }
     }
     
     func createInfo(type: Int = 0, title: String, info: String, atta: String = "") -> NCMessage? {

@@ -87,15 +87,6 @@ class AirBatteryModel {
         }
     }
 
-    static func unhideDevice(_ name: String) {
-        devicesLock.lock(); defer { devicesLock.unlock() }
-        for index in _devices.indices {
-            if DeviceIdentity.sameName(_devices[index].deviceName, name) {
-                _devices[index].isHidden = false
-            }
-        }
-    }
-    
     static func getBlackList() -> [Device] {
         let blackList = (ud.stringArray(forKey: "blackList") ?? [])
         let devices = getAll(noFilter: true)

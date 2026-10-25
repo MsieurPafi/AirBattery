@@ -7,24 +7,6 @@
 
 import SwiftUI
 
-struct HoverButton<Content: View>: View {
-    var color: Color = .primary
-    var secondaryColor: Color = .blue
-    var action: () -> Void
-    @ViewBuilder let label: () -> Content
-    @State private var isHovered: Bool = false
-    
-    var body: some View {
-        Button(action: {
-            action()
-        }, label: {
-            label().foregroundColor(isHovered ? secondaryColor : color)
-        })
-        .buttonStyle(.plain)
-        .onHover(perform: { isHovered = $0 })
-    }
-}
-
 struct SForm<Content: View>: View {
     var spacing: CGFloat = 30
     var noSpacer: Bool = false
@@ -52,49 +34,6 @@ struct SGroupBox<Content: View>: View {
         GroupBox(label: label != nil ? Text(label!).font(.headline) : nil) {
             VStack(spacing: 10) { content() }.padding(5)
         }
-    }
-}
-
-struct SItem<Content: View>: View {
-    var label: LocalizedStringKey? = nil
-    var spacing: CGFloat = 8
-    @ViewBuilder let content: () -> Content
-    
-    var body: some View {
-        HStack(spacing: spacing) {
-            if let label = label { Text(label) }
-            Spacer()
-            content()
-        }.frame(height: 16)
-    }
-}
-
-struct SDivider: View {
-    var body: some View {
-        Divider().opacity(0.5)
-    }
-}
-
-struct SSlider: View {
-    var label: LocalizedStringKey? = nil
-    @Binding var value: Int
-    var range: ClosedRange<Double> = 0...100
-    var width: CGFloat = .infinity
-    
-    var body: some View {
-        HStack {
-            if let label = label {
-                Text(label)
-            }
-            Spacer()
-            Slider(value:
-                    Binding(get: { Double(value) },
-                            set: { newValue in
-                let base: Int = Int(newValue.rounded())
-                let modulo: Int = base % 1
-                value = base - modulo
-            }), in: range).frame(maxWidth: width)
-        }.frame(height: 16)
     }
 }
 

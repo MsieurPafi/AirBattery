@@ -91,19 +91,5 @@ class BTDBattery {
             }*/
         }
         
-        /*guard let result = process(path: "\(Bundle.main.resourcePath!)/hidpp/bin/hidpp-list-devices", arguments: []) else { return }
-        let devices = result.components(separatedBy: "\n")
-        for device in devices {
-            if let json = try? JSONSerialization.jsonObject(with: Data(device.utf8), options: []) as? [String: Any] {
-                if var name = json["name"] as? String, let pid = json["pid"] as? String,
-                   let status = json["status"] as? Int, let level = json["level"] as? Int {
-                    if name == "" { name = getDeviceName("0x\(pid.uppercased())", "Logitech Device") }
-                    let type = getDeviceTypeWithPID("0x\(pid.uppercased())", "hid")
-                    if !(status == 1 && level == 0) {
-                        AirBatteryModel.updateDevice(Device(deviceID: pid, deviceType: type, deviceName: name, batteryLevel: min(100, max(0, level)), isCharging: status, parentName: deviceName, lastUpdate: Date().timeIntervalSince1970))
-                    }
-                }
-            }
-        }*/
     }
 }

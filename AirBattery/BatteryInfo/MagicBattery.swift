@@ -20,7 +20,20 @@ class SPBluetoothDataModel {
         set { lock.lock(); defer { lock.unlock() }; _data = newValue }
     }
 
-    func refeshData(completion: (String) -> Void, error: (() -> Void)? = nil) {
+    /// Connected devices in the last report, as (name, properties). The report was parsed the
+    /// same way in several places.
+    var connectedDevices: [(name: String, info: [String: Any])] {
+        guard let json = try? JSONSerialization.jsonObject(with: Data(data.utf8)) as? [String: Any],
+              let report = (json["SPBluetoothDataType"] as? [Any])?.first as? [String: Any],
+              let connected = report["device_connected"] as? [Any] else { return [] }
+        return connected.compactMap { entry in
+            guard let device = entry as? [String: Any], let name = device.keys.first,
+                  let info = device[name] as? [String: Any] else { return nil }
+            return (name, info)
+        }
+    }
+
+    func refreshData(completion: (String) -> Void, error: (() -> Void)? = nil) {
         if let result = process(path: "/usr/sbin/system_profiler", arguments: ["SPBluetoothDataType", "-json"]) {
             data = result
             completion(result)
@@ -91,41 +104,8 @@ class MagicBattery {
     }
     
     func getDeviceType(_ mac: String, _ def: String) -> String {
-        if let json = try? JSONSerialization.jsonObject(with: Data(SPBluetoothDataModel.shared.data.utf8), options: []) as? [String: Any],
-           let SPBluetoothDataTypeRaw = json["SPBluetoothDataType"] as? [Any],
-           let SPBluetoothDataType = SPBluetoothDataTypeRaw.first as? [String: Any]{
-            if let device_connected = SPBluetoothDataType["device_connected"] as? [Any]{
-                for device in device_connected{
-                    guard let d = device as? [String: Any] else { continue }
-                    if let n = d.keys.first, let info = d[n] as? [String: Any] {
-                        if let id = info["device_address"] as? String,
-                           let type = info["device_minorType"] as? String{
-                            if id == mac { return type }
-                        }
-                    }
-                }
-            }
-        }
-        return def
-    }
-    
-    func getDeviceTypeWithPID(_ pid: String, _ def: String) -> String {
-        if let json = try? JSONSerialization.jsonObject(with: Data(SPBluetoothDataModel.shared.data.utf8), options: []) as? [String: Any],
-           let SPBluetoothDataTypeRaw = json["SPBluetoothDataType"] as? [Any],
-           let SPBluetoothDataType = SPBluetoothDataTypeRaw.first as? [String: Any]{
-            if let device_connected = SPBluetoothDataType["device_connected"] as? [Any]{
-                for device in device_connected{
-                    guard let d = device as? [String: Any] else { continue }
-                    if let n = d.keys.first, let info = d[n] as? [String: Any] {
-                        if let id = info["device_productID"] as? String,
-                           let type = info["device_minorType"] as? String{
-                            if id == pid { return type }
-                        }
-                    }
-                }
-            }
-        }
-        return def
+        let device = SPBluetoothDataModel.shared.connectedDevices.first { ($0.info["device_address"] as? String) == mac }
+        return device?.info["device_minorType"] as? String ?? def
     }
     
     func readMagicBattery(object: io_object_t) {
@@ -241,105 +221,14 @@ class MagicBattery {
         IOObjectRelease(serialPortIterator)
     }
     
-    func getAirpods() {
-        let now = Date().timeIntervalSince1970
-        //guard let result = process(path: "/usr/sbin/system_profiler", arguments: ["SPBluetoothDataType", "-json"]) else { return }
-        if let json = try? JSONSerialization.jsonObject(with: Data(SPBluetoothDataModel.shared.data.utf8), options: []) as? [String: Any],
-        let SPBluetoothDataTypeRaw = json["SPBluetoothDataType"] as? [Any],
-        let SPBluetoothDataType = SPBluetoothDataTypeRaw.first as? [String: Any]{
-            if let device_connected = SPBluetoothDataType["device_connected"] as? [Any]{
-                for device in device_connected{
-                    guard let d = device as? [String: Any] else { continue }
-                    if let n = d.keys.first, let info = d[n] as? [String: Any] {
-                        // Only Apple accessories can be split into case / left / right: a
-                        // Logitech MX Anywhere 3 was shown as AirPods at 108% (upstream #106).
-                        // This function is currently not called (since upstream 5991915).
-                        guard (info["device_vendorID"] as? String) == "0x004C" else { continue }
-                        var productID = "200e"
-                        var mainDevice: Device?
-                        var subDevices: [Device] = []
-                        if let level = info["device_batteryLevelCase"] as? String {
-                            var id = n
-                            if let mac = info["device_address"] as? String { id = mac }
-                            if let pid = info["device_productID"] as? String { productID = pid.replacingOccurrences(of: "0x", with: "") }
-                            if let level = Int(level.replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "%", with: "")) {
-                                if var apCase = AirBatteryModel.getByName(n + " (Case)".local) {
-                                    apCase.batteryLevel = level
-                                    apCase.lastUpdate = now
-                                    mainDevice = apCase
-                                } else {
-                                    mainDevice = Device(deviceID: id, deviceType: "ap_case", deviceName: n + " (Case)".local, deviceModel: getHeadphoneModel(productID), batteryLevel: level, isCharging: 0, lastUpdate: now)
-                                }
-                            }
-                        }
-                        if let level = info["device_batteryLevelLeft"] as? String {
-                            var id = n
-                            if let mac = info["device_address"] as? String { id = mac }
-                            if let pid = info["device_productID"] as? String { productID = pid.replacingOccurrences(of: "0x", with: "") }
-                            if let level = Int(level.replacingOccurrences(of: "%", with: "")) {
-                                if var apLeft = AirBatteryModel.getByName(n + " 🄻") {
-                                    apLeft.batteryLevel = level
-                                    apLeft.lastUpdate = now
-                                    subDevices.append(apLeft)
-                                } else {
-                                    subDevices.append(Device(deviceID: id, deviceType: "ap_pod_left", deviceName: n + " 🄻", deviceModel: getHeadphoneModel(productID), batteryLevel: level, isCharging: 0, parentName: n + " (Case)".local, lastUpdate: now))
-                                }
-                            }
-                            mainDevice?.deviceModel = getHeadphoneModel(productID)
-                        }
-                        if let level = info["device_batteryLevelRight"] as? String {
-                            var id = n
-                            if let mac = info["device_address"] as? String { id = mac }
-                            if let pid = info["device_productID"] as? String { productID = pid.replacingOccurrences(of: "0x", with: "") }
-                            if let level = Int(level.replacingOccurrences(of: "%", with: "")) {
-                                if var apRight = AirBatteryModel.getByName(n + " 🅁") {
-                                    apRight.batteryLevel = level
-                                    apRight.lastUpdate = now
-                                    subDevices.append(apRight)
-                                } else {
-                                    subDevices.append(Device(deviceID: id, deviceType: "ap_pod_right", deviceName: n + " 🅁", deviceModel: getHeadphoneModel(productID), batteryLevel: level, isCharging: 0, parentName: n + " (Case)".local, lastUpdate: now))
-                                }
-                            }
-                            mainDevice?.deviceModel = getHeadphoneModel(productID)
-                        }
-                        if let apCase = mainDevice { AirBatteryModel.updateDevice(apCase) }
-                        if subDevices.count != 0 {
-                            if subDevices.count == 2 {
-                                if abs(Int(subDevices[0].batteryLevel) - Int(subDevices[1].batteryLevel)) < 3 {
-                                    AirBatteryModel.hideDevice(n + " 🄻")
-                                    AirBatteryModel.hideDevice(n + " 🅁")
-                                    AirBatteryModel.updateDevice(Device(deviceID: n + "_All", deviceType: "ap_pod_all", deviceName: n + " 🄻🅁", deviceModel: getHeadphoneModel(productID), batteryLevel: Int(min(subDevices[0].batteryLevel, subDevices[1].batteryLevel)), isCharging: 0, parentName: n + " (Case)".local, lastUpdate: now))
-                                }
-                            } else {
-                                AirBatteryModel.hideDevice(n + " 🄻🅁")
-                                for pod in subDevices { AirBatteryModel.updateDevice(pod) }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
     func getOtherBTBattery() {
-        //guard let result = process(path: "/usr/sbin/system_profiler", arguments: ["SPBluetoothDataType", "-json"]) else { return }
-        if let json = try? JSONSerialization.jsonObject(with: Data(SPBluetoothDataModel.shared.data.utf8), options: []) as? [String: Any],
-        let SPBluetoothDataTypeRaw = json["SPBluetoothDataType"] as? [Any],
-        let SPBluetoothDataType = SPBluetoothDataTypeRaw.first as? [String: Any]{
-            if let device_connected = SPBluetoothDataType["device_connected"] as? [Any]{
-                for device in device_connected{
-                    guard let d = device as? [String: Any] else { continue }
-                    if let n = d.keys.first, let info = d[n] as? [String: Any] {
-                        if let level = info["device_batteryLevelMain"] as? String,
-                           let id = info["device_address"] as? String,
-                           let type = info["device_minorType"] as? String,
-                           (info["device_vendorID"] as? String) != "0x004C" {
-                            guard let batLevel = Int(level.replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "%", with: "")) else { continue }
-                            AirBatteryModel.updateDevice(Device(deviceID: id, deviceType: type, deviceName: n, batteryLevel: batLevel, isCharging: 0, lastUpdate: Date().timeIntervalSince1970))
-                        }
-                    }
-                }
-            }
+        for device in SPBluetoothDataModel.shared.connectedDevices {
+            guard let level = device.info["device_batteryLevelMain"] as? String,
+                  let id = device.info["device_address"] as? String,
+                  let type = device.info["device_minorType"] as? String,
+                  (device.info["device_vendorID"] as? String) != "0x004C",
+                  let batLevel = Int(level.replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "%", with: "")) else { continue }
+            AirBatteryModel.updateDevice(Device(deviceID: id, deviceType: type, deviceName: device.name, batteryLevel: batLevel, isCharging: 0, lastUpdate: Date().timeIntervalSince1970))
         }
     }
     

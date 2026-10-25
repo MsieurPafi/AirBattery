@@ -953,3 +953,32 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Échecs :** —
 **Prochaine étape :** PR 7 (nettoyage), puis une release.
+
+---
+
+## 2026-10-25 (suite 21) — Analyse, PR 7 : nettoyage
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, `main` @ `622b94a` (PR #42 fusionnée). Branche `chore/cleanup`.
+
+**Fait :**
+- Inventaire par script : déclarations jamais référencées hors commentaires, faux positifs écartés (points d'entrée, classes AppleScript nommées dans le `.sdef`, méthodes de délégués).
+- Supprimé :
+  - fichiers `BTTool.swift` et `InfoButton.swift` (et leurs entrées du projet) ;
+  - `appleMacPrefix` (~900 entrées sur une ligne), `dayAndWeek`, `roundedCorners`, `getFirstNCharacters`, `getMonoNum`, `pasteFromClipboard` ;
+  - le `findParentKey` global (doublon de celui de `MagicBattery`, que l'inventaire ratait à cause de sa récursion) ;
+  - `MagicBattery.getAirpods` et `getDeviceTypeWithPID`, `BLEBattery.getPaired`, `transDevice`, `unhideDevice` ;
+  - `SDivider`, `SItem`, `SSlider`, `HoverButton` ;
+  - les blocs commentés `test_data`, `.contextMenu` (73 lignes), `menuWillOpen`, « trans » de Nearcast, `hidpp` ;
+  - 9 phrases du catalogue utilisées seulement par ce code (« Transmit to… », etc.).
+- Gardé : le grand commentaire en tête de `BLEBattery.swift`, qui documente les octets des AirPods.
+- Lecture du rapport `system_profiler` regroupée : `SPBluetoothDataModel.connectedDevices`, utilisé par `getLevel`, `getType`, `getDeviceType`, `getOtherBTBattery`.
+- Noms corrigés : `refesh*` → `refresh*`, `isGroudIDValid` → `isGroupIDValid` (22 occurrences). Commande d'URL `reloadwidgets` acceptée en plus de `reloadwingets`, gardée pour les scripts existants.
+- Bilan : 13 fichiers, +52 / −712 lignes, plus 2 fichiers supprimés. Build Debug sans nouvel avertissement, `swift test` 12/12.
+- **Essai** : un premier essai de 2 min était faussé, parce que `open airbattery-plus://…` et `abtp` ont réveillé la 1.9.0 installée, qui est le gestionnaire du schéma d'URL ; deux instances tournaient. Second essai, la copie de test enregistrée temporairement comme gestionnaire (`lsregister -u` de `/Applications`, `-f` de la copie) : 5 appareils, `reloadwidgets` accepté, aucune erreur. Ensuite, copie désenregistrée, `/Applications` réenregistrée et relancée, widget réenregistré.
+
+**Échecs :**
+- Premier passage du script de suppression : `getPaired` coupée à une ligne (crochet `[String]` de la signature pris pour le bloc). Fichier restauré et suppression refaite par accolades.
+- Premier essai faussé par le gestionnaire d'URL (voir ci-dessus). À retenir pour les essais d'`abtp` ou des URL : enregistrer la copie de test comme gestionnaire.
+
+**Testé sur appareil réel :** oui (copie de test sur le Mac de Côme).
+**Prochaine étape :** release 1.10.0 (PR 1 à 5 et 7 depuis 1.9.0).
