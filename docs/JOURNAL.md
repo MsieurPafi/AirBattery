@@ -517,3 +517,22 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Prochaine étape :** résultat du branchement USB ; release 1.7.4 (icône Duo) quand Côme le souhaite.
 
 **Ajout (2026-10-25, suite) :** Côme a branché l'iPhone Duo en USB, l'a déclaré fiable et a activé l'affichage en Wi-Fi. `idevice_id -l` et `-n` voient maintenant l'iPhone (`00008160-…`), et la **Watch est revenue** dans l'app (`Watch6,7`, 67 %). COMPAT note 12 confirmée.
+
+---
+
+## 2026-10-25 (suite) — Release 1.7.4 (pre-release)
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1. Branche `release/1.7.4` (empilée sur `docs/session-2026-10-25`, PR #21 fusionnée avec l'accord de Côme : `85fa916`).
+
+**Fait :**
+- `os.Logger` passé dans « À faire » de `IDEAS.md` (demande de Côme).
+- `4a90be5` : version 1.7.4 (174), changelog (icône iPhone Duo ; note « nouvel iPhone, pas de Watch » → COMPAT note 12).
+- Build Release propre (`build/DerivedData-release`) : 1.7.4 (174), `CFBundleName` « AirBattery Plus », pas de `SUFeedURL`, `codesign --verify --deep --strict` OK, `iphone.duo` présent dans `Assets.car`, `ideviceinfo 1.4.0`.
+- DMG depuis un dossier temporaire du scratchpad, `hdiutil verify` OK ; copies de build désenregistrées (`pluginkit -r`, `lsregister -u`) et `build/DerivedData-release` supprimé avant l'installation : un seul widget enregistré.
+- Test de Côme : 1.7.4 installée, icône du Duo affichée. Widget 1.7.4 enregistré depuis `/Applications`.
+- Tag `v1.7.4` sur `4a90be5`. Pre-release publiée : https://github.com/MsieurPafi/AirBattery/releases/tag/v1.7.4. SHA-256 `931d3f24c128e4c3f25aa3b5a3a34f781b89dfc8ca37e5cdc41cd5238e3fafd7`, identique après retéléchargement.
+
+**Échecs :** — (avertissement : `hdiutil create -volname -format …` est déprécié sous macOS 27, « Please use 'diskutil image create from/blank …' » ; DMG valide, à reprendre pour le CI.)
+**Testé sur appareil réel :** oui, par Côme.
+**Pistes ouvertes :** identité du projet — liste de questions soumise à Côme (public ou non, « Plus » partout ou non, icône, nom de `abt`, copyright et crédits, traductions, liens upstream) ; rien d'écrit avant d'en avoir discuté (demande de Côme).
+**Prochaine étape :** discussion sur l'identité.
