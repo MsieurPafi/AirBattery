@@ -44,7 +44,7 @@ Activation de Nearcast et identifiant de groupe : voir [Nearcast](nearcast.md).
 ## Widget
 
 - **Inverser l'ordre des appareils** : inverse l'ordre de la liste.
-- **Fréquence d'actualisation** : « Comme Proximité » [par défaut] ou « Défini par macOS ».
+- **Fréquence d'actualisation** : « Comme Proximité » [par défaut] ou « Défini par macOS ». Avec « Comme Proximité », l'app demande à macOS de recharger les widgets à chaque **Fréquence d'actualisation** de Proximité (toutes les minutes par défaut). Il n'y a pas de fréquence propre aux widgets.
 - **Widget à un seul appareil** (macOS 12 et 13 seulement).
 - **Recharger tous les widgets** : si un widget semble figé.
 

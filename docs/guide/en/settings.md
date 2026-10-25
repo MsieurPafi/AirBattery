@@ -44,7 +44,7 @@ Enable Nearcast and its Group ID: see [Nearcast](nearcast.md). **Peer Info** sho
 ## Widget
 
 - **Reverse Device List**.
-- **Refresh Interval**: same as Nearbility [default], or left to macOS.
+- **Refresh Interval**: same as Nearbility [default], or left to macOS. With *Same as Nearbility*, the app asks macOS to reload the widgets at each Nearbility **Refresh Interval** (every minute by default). There is no separate interval for the widgets.
 - **Single Device Widget** (macOS 12 and 13 only).
 - **Reload All Widgets**: if a widget looks stuck.
 
