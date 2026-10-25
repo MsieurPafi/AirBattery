@@ -2,6 +2,16 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
+## 1.11.1 — 2026-10-25 (pre-release)
+
+### Changes
+
+- No change to the app: this version checks that updates found and installed by the app itself work, from 1.11.0.
+
+### Note
+
+- After the update, macOS asks again for local network access: allow it.
+
 ## 1.11.0 — 2026-10-25 (pre-release)
 
 ### Changes
