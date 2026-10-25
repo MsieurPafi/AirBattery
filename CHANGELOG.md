@@ -6,6 +6,8 @@ Changes in this fork compared with the official [AirBattery](https://github.com/
 
 ### Changes
 
+- **Liquid Glass Dock window** on macOS 26 and later: the window opened from the Dock icon now matches the menu bar popover (glass, rounded corners, lists that follow them).
+- The device list in the menu bar popover now keeps the same margin at the bottom as on the sides, so its corners follow the popover's.
 - **Diagnostic messages now go to the macOS unified log** (subsystem `io.github.msieurpafi.AirBattery`), so they can be read in Console or with `log show` even when the app was opened from Finder. Device names and addresses stay private. The Nearcast group ID is no longer printed.
 
 ## 1.8.0 — 2026-10-25 (pre-release)

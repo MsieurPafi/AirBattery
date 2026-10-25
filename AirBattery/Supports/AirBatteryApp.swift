@@ -128,7 +128,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
                     ncDeviceCount += count
                 }
             }
-            let menuHeight = CGFloat((max(max(allDevices.count,1)+ncDeviceCount,1)+hiddenRow)*37+30+ncCount)
+            var menuHeight = CGFloat((max(max(allDevices.count,1)+ncDeviceCount,1)+hiddenRow)*37+30+ncCount)
+            // Liquid Glass layout: measure the view (the formula above doesn't know its margins)
+            if ListMetrics.liquidGlass { menuHeight = contentView.fittingSize.height }
             let mouse = NSEvent.mouseLocation
             var menuX = mouse.x
             var menuY = mouse.y
@@ -165,12 +167,32 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
             dockWindow = AutoHideWindow(contentRect: contentView.frame, styleMask: [.fullSizeContentView], backing: .buffered, defer: false)
             dockWindow.title = "AirBattery Plus Dock Window"
             dockWindow.level = .popUpMenu
-            dockWindow.contentView = contentView
             dockWindow.isOpaque = false
             dockWindow.backgroundColor = NSColor.clear
-            dockWindow.contentView?.wantsLayer = true
-            dockWindow.contentView?.layer?.cornerRadius = 7
-            dockWindow.contentView?.layer?.masksToBounds = true
+            if #available(macOS 26.0, *) {
+                // Same glass and corner radius as the menu bar popover, so the lists inside
+                // stay concentric with the window (D-020)
+                let glass = NSGlassEffectView(frame: NSRect(origin: .zero, size: contentView.frame.size))
+                glass.cornerRadius = ListMetrics.popoverCornerRadius
+                // The window keeps the size measured above: left to the hosting view, it could
+                // be resized after showing and grow down past the bottom of the screen
+                contentView.sizingOptions = []
+                contentView.frame.origin = .zero
+                glass.contentView = contentView
+                dockWindow.contentView = glass
+                dockWindow.hasShadow = true
+                var frame = dockWindow.frame
+                if let visible = (dockWindow.screen ?? NSScreen.main)?.visibleFrame {
+                    frame.origin.y = min(max(frame.origin.y, visible.minY), visible.maxY - frame.height)
+                }
+                Log.app.debug("Dock window frame \(NSStringFromRect(frame), privacy: .public)")
+                dockWindow.setFrame(frame, display: false)
+            } else {
+                dockWindow.contentView = contentView
+                dockWindow.contentView?.wantsLayer = true
+                dockWindow.contentView?.layer?.cornerRadius = 7
+                dockWindow.contentView?.layer?.masksToBounds = true
+            }
             dockWindow.makeKeyAndOrderFront(nil)
         }
         return true
