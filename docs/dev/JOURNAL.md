@@ -1039,3 +1039,17 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Échecs :** —
 **Testé sur appareil réel :** en attente de Côme (installation à la main de la 1.11.0).
 **Prochaine étape :** test de Côme, publication, fusion ; puis une 1.11.1 pour essayer une mise à jour livrée par Sparkle (Gatekeeper).
+
+## 2026-10-25 (suite 25) — 1.11.0 publiée
+
+**Contexte :** suite 24. Test de Côme : 1.11.0 installée à la main, « tout fonctionne ». Il a accepté les vérifications automatiques à la question du deuxième lancement.
+
+**Fait :**
+- **Vérification avant publication** : PlistBuddy sur `/Applications` → 1.11.0 (1110), `SUPublicEDKey` du fork ; processus lancé à 19:08 ; widget 1.11.0 enregistré (un seul) ; aucun nouveau rapport de plantage (le seul récent, 18:57, est le lancement depuis le shell de la suite 23). Préférences Sparkle : `SUEnableAutomaticChecks = 1`, `SUAutomaticallyUpdate = 1` (téléchargement et installation automatiques aussi activés), `SUSendProfileInfo = 0`, `SULastCheckTime` 18:08:54 UTC : la première vérification a eu lieu, sur le flux vide.
+- Première tentative de publication refusée par le mode automatique (« Create Public Surface ») : la réponse de Côme n'autorisait pas explicitement la publication. Rien n'avait été créé (pas de tag) ; accord explicite demandé, puis obtenu.
+- Tag annoté `v1.11.0` sur `c75e4b7`, poussé. Pre-release publiée : https://github.com/MsieurPafi/AirBattery-Plus/releases/tag/v1.11.0 (DMG + `.sha256`). DMG retéléchargé : même SHA-256 ; adresse du flux → HTTP 200.
+- PR #47 fusionnée (`main` @ `ebef8b6`). `appcast.xml` servi par `raw.githubusercontent.com` : entrée 1.11.0 (1110) avec l'adresse de la release.
+
+**Testé sur appareil réel :** oui, par Côme (installation à la main, réglages, question du deuxième lancement).
+**Pour le test de la 1.11.1 :** avec `SUAutomaticallyUpdate = 1`, Sparkle télécharge la mise à jour en arrière-plan et l'installe **à la fermeture de l'app**, sans fenêtre. Pour la voir passer, utiliser « Rechercher des mises à jour… », ou observer la version après avoir quitté puis relancé l'app. Sparkle vérifie toutes les 24 h par défaut.
+**Prochaine étape :** une 1.11.1 pour valider une mise à jour livrée par Sparkle (Gatekeeper, accès au réseau local, widget) ; ou CI / Nearcast v2, au choix de Côme.
