@@ -653,7 +653,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSBackgroundOnly = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 lihaoyun6. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 lihaoyun6, © 2026 Côme Bouquet.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -687,7 +687,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSBackgroundOnly = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 lihaoyun6. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 lihaoyun6, © 2026 Côme Bouquet.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -843,9 +843,9 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "AirBattery Plus";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_LSUIElement = YES;
-				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "AirBattery uses Bluetooth to collect battery information from peripheral devices.";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 lihaoyun6. All rights reserved.";
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "AirBattery will collect battery information through the local network.";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "AirBattery Plus uses Bluetooth to collect battery information from peripheral devices.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 lihaoyun6, © 2026 Côme Bouquet.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "AirBattery Plus will collect battery information through the local network.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -879,9 +879,9 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "AirBattery Plus";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_LSUIElement = YES;
-				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "AirBattery uses Bluetooth to collect battery information from peripheral devices.";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 lihaoyun6. All rights reserved.";
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "AirBattery will collect battery information through the local network.";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "AirBattery Plus uses Bluetooth to collect battery information from peripheral devices.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 lihaoyun6, © 2026 Côme Bouquet.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "AirBattery Plus will collect battery information through the local network.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -943,7 +943,7 @@
 				INFOPLIST_FILE = widget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = widget;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 lihaoyun6. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 lihaoyun6, © 2026 Côme Bouquet.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -977,7 +977,7 @@
 				INFOPLIST_FILE = widget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = widget;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 lihaoyun6. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 lihaoyun6, © 2026 Côme Bouquet.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
