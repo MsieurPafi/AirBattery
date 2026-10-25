@@ -1,0 +1,4 @@
+2026-10-25 10:00:01.123 Df bluetoothd[428:1] [com.apple.bluetooth:CBStackDeviceMonitor] Device found: CBDevice 11111111-2222-3333-4444-555555555555, BDA AA:BB:CC:DD:EE:01, Nm 'Sony WH-1000XM4', PID 0x0D58, VID 0x054C, DvT Headphones, Battery M +85%, DsFl 0xA00000 < Connections >
+2026-10-25 10:00:02.456 Df bluetoothd[428:1] [com.apple.bluetooth:CBStackDeviceMonitor] Device found: CBDevice 11111111-2222-3333-4444-555555555556, BDA AA:BB:CC:DD:EE:02, Nm 'Bob's "Speaker" *', PID 0x1234, VID 0x0A12, DvT Speaker, Battery M -40%, DsFl 0xA00000 < Connections >
+2026-10-25 10:00:03.789 Df bluetoothd[428:1] [com.apple.bluetooth:CBStackDeviceMonitor] Device found: CBDevice 11111111-2222-3333-4444-555555555557, BDA AA:BB:CC:DD:EE:03, Nm 'AirPods Pro', PID 0x2027, VID 0x004C, DvT Headphones, Battery M +90%, DsFl 0xA00000 < Connections >
+2026-10-25 10:00:04.000 Df bluetoothd[428:1] [com.apple.bluetooth:Server.GATT] The device "MX" supports CATT Battery Service

@@ -27,7 +27,7 @@ class LogReader {
     static let shared = LogReader()
 
     @AppStorage("readBTHID") var readBTHID = true
-    @AppStorage("logReaderLastTS") var lastTS: String = ""   // e.g. "2025-07-01 12:34:56 +0000"
+    @AppStorage("logReaderLastTS") var lastTS: String = ""   // e.g. "2025-07-01 12:34:56+0000"
 
     private var isRunning = false
     private var queued = false
@@ -35,7 +35,10 @@ class LogReader {
     private let fmt: DateFormatter = {
         let f = DateFormatter()
         f.locale = Locale(identifier: "en_US_POSIX")
-        f.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZZZ"
+        // The format `log show --start` accepts: no space before the time zone. With one, every
+        // incremental read failed ("Failed conversion … using format '%Y-%m-%d %H:%M:%S%z'").
+        // A value saved in the old format no longer parses, and the next run uses a window.
+        f.dateFormat = "yyyy-MM-dd HH:mm:ssZ"
         return f
     }()
 
@@ -48,12 +51,12 @@ class LogReader {
         isRunning = true
         lock.unlock()
 
+        // The start time is an argument: an environment variable (setenv) was process-wide,
+        // raced with other threads launching tools, and leaked into BTDBattery's own runs.
         let args: [String]
         if let start = computeStart(trigger) {
-            setenv("START_TS", start, 1)
-            args = ["\(Bundle.main.resourcePath!)/logReader.sh", "mac", "10m"]
+            args = ["\(Bundle.main.resourcePath!)/logReader.sh", "mac", "10m", start]
         } else {
-            unsetenv("START_TS")
             let win = (trigger == .bootstrap) ? "20m" : (trigger == .wake ? "3m" : "2m")
             args = ["\(Bundle.main.resourcePath!)/logReader.sh", "mac", win]
         }
@@ -79,7 +82,10 @@ class LogReader {
             return fmt.string(from: t)
         }
         if let prev = fmt.date(from: lastTS) {
-            return fmt.string(from: prev.addingTimeInterval(-2))
+            // After a long sleep, the previous run can be hours old: reading all those logs
+            // took seconds of CPU and the 5 s timeout cut it short anyway. 10 minutes at most.
+            let oldest = Date(timeIntervalSinceNow: -10 * 60)
+            return fmt.string(from: max(prev.addingTimeInterval(-2), oldest))
         }
         return nil
     }

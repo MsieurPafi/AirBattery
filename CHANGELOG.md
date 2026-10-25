@@ -17,6 +17,7 @@ Changes in this fork compared with the official [AirBattery](https://github.com/
 
 - **Less Bluetooth traffic**: the app no longer reconnects every minute to Bluetooth LE mice and keyboards that macOS keeps connected (such as a Logitech MX): it just reads their level again. With "Discover iOS devices via Bluetooth", an iPhone also read over USB or Wi-Fi is no longer re-read over Bluetooth every minute, nor over USB/Wi-Fi every 15 s. Each reconnection used to start a full read (`system_profiler`, logs).
 - A device reconnecting in a loop starts at most one full read per minute.
+- **"Discover more BT devices" works again for devices reported in the Bluetooth logs** (third-party headphones and speakers): since upstream PR #163, the log reader passed malformed options and dates to `log show`, which rejected them, so it read nothing. It now reads at most the last 10 minutes of logs, escapes device names, and only runs `system_profiler` when it needs it.
 - Possible crashes: Bluetooth devices are now read on the main thread only, and the Mac's battery status is protected against concurrent access (same kind of crash as upstream #215).
 
 ### Security
