@@ -1053,3 +1053,17 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Testé sur appareil réel :** oui, par Côme (installation à la main, réglages, question du deuxième lancement).
 **Pour le test de la 1.11.1 :** avec `SUAutomaticallyUpdate = 1`, Sparkle télécharge la mise à jour en arrière-plan et l'installe **à la fermeture de l'app**, sans fenêtre. Pour la voir passer, utiliser « Rechercher des mises à jour… », ou observer la version après avoir quitté puis relancé l'app. Sparkle vérifie toutes les 24 h par défaut.
 **Prochaine étape :** une 1.11.1 pour valider une mise à jour livrée par Sparkle (Gatekeeper, accès au réseau local, widget) ; ou CI / Nearcast v2, au choix de Côme.
+
+## 2026-10-25 (suite 26) — 1.11.1 préparée pour tester une mise à jour par Sparkle
+
+**Contexte :** PR #48 fusionnée avec l'accord de Côme (`main` @ `edcc55f`). Branche `release/1.11.1`. 1.11.0 installée chez Côme, vérification et installation automatiques activées.
+
+**Fait :**
+- `7f08ac5` : version 1.11.1 (`CURRENT_PROJECT_VERSION` 1111). Aucun changement de l'app : version de test de la mise à jour, dit tel quel dans le CHANGELOG.
+- Build Release propre, DMG `AirBattery-Plus-1.11.1.dmg` (`hdiutil verify` OK), SHA-256 `5179f7e821421b017e8b02858fd03aa9953dc93c880d3e3cc1b098e0d01acd03`. App : 1.11.1 (1111), widget 1111, clé du fork, `codesign --verify --deep --strict` OK, équipe `PCH7VR8GPS`, pas de mode démo.
+- **Exigence de signature** : Sparkle refuse une mise à jour dont la signature de code ne satisfait pas l'exigence désignée de l'app installée. Celle de la 1.11.0 : `identifier "io.github.msieurpafi.AirBattery" and anchor apple generic and certificate leaf[subject.CN] = "Apple Development: … (D8K49NUSH7)" and certificate 1[…6.2.1] exists`. Vérifiée sur la 1.11.1 avec `codesign -v -R=…` : satisfaite. Elle dépend du nom du certificat de développement : si un jour Xcode signe avec un autre certificat (autre nom), les mises à jour seront refusées par la version installée (la clé EdDSA seule ne suffit pas quand les deux apps sont signées). À revérifier à chaque release.
+- `appcast.xml` : 1.11.1 ajoutée (signature identique à `sign_update`), 1.11.0 conservée.
+- Copies de build désenregistrées, `build/DerivedData-release` supprimé, widget de `/Applications` seul enregistré.
+
+**Testé sur appareil réel :** pas encore : le test passe par la publication (le flux est lu sur `main`).
+**Prochaine étape :** accord de Côme pour publier la 1.11.1 et fusionner l'appcast, puis son test (checklist dans le résumé de la PR).

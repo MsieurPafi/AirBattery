@@ -3,6 +3,25 @@
     <channel>
         <title>AirBattery Plus</title>
         <item>
+            <title>1.11.1</title>
+            <pubDate>Sun, 25 Oct 2026 19:14:36 +0100</pubDate>
+            <link>https://github.com/MsieurPafi/AirBattery-Plus</link>
+            <sparkle:fullReleaseNotesLink>https://github.com/MsieurPafi/AirBattery-Plus/blob/main/CHANGELOG.md</sparkle:fullReleaseNotesLink>
+            <sparkle:version>1111</sparkle:version>
+            <sparkle:shortVersionString>1.11.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>12.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h3>Changes</h3>
+<ul>
+<li>No change to the app: this version checks that updates found and installed by the app itself work, from 1.11.0.</li>
+</ul>
+<h3>Note</h3>
+<ul>
+<li>After the update, macOS asks again for local network access: allow it.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/MsieurPafi/AirBattery-Plus/releases/download/v1.11.1/AirBattery-Plus-1.11.1.dmg" length="12770381" type="application/octet-stream" sparkle:edSignature="jhOayE8eW1gf4FmiDRv7Zw0In4xVOE6DDGOWAg+cqvK9rvJyF/8NwGubo4EnCBgABP8GTajlfzy42AUs3q7WCg=="/>
+        </item>
+        <item>
             <title>1.11.0</title>
             <pubDate>Sun, 25 Oct 2026 19:05:12 +0100</pubDate>
             <link>https://github.com/MsieurPafi/AirBattery-Plus</link>
