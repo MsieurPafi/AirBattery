@@ -165,7 +165,7 @@ class InternalFinder {
         }
         // Not displayed today. On Apple Silicon (macOS 27.0.1), DesignCapacity and
         // NominalChargeCapacity (mAh) live in the "BatteryData" dictionary, not at the top
-        // level, and MaxCapacity is a percentage: see docs/COMPAT.md before using these.
+        // level, and MaxCapacity is a percentage: see docs/dev/COMPAT.md before using these.
         battery.designCapacity = self.getIntValue("DesignCapacity" as CFString)
 
         // Battery Cycles

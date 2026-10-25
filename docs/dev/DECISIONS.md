@@ -168,3 +168,16 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 **Pourquoi :** B garde la fenêtre existante (positionnement selon le Dock, fermeture au clic extérieur) et reproduit exactement le popover. Deux essais ratés montrent qu'il ne faut pas laisser SwiftUI mesurer : la liste n'est remplie qu'au `onAppear`, d'où une fenêtre de 72 pt qui grandissait ensuite vers le bas, hors de l'écran (1er essai), puis de 0 pt avec `sizingOptions = []` (2e essai).
 **Conséquences :** la formule de hauteur (`37 pt` par ligne, `+30`, `+7` par groupe Nearcast) ne sert plus qu'avant macOS 26. Les marges du bas sont des mesures sur l'écran de Côme (macOS 27.0.1), à revérifier si macOS change le rendu du verre.
 **Validée par Côme :** oui (capture du 2026-10-25, écrans interne et externe)
+
+## D-021 — Organisation de la documentation, bilingue EN/FR   (2026-10-25, statut : acceptée)
+**Contexte :** le README faisait tout à la fois (présentation, installation, utilisation, Q&R, crédits) ; la documentation de travail (français) était au même niveau que ce qui pourrait servir aux utilisateurs ; rien pour les contributeurs ; l'app n'existe qu'en anglais et en chinois (figé, D-017). Recommandations présentées à Côme le 2026-10-25.
+**Options envisagées :** guide dans un wiki GitHub / dans le dépôt en Markdown. Traductions : fichiers `.strings` / String Catalog (`.xcstrings`).
+**Décision :** (validée en bloc par Côme)
+1. **README vitrine** (présentation, fonctions, installation, liens, crédits, licence) ; **guide utilisateur** dans `docs/guide/en/` (8 pages) ; **`CONTRIBUTING.md`** en anglais ; **documentation de travail** déplacée dans `docs/dev/`, toujours en français.
+2. **Guide dans le dépôt**, en Markdown : versionné avec le code, relu dans les PR, publiable plus tard sur GitHub Pages.
+3. **Bilingue** : anglais de référence (`README.md`, `docs/guide/en/`), français en miroir (`README.fr.md`, `docs/guide/fr/`), les deux mis à jour dans la même PR. Chinois figé.
+4. **App en français** à partir de la PR upstream #170 (leo1425), retravaillée ; passage au **String Catalog** d'Xcode, pour voir les traductions manquantes ou périmées par langue.
+5. Nouvelles captures d'écran (clair/sombre) avec des noms d'appareils neutres.
+**Pourquoi :** chaque public trouve ce qui le concerne ; la règle « deux langues dans la même PR » évite qu'une version dérive.
+**Conséquences :** chemins de la documentation de travail changés (`docs/dev/…`) dans `CLAUDE.md` et le code ; les anciennes entrées du journal citent encore `docs/…` (journal en ajout seul). Les liens vers la version française sont ajoutés avec la traduction (étape 2).
+**Validée par Côme :** oui (2026-10-25)
