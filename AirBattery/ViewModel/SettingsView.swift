@@ -443,7 +443,7 @@ struct DisplayView: View {
                     Text("Battery: Highest First").tag("levelDesc")
                 }
                 .onChange(of: sortDevices) { _ in
-                    AirBatteryModel.writeData()
+                    AirBatteryModel.writeData(force: true)
                     WidgetCenter.shared.reloadAllTimelines()
                 }
                 Divider().opacity(0.5)
@@ -483,7 +483,8 @@ struct WidgetView: View {
     @AppStorage("widgetInterval") var widgetInterval = 0
     @AppStorage("deviceName") var deviceName = "Mac"
     
-    @State var ib = getMacDeviceType().lowercased().contains("book")
+    // Saved at launch: getMacDeviceType() runs system_profiler, each time this pane was built
+    @State var ib = (ud.string(forKey: "machineType") ?? "mac").lowercased().contains("book")
     @State var devices = [String]()
 
     var body: some View {
@@ -510,7 +511,7 @@ struct WidgetView: View {
                 }
                 Divider().opacity(0.5)
                 SButton("Reload All Widgets", buttonTitle: "Reload") {
-                    AirBatteryModel.writeData()
+                    AirBatteryModel.writeData(force: true)
                     WidgetCenter.shared.reloadAllTimelines()
                 }
             }

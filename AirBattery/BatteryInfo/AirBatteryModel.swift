@@ -191,7 +191,16 @@ class AirBatteryModel {
         return url
     }
     
-    static func writeData(){
+    private static let writeLock = NSLock()
+    private static var lastSignature = ""
+    private static var lastWrite = 0.0
+    private static var widgetReloadNeeded = true
+
+    /// Writes the widgets' data. Periodic calls only write when something the widgets show has
+    /// changed, or every 5 minutes so the "⚠︎" offline marker stays right: the file was
+    /// replaced every 24 s and the widgets reloaded every minute even when nothing changed.
+    /// `force` (user action, `abtp`, AppleScript, launch) always writes, and exports for `abtp`.
+    static func writeData(force: Bool = false) {
         //let showMac = ud.object(forKey: "showMacOnWidget") as? Bool ?? true
         let revList = ud.object(forKey: "revListOnWidget") as? Bool ?? false
         
@@ -200,13 +209,34 @@ class AirBatteryModel {
         let ibStatus = InternalBattery.status
         if ibStatus.hasBattery { devices.insert(ib2ab(ibStatus), at: 0) }
         devices = sortForDisplay(devices, reversed: revList)
+
+        let signature = devices.map { "\($0.deviceID)|\($0.deviceName)|\($0.deviceType)|\($0.deviceModel ?? "")|\($0.batteryLevel)|\($0.isCharging)|\($0.isCharged)|\($0.isPaused)|\($0.acPowered)|\($0.lowPower)|\($0.parentName)" }.joined(separator: "\n")
+        let now = Date().timeIntervalSince1970
+        writeLock.lock()
+        let due = force || signature != lastSignature || now - lastWrite >= 300
+        if due {
+            lastSignature = signature
+            lastWrite = now
+            widgetReloadNeeded = true
+        }
+        writeLock.unlock()
+        guard due else { return }
+
         do {
             let jsonData = try JSONEncoder().encode(devices)
             try jsonData.write(to: getJsonURL(), options: .atomic)
         } catch {
             Log.data.error("Write JSON error: \(String(describing: error), privacy: .public)")
         }
-        if Bundle.main.bundleIdentifier == AppIdentifiers.app { exportForTools(devices) }
+        if force && Bundle.main.bundleIdentifier == AppIdentifiers.app { exportForTools(devices) }
+    }
+
+    /// Whether the widgets' data changed since the last call (then they need a reload).
+    static func takeWidgetReloadNeeded() -> Bool {
+        writeLock.lock(); defer { writeLock.unlock() }
+        let needed = widgetReloadNeeded
+        widgetReloadNeeded = false
+        return needed
     }
 
     /// Folder read by abt and other local tools. Since macOS 14, a process launched

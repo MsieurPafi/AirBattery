@@ -273,12 +273,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
         btdBattery.startScan()
         MagicBattery.shared.startScan()
         IDeviceBattery.shared.startScan()
+        Scheduler.shared.start()
         #if DEBUG
         DemoDevices.start()
         #endif
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            AirBatteryModel.writeData()
+            AirBatteryModel.writeData(force: true)
             _ = AirBatteryModel.singleDeviceName()
             WidgetCenter.shared.reloadAllTimelines()
         }
@@ -461,10 +462,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
                 switch url.host {
                 case "writedata" :
                     Log.app.debug("URL command: write data")
-                    AirBatteryModel.writeData()
+                    AirBatteryModel.writeData(force: true)
                 case "reloadwingets" :
                     Log.app.debug("URL command: reload widgets")
-                    AirBatteryModel.writeData()
+                    AirBatteryModel.writeData(force: true)
                     WidgetCenter.shared.reloadAllTimelines()
                 default: Log.app.error("Unknown URL command: \(url.host ?? "", privacy: .public)")
                 }
@@ -610,5 +611,61 @@ enum LoginItem {
         let ok = SMLoginItemSetEnabled(AppIdentifiers.helper as CFString, enabled)
         if !ok { Log.app.error("SMLoginItemSetEnabled failed for \(AppIdentifiers.helper, privacy: .public)") }
         return ok
+    }
+}
+
+/// Periodic background work. It used to hang off the Dock icon's SwiftUI view (installed even
+/// in menu bar mode), and ran system_profiler on the main thread every 24 s.
+/// Intervals follow the Nearbility refresh interval read at launch, as before.
+final class Scheduler {
+    static let shared = Scheduler()
+    private var timers: [Timer] = []
+    private let dataQueue = DispatchQueue(label: "\(AppIdentifiers.app).data", qos: .utility)
+
+    func start() {
+        let interval = TimeInterval(60 * max(updateInterval, 1))
+        every(300) { batteryAlert() }
+        every(interval) {
+            if widgetInterval != -1 && AirBatteryModel.takeWidgetReloadNeeded() { WidgetCenter.shared.reloadAllTimelines() }
+        }
+        // system_profiler and the Magic accessories, then the widgets' data (24 s by default)
+        every(interval * 0.4) { self.refreshData() }
+        every(interval + Double(Int(arc4random_uniform(19)) - 9)) { self.broadcastNearcast() }
+    }
+
+    private func every(_ seconds: TimeInterval, _ work: @escaping () -> Void) {
+        let timer = Timer(timeInterval: seconds, repeats: true) { _ in work() }
+        timer.tolerance = seconds / 10
+        RunLoop.main.add(timer, forMode: .common)
+        timers.append(timer)
+    }
+
+    private func refreshData() {
+        // Serial queue: a slow system_profiler (after wake) can't pile up runs
+        dataQueue.async {
+            SPBluetoothDataModel.shared.refeshData(completion: { _ in
+                MagicBattery.shared.scanDevices()
+                AirBatteryModel.writeData()
+            }, error: {
+                AirBatteryModel.writeData()
+            })
+        }
+    }
+
+    private func broadcastNearcast() {
+        let ncGroupID = ud.string(forKey: "ncGroupID") ?? ""
+        guard ud.bool(forKey: "nearCast"), isGroudIDValid(id: ncGroupID) else { return }
+        var allDevices = AirBatteryModel.getAll()
+        allDevices.insert(ib2ab(InternalBattery.status), at: 0)
+        do {
+            let jsonData = try JSONEncoder().encode(allDevices)
+            guard let jsonString = String(data: jsonData, encoding: .utf8) else { return }
+            guard let data = encryptString(jsonString, password: ncGroupID) else { return }
+            let sender = systemUUID ?? (ud.string(forKey: "deviceName") ?? "Mac")
+            let message = NCMessage(id: String(ncGroupID.prefix(15)), sender: sender, command: "", content: data)
+            netcastService.sendMessage(message)
+        } catch {
+            Log.data.error("Write JSON error: \(String(describing: error), privacy: .public)")
+        }
     }
 }

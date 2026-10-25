@@ -879,3 +879,39 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Échecs :** voir le second bogue ci-dessus.
 **Testé sur appareil réel :** script et app sur le Mac de Côme ; pas d'appareil concerné pour vérifier une lecture de batterie réelle.
 **Prochaine étape :** PR 4 (ordonnanceur et `process()`).
+
+---
+
+## 2026-10-25 (suite 18) — Analyse, PR 4 : ordonnanceur et `process()`
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, `main` @ `5e59153` (PR #38 fusionnée avec l'accord de Côme). Branche `perf/scheduler-process`.
+
+**Fait :**
+- **`process()`** :
+  - délai par défaut de 20 s (8 `system_profiler`, `idevice_id`, `ideviceinfo`, `wificonnection`, `killall` n'en avaient pas) ;
+  - sortie d'erreur vers `FileHandle.nullDevice` (le tube jamais lu pouvait bloquer l'outil) ;
+  - à l'expiration, `terminateTree` arrête les descendants d'abord (via `pgrep -P`), puis SIGKILL 400 ms plus tard ; `kill()` direct au lieu de lancer `/bin/kill`.
+  - Testé à part : `bash -c 'x=$(sleep 300…)'` avec 1 s de délai rend la main en 1 s, sans `sleep` restant.
+- **iPhone/iPad** :
+  - un seul scan à la fois (`scanning` sous verrou) ;
+  - appareils inconnus (bloqués ou lecture en échec) relus au plus une fois par intervalle, séparément pour l'USB et le réseau ;
+  - Pencil relu une fois par intervalle, une lecture par iPad à la fois.
+- **`Scheduler`** (`AirBatteryApp.swift`) :
+  - alertes (300 s), rechargement des widgets (intervalle), `system_profiler` + accessoires Magic + données des widgets (0,4 × intervalle, file série hors du fil principal), diffusion Nearcast ;
+  - minuteries avec 10 % de tolérance, retirées de `MultiBatteryView` ;
+  - tolérance aussi sur `mainTimer` (0,1 s) et `dockTimer` (0,5 s).
+  - Premier build en échec : `Supports.swift` est aussi compilé dans le widget (`cannot find 'NCMessage' in scope`…). Classe déplacée dans `AirBatteryApp.swift` (cible app seule).
+- **`writeData`** : écrit seulement si un champ affiché change (signature sans les horodatages) ou toutes les 5 min. Le rechargement des widgets n'a lieu que s'il y a eu écriture. `force: true` pour les actions de l'utilisateur, le lancement, les URL et AppleScript ; l'export pour `abtp` n'a lieu qu'en mode `force`.
+- Batterie du Mac lue une fois par seconde au lieu de deux. Onglet Widget : type de Mac lu dans `machineType` au lieu de relancer `system_profiler`.
+- **Mesure sur 6 min** (1.9.0 sur les 6 min précédentes, puis copie de test) :
+  - `system_profiler` : 26 → 17, compté par les PID distincts « from system_profiler » dans les journaux de `bluetoothd` ;
+  - enregistrements de rechargement des widgets (`chronod`) : 52 → 16 ;
+  - CPU de la copie de test : 0,98 s en 345 s (0,28 %) ;
+  - aucune erreur ; `abtp --csv` complet.
+  - Les réveils mesurés avec `top` ne sont pas comparables d'un échantillon à l'autre : non retenus.
+- 1.9.0 relancée et widget réenregistré.
+
+**Échecs :** voir le premier build ci-dessus.
+**Testé sur appareil réel :** oui (mesures sur le Mac de Côme).
+**Pistes ouvertes :** le reste des `system_profiler` (~2,5 par minute) vient de la relecture des accessoires Magic toutes les 24 s ; une lecture par intervalle suffirait sans doute. Batterie du Mac sur notification (`IOPSNotificationCreateRunLoopSource`) plutôt qu'à la seconde : non fait.
+**Prochaine étape :** PR 5 (indexation par identifiant + tests).
