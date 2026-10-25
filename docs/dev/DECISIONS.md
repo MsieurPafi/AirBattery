@@ -206,3 +206,30 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 **Pourquoi :** cohérence du nom partout, avant de mettre en place les mises à jour et l'intégration continue, dont les adresses dépendent du nom du dépôt.
 **Conséquences :** GitHub redirige les anciennes adresses (vérifié : 301 vers le nouveau nom, y compris pour les pages de release). Mis à jour : remote `origin` de `src/`, crédits de l'app (4 langues), guide (EN et FR), `CONTRIBUTING.md`, `CLAUDE.md` (commandes `gh … --repo`). Laissés tels quels : les anciennes entrées du journal et des décisions (D-010 cite encore l'ancien nom), les notes des releases déjà publiées. Bundle IDs, réglages et schéma d'URL inchangés. Ne jamais recréer un dépôt nommé `MsieurPafi/AirBattery` : il casserait les redirections.
 **Validée par Côme :** oui (2026-10-25)
+
+## D-025 — Identité des appareils : identifiant d'abord, noms comparables d'une langue à l'autre ; tests unitaires par un paquet Swift   (2026-10-25, statut : acceptée)
+**Contexte :** l'analyse (AUDIT 1.4, 1.6) et le plan validé par Côme prévoyaient d'« indexer les appareils par identifiant ».
+**Ce que la carte des sources a montré :**
+- Chaque source a son identifiant : UDID (USB/Wi-Fi), UUID CoreBluetooth (BLE), adresse Bluetooth sous deux formes (`aa-bb-…` par IOBluetooth, `AA:BB:…` par `system_profiler` et les journaux), `@MacInternalBattery`, suffixes `_All`/`_Left`/`_Right` pour les AirPods, `Pencil_<UDID>`.
+- Un même appareil vu par deux sources a donc deux identifiants : c'est la comparaison par nom qui les réunissait.
+- L'identifiant des AirPods vient de leurs annonces Bluetooth et peut changer.
+- Les listes de l'utilisateur (alertes, épingles, masqués, blocage/autorisation) sont par nom, saisi à la main pour la liste de blocage.
+
+**Options envisagées :**
+- A. Indexation par identifiant seul, avec migration des listes : risque de doublons d'AirPods et de casse des listes.
+- B. Identifiant d'abord, nom ensuite, avec des noms comparables d'une langue à l'autre.
+
+**Décision :** B, dans `Shared/Core/DeviceIdentity.swift` :
+- même identifiant (adresses normalisées) → même appareil, même si le nom a changé ;
+- sinon même nom, comme avant, **sauf deux UDID différents** (deux iPhone, iPad ou Watch qui portent le même nom) ;
+- les noms se comparent après conversion du suffixe du boîtier des AirPods (« (Case) », « (boîtier) », « (充电盒) », « (充電盒) ») ;
+- appliqué à `updateDevice`, `getByName`, aux listes (blocage, masqués, épingles, alertes) et à AppleScript.
+
+**Tests unitaires :** un paquet Swift à la racine de `src/` (`Package.swift`, cible `Shared/Core`, tests dans `Tests/AirBatteryCoreTests`), lancé par `swift test`, sans cible de test dans le projet Xcode. Les fichiers de `Shared/Core` sont aussi compilés dans les quatre cibles de l'app (groupe synchronisé `Shared`), donc ils doivent rester en Foundation seule. 12 tests au départ : identité, lecture d'`ideviceinfo` (`BatteryParsing`, déplacée depuis `IDeviceBattery`).
+**Pourquoi :** corrige les problèmes réels (listes cassées par la traduction, iPhone de même nom qui s'écrasent, ping-pong déjà réglé par la PR #37) sans risque de doublons ni migration de données.
+**Conséquences :**
+- Deux appareils non-UDID de même nom (deux souris identiques) restent confondus.
+- Un appareil Bluetooth renommé reste un seul appareil si sa source garde le même identifiant.
+- L'indexation « tout identifiant » reste possible plus tard, avec une table d'alias par source (IDEAS).
+**Validée par Côme :** plan validé (« dans l'ordre que tu as suggéré ») ; le changement de portée par rapport au plan lui est signalé dans le résumé de la PR.
+

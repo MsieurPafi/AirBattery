@@ -37,7 +37,7 @@ class getUsage: NSScriptCommand {
         if ibStatus.hasBattery { allDevices.insert(ib2ab(ibStatus), at: 0) }
         let ncFiles = getFiles(withExtension: "json", in: ncFolder)
         for ncFile in ncFiles { allDevices += AirBatteryModel.ncGetAll(url: ncFile) }
-        for d in allDevices { if d.deviceName == device { return d.batteryLevel } }
+        for d in allDevices { if DeviceIdentity.sameName(d.deviceName, device) { return d.batteryLevel } }
         return -1
     }
 }
@@ -50,7 +50,7 @@ class getStatus: NSScriptCommand {
         if ibStatus.hasBattery { allDevices.insert(ib2ab(ibStatus), at: 0) }
         let ncFiles = getFiles(withExtension: "json", in: ncFolder)
         for ncFile in ncFiles { allDevices += AirBatteryModel.ncGetAll(url: ncFile) }
-        for d in allDevices { if d.deviceName == device { return d.isCharging } }
+        for d in allDevices { if DeviceIdentity.sameName(d.deviceName, device) { return d.isCharging } }
         return -1
     }
 }

@@ -109,14 +109,7 @@ class IDeviceBattery {
     /// output. Returns nil instead of crashing when a field is missing or malformed: these
     /// lines come from external tools whose format may change.
     static func parseBattery(_ lines: [String]) -> (level: Int, charging: Bool)? {
-        func value(_ key: String) -> String? {
-            return lines.first(where: { $0.contains(key) })?
-                .components(separatedBy: ": ").last?
-                .trimmingCharacters(in: .whitespaces)
-        }
-        guard let levelText = value("BatteryCurrentCapacity"), let level = Int(levelText),
-              let chargingText = value("BatteryIsCharging"), let charging = Bool(chargingText) else { return nil }
-        return (min(100, max(0, level)), charging)
+        return BatteryParsing.ideviceBattery(lines)
     }
 
     func writeBatteryInfo(_ id: String, _ connectType: String) {

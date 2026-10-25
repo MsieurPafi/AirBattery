@@ -504,12 +504,12 @@ struct popover: View {
                                             .foregroundColor(.blackWhite)
                                             .frame(height: 24, alignment: .center)
                                         Spacer().frame(width: 0.5)
-                                        if alertList.map({$0.name}).contains(allDevices[index].deviceName) {
+                                        if alertList.map({$0.name}).containsDeviceName(allDevices[index].deviceName) {
                                             Image(systemName: "bell.fill")
                                                 .font(.system(size: 10))
                                                 .foregroundColor(.blackWhite)
                                         }
-                                        if pinnedList.contains(allDevices[index].deviceName) {
+                                        if pinnedList.containsDeviceName(allDevices[index].deviceName) {
                                             Image(systemName: "pin.fill")
                                                 .font(.system(size: 10))
                                                 .foregroundColor(.blackWhite)
@@ -539,7 +539,7 @@ struct popover: View {
                                                     }
                                                 }
                                                 Spacer().frame(width: 1)
-                                                if !alertList.map({$0.name}).contains(allDevices[index].deviceName) {
+                                                if !alertList.map({$0.name}).containsDeviceName(allDevices[index].deviceName) {
                                                     Button(action: {
                                                         let alert = btAlert(name: allDevices[index].deviceName,
                                                                                     full: 80, fullOn: true, fullSound: true,
@@ -561,11 +561,11 @@ struct popover: View {
                                                 } else {
                                                     Button(action: {
                                                         alertList = ud.get(objectType: [btAlert].self, forKey: "alertList") ?? []
-                                                        if let alert = alertList.first(where: {$0.name == allDevices[index].deviceName}) {
+                                                        if let alert = alertList.first(where: { DeviceIdentity.sameName($0.name, allDevices[index].deviceName) }) {
                                                             let alertWindowController = AlertWindowController()
                                                             alertWindowController.showAlert(with: alert, iconName: getDeviceIcon(allDevices[index]), onConfirm: { newAlert in
                                                                 alertList = ud.get(objectType: [btAlert].self, forKey: "alertList") ?? []
-                                                                alertList.removeAll {$0.name == allDevices[index].deviceName}
+                                                                alertList.removeAll(where: { DeviceIdentity.sameName($0.name, allDevices[index].deviceName) })
                                                                 alertList.append(newAlert)
                                                                 ud.set(object: alertList, forKey: "alertList")
                                                             }, onCancel: {})
@@ -580,7 +580,7 @@ struct popover: View {
                                                     .onHover{ hovering in overAlertButton = hovering }
                                                 }
                                                 if allDevices[index].deviceID != "@MacInternalBattery" {
-                                                    if !pinnedList.contains(allDevices[index].deviceName) {
+                                                    if !pinnedList.containsDeviceName(allDevices[index].deviceName) {
                                                         Button(action: {
                                                             pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
                                                             pinnedList.append(allDevices[index].deviceName)
@@ -597,7 +597,7 @@ struct popover: View {
                                                     } else {
                                                         Button(action: {
                                                             pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
-                                                            pinnedList.removeAll(where:  { $0 == allDevices[index].deviceName })
+                                                            pinnedList.removeAll(where: { DeviceIdentity.sameName($0, allDevices[index].deviceName) })
                                                             refeshPinnedBar(unpin: allDevices[index].deviceName)
                                                             ud.set(pinnedList, forKey: "pinnedList")
                                                         }, label: {
@@ -635,7 +635,7 @@ struct popover: View {
                                                         blackList.append(allDevices[index].deviceName)
                                                         ud.set(blackList, forKey: "blackList")
                                                         let pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
-                                                        if pinnedList.contains(allDevices[index].deviceName){
+                                                        if pinnedList.containsDeviceName(allDevices[index].deviceName){
                                                             refeshPinnedBar()
                                                         }
                                                     }, label: {
@@ -695,7 +695,7 @@ struct popover: View {
                                         }
                                     }
                                     if allDevices[index].deviceID != "@MacInternalBattery" {
-                                        if !pinnedList.contains(allDevices[index].deviceName) {
+                                        if !pinnedList.containsDeviceName(allDevices[index].deviceName) {
                                             Button(action: {
                                                 pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
                                                 pinnedList.append(allDevices[index].deviceName)
@@ -707,7 +707,7 @@ struct popover: View {
                                         } else {
                                             Button(action: {
                                                 pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
-                                                pinnedList.removeAll { $0 == allDevices[index].deviceName }
+                                                pinnedList.removeAll(where: { DeviceIdentity.sameName($0, allDevices[index].deviceName) })
                                                 ud.set(pinnedList, forKey: "pinnedList")
                                                 refeshPinnedBar()
                                             }) {
@@ -764,10 +764,10 @@ struct popover: View {
                                     Button(action: {
                                         hidden2.append(index)
                                         var blackList = (ud.stringArray(forKey: "blackList") ?? [])
-                                        blackList.removeAll { $0 == hiddenDevices[index].deviceName }
+                                        blackList.removeAll(where: { DeviceIdentity.sameName($0, hiddenDevices[index].deviceName) })
                                         ud.set(blackList, forKey: "blackList")
                                         let pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
-                                        if pinnedList.contains(hiddenDevices[index].deviceName){
+                                        if pinnedList.containsDeviceName(hiddenDevices[index].deviceName){
                                             refeshPinnedBar()
                                         }
                                     }, label: {
@@ -869,12 +869,12 @@ struct nearcastView: View {
                                 .frame(height: 24, alignment: .center)
                                 .padding(.horizontal, 7)
                             Spacer().frame(width: 0.5)
-                            if alertList.map({$0.name}).contains(devices[index].deviceName) {
+                            if alertList.map({$0.name}).containsDeviceName(devices[index].deviceName) {
                                 Image(systemName: "bell.fill")
                                     .font(.system(size: 10))
                                     .foregroundColor(.blackWhite)
                             }
-                            if pinnedList.contains(devices[index].deviceName) {
+                            if pinnedList.containsDeviceName(devices[index].deviceName) {
                                 Image(systemName: "pin.fill")
                                     .font(.system(size: 10))
                                     .foregroundColor(.blackWhite)
@@ -888,7 +888,7 @@ struct nearcastView: View {
                                     .font(.system(size: 11))
                                 if devices[index].hasBattery {
                                     Spacer().frame(width: 1)
-                                    if !alertList.map({$0.name}).contains(devices[index].deviceName) {
+                                    if !alertList.map({$0.name}).containsDeviceName(devices[index].deviceName) {
                                         Button(action: {
                                             let alert = btAlert(name: devices[index].deviceName,
                                                                 full: 80, fullOn: true, fullSound: true,
@@ -910,11 +910,11 @@ struct nearcastView: View {
                                     } else {
                                         Button(action: {
                                             alertList = ud.get(objectType: [btAlert].self, forKey: "alertList") ?? []
-                                            if let alert = alertList.first(where: {$0.name == devices[index].deviceName}) {
+                                            if let alert = alertList.first(where: { DeviceIdentity.sameName($0.name, devices[index].deviceName) }) {
                                                 let alertWindowController = AlertWindowController()
                                                 alertWindowController.showAlert(with: alert, iconName: getDeviceIcon(devices[index]), onConfirm: { newAlert in
                                                     alertList = ud.get(objectType: [btAlert].self, forKey: "alertList") ?? []
-                                                    alertList.removeAll(where: {$0.name == devices[index].deviceName})
+                                                    alertList.removeAll(where: { DeviceIdentity.sameName($0.name, devices[index].deviceName) })
                                                     alertList.append(newAlert)
                                                     ud.set(object: alertList, forKey: "alertList")
                                                 }, onCancel: {})
@@ -928,7 +928,7 @@ struct nearcastView: View {
                                         .buttonStyle(PlainButtonStyle())
                                         .onHover{ hovering in overAlertButton = hovering }
                                     }
-                                    if !pinnedList.contains(devices[index].deviceName) {
+                                    if !pinnedList.containsDeviceName(devices[index].deviceName) {
                                         Button(action: {
                                             pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
                                             pinnedList.append(devices[index].deviceName)
@@ -945,7 +945,7 @@ struct nearcastView: View {
                                     } else {
                                         Button(action: {
                                             pinnedList = (ud.stringArray(forKey: "pinnedList") ?? [])
-                                            pinnedList.removeAll { $0 == devices[index].deviceName }
+                                            pinnedList.removeAll(where: { DeviceIdentity.sameName($0, devices[index].deviceName) })
                                             ud.set(pinnedList, forKey: "pinnedList")
                                             refeshPinnedBar()
                                         }, label: {
