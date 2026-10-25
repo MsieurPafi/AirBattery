@@ -30,4 +30,4 @@ Ouvrez AirBattery Plus. Si le widget semble encore figé : **Réglages › Widg
 macOS garde les icônes des apps en cache. Elles se rafraîchissent d'elles-mêmes, ou à la prochaine ouverture de session.
 
 **Autre chose ne va pas.**
-Ouvrez une *issue* sur [GitHub](https://github.com/MsieurPafi/AirBattery/issues) (en anglais ou en français) avec votre version de macOS, la version de l'app et, si possible, ses journaux (voir [Autorisations et confidentialité](permissions-privacy.md#journaux)).
+Ouvrez une *issue* sur [GitHub](https://github.com/MsieurPafi/AirBattery-Plus/issues) (en anglais ou en français) avec votre version de macOS, la version de l'app et, si possible, ses journaux (voir [Autorisations et confidentialité](permissions-privacy.md#journaux)).

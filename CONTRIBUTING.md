@@ -4,7 +4,7 @@ Thanks for your interest! AirBattery Plus is a personal project first, maintaine
 
 ## Report a bug
 
-Open an [issue](https://github.com/MsieurPafi/AirBattery/issues) with:
+Open an [issue](https://github.com/MsieurPafi/AirBattery-Plus/issues) with:
 
 - your macOS version (`sw_vers`) and Mac model;
 - the AirBattery Plus version (About AirBattery Plus);
@@ -76,7 +76,7 @@ The bundled libimobiledevice tools are built by `scripts/build-libimobiledevice.
 
 ## Pull requests
 
-- One topic per pull request, on a branch of its own, against `main` of [MsieurPafi/AirBattery](https://github.com/MsieurPafi/AirBattery).
+- One topic per pull request, on a branch of its own, against `main` of [MsieurPafi/AirBattery-Plus](https://github.com/MsieurPafi/AirBattery-Plus).
 - Code, comments and commit messages in English. Commits follow [Conventional Commits](https://www.conventionalcommits.org) (`fix:`, `feat:`, `docs:`…), and mention the upstream issue when there is one (`fixes upstream #203`).
 - Say how you tested: macOS version, devices used.
 - Changes visible to users go in `CHANGELOG.md`, under *Unreleased*.
