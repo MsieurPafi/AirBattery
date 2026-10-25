@@ -498,3 +498,22 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Testé sur appareil réel :** oui, par Côme (21:40) : la version de test voit l'iPhone Duo (`iPhone19,4`) et affiche la nouvelle icône dans le menu. Ensuite : copie de build désenregistrée, 1.7.3 de `/Applications` relancée.
 **Pistes ouvertes :** l'Apple Watch n'apparaît plus depuis l'appairage de l'iPhone Duo (sans doute à re-autoriser en USB avec le nouvel iPhone) ; bruit de logs ci-dessus.
 **Prochaine étape :** fusion de la PR #20.
+
+---
+
+## 2026-10-25 — Icône Duo absente, Apple Watch disparue, bruit des logs
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, `main` @ `e828441`. Branche `docs/session-2026-10-25`. App installée : 1.7.3, lancée depuis 41 h, RSS 48 Mo.
+
+**Fait :**
+- Crashs : aucun nouveau rapport depuis le 2026-10-22 12:52 (avant le correctif de `comptest`).
+- Icône de l'iPhone Duo « pas utilisée » (Côme) : normal, l'app installée est la 1.7.3 et son `Assets.car` ne contient pas `iphone.duo` (`assetutil --info` → 0). L'icône arrivera avec la prochaine release.
+- Apple Watch absente : l'iPhone Duo n'est vu qu'en Bluetooth (D-009) ; `idevice_id -l` et `-n` ne renvoient rien. Sans *pair record*, `comptest` ne peut pas joindre la Watch par l'iPhone (COMPAT note 12). Test demandé à Côme : branchement USB, « Se fier », « Afficher cet iPhone en Wi-Fi ».
+- Bruit des logs (COMPAT note 11) : les messages IOBluetooth/CoreBluetooth restants sont émis aussi, en même nombre, par des processus système ; les « Cannot create IOBluetoothDevice » et « API MISUSE » ont disparu depuis la fin des tests. Rien à corriger dans le code.
+
+**Échecs :** `ls /var/db/lockdown/` → `Operation not permitted` (dossier protégé, pas de vérification directe des *pair records*).
+**Testé sur appareil réel :** non (en attente du branchement de l'iPhone Duo par Côme).
+**Pistes ouvertes :** préciser dans l'aide de l'app qu'un iPhone doit être fiable en USB pour la Watch (tâche identité / textes d'aide).
+**Prochaine étape :** résultat du branchement USB ; release 1.7.4 (icône Duo) quand Côme le souhaite.
+
+**Ajout (2026-10-25, suite) :** Côme a branché l'iPhone Duo en USB, l'a déclaré fiable et a activé l'affichage en Wi-Fi. `idevice_id -l` et `-n` voient maintenant l'iPhone (`00008160-…`), et la **Watch est revenue** dans l'app (`Watch6,7`, 67 %). COMPAT note 12 confirmée.
