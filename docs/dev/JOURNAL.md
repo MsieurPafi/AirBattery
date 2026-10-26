@@ -1149,3 +1149,22 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Testé sur appareil réel :** non (rien de visible : niveaux des accessoires mis à jour moins souvent).
 **Prochaine étape :** #210, après évaluation de sa complexité.
+
+## 2026-10-25 (suite 33) — #210 mise de côté ; décrochages Wi-Fi de l'iPhone (lecture seule)
+
+**Contexte :** `main` @ `446a228` (PR #55 puis #57 fusionnées après leur CI, avec l'accord de Côme). Branche `docs/wifi-dropouts`. iPhone de Côme posé sur le bureau, inutilisé depuis un moment.
+
+**Fait :**
+- **#210 évaluée, mise de côté** avec Côme (UPSTREAM.md) : le problème qu'elle corrige (« Ignoring … (Pariable=false) » de `usbmuxd`) n'apparaît pas sur macOS 27.0.1 alors que l'iPhone utilise une adresse Wi-Fi privée.
+- **Décrochages :** `log show --last 6h --predicate 'process == "usbmuxd" …'` : 462 « Attaching DeviceID », 453 « Interface already torn down » + détachement « sent from MuxInterface », 10 détachements par Bonjour. Attachement toutes les 38 s (médiane ; 3 s à 280 s), **durée médiane 6 s** (0 à 273 s), 65 à 85 par heure, régulier sur 6 h. Cohérent avec l'économie d'énergie du Wi-Fi d'un iPhone inactif (hypothèse, non prouvée).
+- **Lecture comme le fait l'app**, 3 min, toutes les 5 s (`idevice_id -n` puis `ideviceinfo -n -q com.apple.mobile.battery`) : iPhone visible 8 fois sur 36 ; lecture réussie 7 fois sur 8 (82 %, pas en charge), un échec « Could not connect to lockdownd: Mux error (-8) » en fin de fenêtre.
+- Journaux de l'app sur 6 h : 12 « Could not parse Watch battery info » (chacun suit une lecture réussie de l'iPhone : la Watch n'est pas lue quand l'iPhone est en veille) ; 30 « Start scanning » (lancements de la journée, dont mes copies de test).
+- **Conséquence probable :** l'app ne lit l'iPhone en Wi-Fi que si son scan (toutes les 15 s) tombe dans une fenêtre d'environ 6 s : lectures irrégulières, marque « ⚠︎ » après 10 min sans lecture, et retrait de la liste après 20 min (`disappearTime`). Pourrait expliquer une partie des « iPhone qui disparaît » (upstream #192/#194) sur macOS 26/27. Non vérifié : à regarder dans la liste (« ⚠︎ » devant l'iPhone ?).
+
+**Échecs :**
+- `timeout 10 ideviceinfo …` → « command not found: timeout » : `timeout` n'existe pas sur macOS (GNU coreutils). Refait avec `perl -e 'alarm 10; exec @ARGV'`.
+- **Correction de la suite 31 :** la vérification des notifications de la batterie (`timeout 90 /usr/bin/log stream …`) n'a pas tourné, pour la même raison : sa sortie vide ne prouve rien. « Pas de notification pendant 90 s […] attendu » est faux. La vérification reste à faire (débrancher et rebrancher le chargeur avec le message de débogage « Power source changed »).
+
+**Testé sur appareil réel :** lecture seule, sans action de Côme.
+**Pistes ouvertes :** lire l'iPhone dès que `usbmuxd` l'attache (abonnement aux événements, `usbmuxd_events_subscribe` / `idevice_event_subscribe` : nouvel outil à compiler, accord de Côme nécessaire), ou interroger `idevice_id -n` plus souvent tant que l'iPhone n'a pas été lu.
+**Prochaine étape :** Côme regarde si son iPhone porte un « ⚠︎ » dans la liste ; décision sur la piste.
