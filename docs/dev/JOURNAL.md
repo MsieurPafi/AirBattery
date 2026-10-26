@@ -1168,3 +1168,16 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Testé sur appareil réel :** lecture seule, sans action de Côme.
 **Pistes ouvertes :** lire l'iPhone dès que `usbmuxd` l'attache (abonnement aux événements, `usbmuxd_events_subscribe` / `idevice_event_subscribe` : nouvel outil à compiler, accord de Côme nécessaire), ou interroger `idevice_id -n` plus souvent tant que l'iPhone n'a pas été lu.
 **Prochaine étape :** Côme regarde si son iPhone porte un « ⚠︎ » dans la liste ; décision sur la piste.
+## 2026-10-26 — Journal des lectures d'iPhone, iPad et Watch
+
+**Contexte :** macOS 27.0.1 (26A434), Xcode 27.1, `main` @ `446a228`. Branche `feat/idevice-read-log`. Relevé des plantages en début de session : rien de nouveau (dernier rapport : `AirBattery Plus-2026-10-25-185757.ips`, lancement depuis le shell, suite 23 ; dernier `comptest` le 2026-10-22).
+**Objectif :** savoir si l'iPhone de Côme reste vraiment plus de 10 à 20 min sans lecture en Wi-Fi (suite 33) avant de choisir un correctif. Côme n'a jamais remarqué de « ⚠︎ », sans certitude.
+
+**Fait :**
+- Inconvénients des deux correctifs possibles exposés à Côme : outil séparé abonné aux événements de `usbmuxd` (binaire et processus permanent en plus) ou dialogue direct de l'app avec `/var/run/usbmuxd` (protocole non documenté par Apple, pas de binaire). Dans les deux cas : remplace les ~480 lancements d'`idevice_id` par heure, on lit l'iPhone pendant ses fenêtres de réveil sans le réveiller, lectures toujours plafonnées à une par intervalle. Choix de Côme : mesurer d'abord.
+- `IDeviceBattery.writeBatteryInfo` : message `notice` à chaque lecture réussie (« Read iPhone <nom> over Wi-Fi: 85% », Watch comprise) et à chaque échec de connexion (« Could not reach a device over Wi-Fi »). Nom privé dans les journaux, type, connexion et niveau publics.
+- Les journaux de l'app ne permettaient pas de mesurer l'ancienneté de la dernière lecture : les « Could not parse Watch battery info » (03:58, 06:46, 07:38, 09:22, 11:39) ne sont émis que si la Watch échoue, donc les écarts ne sont que des majorants. Pas de lecture via AppleScript : elle aurait déclenché une demande d'autorisation (Automatisation) chez Côme, et le dictionnaire n'expose pas la date de lecture.
+- Copie de test (Release) à la place de l'app de Côme, 5 min (13:39:48 → 13:44:48) : « Could not reach a device over Wi-Fi » au lancement, puis iPhone (85 %) et Watch (56 %) lus en Wi-Fi à 13:40:49 et 13:42:18, plus rien jusqu'à la fin. 1.11.1 relancée, widget de `/Applications` seul enregistré.
+
+**Testé sur appareil réel :** oui (lecture seule, iPhone et Watch de Côme).
+**Prochaine étape :** une journée d'observation avec une version qui contient ce journal (release à faire), puis relevé : `log show --last 1d --predicate 'subsystem == "io.github.msieurpafi.AirBattery" AND category == "idevice"'`.

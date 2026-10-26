@@ -9,6 +9,10 @@ Changes in this fork compared with the official [AirBattery](https://github.com/
 - **The Mac's battery is read when it changes** (level, time left, charger, Low Power Mode, wake from sleep) instead of every second. The menu bar icon follows a charger plugged in or out right away. Measured over 3 minutes: idle wakeups went from about 30 per minute to 0 or 1.
 - **Bluetooth accessories (Magic keyboards, mice and trackpads, and others) are read once per refresh interval** (every minute by default, at most every 5 minutes) instead of every 24 s: their level moves by 1% in hours, and a newly connected accessory is still read right away. Measured over 6 minutes: `system_profiler` ran 10 times instead of 17.
 
+### Changes
+
+- Each read of an iPhone, iPad or Apple Watch is written to the system log, with its connection (USB or Wi-Fi), to see how often an idle iPhone is really read over Wi-Fi. See them in Console, or with `log show --predicate 'subsystem == "io.github.msieurpafi.AirBattery" AND category == "idevice"'`.
+
 ## 1.11.1 — 2026-10-25 (pre-release)
 
 ### Changes
