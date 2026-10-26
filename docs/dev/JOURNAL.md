@@ -1181,3 +1181,18 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Testé sur appareil réel :** oui (lecture seule, iPhone et Watch de Côme).
 **Prochaine étape :** une journée d'observation avec une version qui contient ce journal (release à faire), puis relevé : `log show --last 1d --predicate 'subsystem == "io.github.msieurpafi.AirBattery" AND category == "idevice"'`.
+
+## 2026-10-26 (suite 1) — Release 1.12.0 préparée
+
+**Contexte :** PR #58 fusionnée après son CI, avec l'accord de Côme (`main` @ `79e1254`). Conflit de journal sur #59 (deux entrées ajoutées en fin de fichier) : `origin/main` fusionné dans `feat/idevice-read-log` (`c18701c`), les deux entrées gardées dans l'ordre. Branche `release/1.12.0` partie de `feat/idevice-read-log`.
+
+**Fait :**
+- `cad45b6` : version 1.12.0 (`CURRENT_PROJECT_VERSION` 1120). *Unreleased* → `## 1.12.0`, avec la note sur l'accès au réseau local (le code change : nouvel UUID d'exécutable, COMPAT note 8).
+- Build Release propre, DMG `AirBattery-Plus-1.12.0.dmg`, `hdiutil verify` OK, SHA-256 `2b57f73544cc07f655c4ac4a5284f83324bc18e4aca8c840e7bdf33179255965`. App : 1.12.0 (1120), widget 1120, flux et clé du fork, `codesign --verify --deep --strict` OK, **exigence de signature de la 1.11.1 installée satisfaite** (`codesign -v -R=…`), pas de mode démo, nouveaux messages de journal présents.
+- `appcast.xml` : 1.12.0 ajoutée (signature identique à `sign_update`), 1.11.1 et 1.11.0 conservées. Copies de build désenregistrées, `build/DerivedData-release` supprimé.
+
+**Échecs :**
+- `hdiutil create -quiet … 2>/dev/null && …` : pas de DMG ni d'erreur visible au premier essai (cause non identifiée, sortie masquée) ; le deuxième essai, sortie filtrée, l'a créé ; le troisième a échoué sur « create failed - Le fichier existe ». DMG vérifié (`hdiutil verify`, contenu inspecté) avant usage. Ne plus masquer la sortie d'`hdiutil`.
+
+**Testé sur appareil réel :** pas encore (checklist dans la PR de release).
+**Prochaine étape :** fusion de #59, accord de Côme pour publier, mise à jour par Sparkle chez lui, puis une journée d'observation.

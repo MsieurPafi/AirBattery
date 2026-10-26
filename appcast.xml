@@ -3,6 +3,30 @@
     <channel>
         <title>AirBattery Plus</title>
         <item>
+            <title>1.12.0</title>
+            <pubDate>Mon, 26 Oct 2026 13:48:51 +0100</pubDate>
+            <link>https://github.com/MsieurPafi/AirBattery-Plus</link>
+            <sparkle:fullReleaseNotesLink>https://github.com/MsieurPafi/AirBattery-Plus/blob/main/CHANGELOG.md</sparkle:fullReleaseNotesLink>
+            <sparkle:version>1120</sparkle:version>
+            <sparkle:shortVersionString>1.12.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>12.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h3>Performance</h3>
+<ul>
+<li><strong>The Mac's battery is read when it changes</strong> (level, time left, charger, Low Power Mode, wake from sleep) instead of every second. The menu bar icon follows a charger plugged in or out right away. Measured over 3 minutes: idle wakeups went from about 30 per minute to 0 or 1.</li>
+<li><strong>Bluetooth accessories (Magic keyboards, mice and trackpads, and others) are read once per refresh interval</strong> (every minute by default, at most every 5 minutes) instead of every 24 s: their level moves by 1% in hours, and a newly connected accessory is still read right away. Measured over 6 minutes: <code>system_profiler</code> ran 10 times instead of 17.</li>
+</ul>
+<h3>Changes</h3>
+<ul>
+<li>Each read of an iPhone, iPad or Apple Watch is written to the system log, with its connection (USB or Wi-Fi), to see how often an idle iPhone is really read over Wi-Fi. See them in Console, or with <code>log show --predicate 'subsystem == "io.github.msieurpafi.AirBattery" AND category == "idevice"'</code>.</li>
+</ul>
+<h3>Note</h3>
+<ul>
+<li>After the update, macOS asks again for local network access: allow it.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/MsieurPafi/AirBattery-Plus/releases/download/v1.12.0/AirBattery-Plus-1.12.0.dmg" length="12792920" type="application/octet-stream" sparkle:edSignature="YoBDSJp4s6c9cN8pOagYem/Zwkz6Qs+zwQ0/D9fILYPzH9u9m9Zhyou+Fques5ClJCjGrAwUJgWNq2QSbxjEBQ=="/>
+        </item>
+        <item>
             <title>1.11.1</title>
             <pubDate>Sun, 25 Oct 2026 19:14:36 +0100</pubDate>
             <link>https://github.com/MsieurPafi/AirBattery-Plus</link>
