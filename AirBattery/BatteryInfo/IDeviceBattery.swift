@@ -115,6 +115,9 @@ class IDeviceBattery {
     func writeBatteryInfo(_ id: String, _ connectType: String) {
         //print("ℹ️ Getting Battery Info for \(id)")
         let lastUpdate = Date().timeIntervalSince1970
+        // Each read is logged, to see how often a device is really read over Wi-Fi: an idle
+        // iPhone is only reachable a few seconds at a time (JOURNAL 2026-10-25 suite 33).
+        let via = connectType == "-n" ? "Wi-Fi" : "USB"
         if connectType == "" { _ = process(path: "\(Bundle.main.resourcePath!)/libimobiledevice/bin/wificonnection", arguments: ["-u", id, "true"]) }
         if let deviceInfo = process(path: "\(Bundle.main.resourcePath!)/libimobiledevice/bin/ideviceinfo", arguments: [connectType, "-u", id]){
             let i = deviceInfo.components(separatedBy: .newlines)
@@ -124,6 +127,7 @@ class IDeviceBattery {
                 if let batteryInfo = process(path: "\(Bundle.main.resourcePath!)/libimobiledevice/bin/ideviceinfo", arguments: [connectType, "-u", id, "-q", "com.apple.mobile.battery"]) {
                     if let battery = IDeviceBattery.parseBattery(batteryInfo.components(separatedBy: .newlines)) {
                         AirBatteryModel.updateDevice(Device(deviceID: id, deviceType: type, deviceName: deviceName, deviceModel: model, batteryLevel: battery.level, isCharging: battery.charging ? 1 : 0, lastUpdate: lastUpdate))
+                        Log.idevice.notice("Read \(type, privacy: .public) \(deviceName) over \(via, privacy: .public): \(battery.level, privacy: .public)%")
                         // comptest occasionally hangs or crashes (upstream #198): don't let it
                         // block this background thread forever.
                         if let watchInfo = process(path: "\(Bundle.main.resourcePath!)/libimobiledevice/bin/comptest", arguments: [id], timeout: 15) {
@@ -133,6 +137,7 @@ class IDeviceBattery {
                                let watchModel = w.filter({ $0.contains("ProductType") }).first?.components(separatedBy: ": ").last,
                                let watchBattery = IDeviceBattery.parseBattery(w) {
                                 AirBatteryModel.updateDevice(Device(deviceID: watchID, deviceType: "Watch", deviceName: watchName, deviceModel: watchModel, batteryLevel: watchBattery.level, isCharging: watchBattery.charging ? 1 : 0, parentName: deviceName, lastUpdate: lastUpdate))
+                                Log.idevice.notice("Read Watch \(watchName) through \(deviceName) over \(via, privacy: .public): \(watchBattery.level, privacy: .public)%")
                             } else {
                                 Log.idevice.error("Could not parse Watch battery info for \(deviceName)")
                             }
@@ -142,6 +147,8 @@ class IDeviceBattery {
                     }
                 }
             }
+        } else {
+            Log.idevice.notice("Could not reach a device over \(via, privacy: .public)")
         }
     }
 }
