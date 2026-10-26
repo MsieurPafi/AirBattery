@@ -2,7 +2,7 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
-## Unreleased
+## 1.12.0 — 2026-10-26 (pre-release)
 
 ### Performance
 
@@ -12,6 +12,10 @@ Changes in this fork compared with the official [AirBattery](https://github.com/
 ### Changes
 
 - Each read of an iPhone, iPad or Apple Watch is written to the system log, with its connection (USB or Wi-Fi), to see how often an idle iPhone is really read over Wi-Fi. See them in Console, or with `log show --predicate 'subsystem == "io.github.msieurpafi.AirBattery" AND category == "idevice"'`.
+
+### Note
+
+- After the update, macOS asks again for local network access: allow it.
 
 ## 1.11.1 — 2026-10-25 (pre-release)
 
