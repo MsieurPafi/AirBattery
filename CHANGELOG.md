@@ -2,6 +2,16 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
+## Unreleased
+
+### Fixes
+
+- **iPhones, iPads and Apple Watches are read as soon as they show up**, over USB or Wi-Fi: the app now listens to macOS's device service (`usbmuxd`) instead of checking every 15 s. An idle iPhone turns on its Wi-Fi only a few seconds at a time, and the 15 s check often missed it. Then, as before, they're read once per refresh interval while they stay. Measured over 6 minutes: the iPhone and Watch were read 5 times instead of about 1 or 2.
+
+### Performance
+
+- No more `idevice_id` launches every 15 s (about 480 per hour): measured over 6 minutes, 32 → 0. If the device service can't be reached, the app goes back to checking every 15 s.
+
 ## 1.12.0 — 2026-10-26 (pre-release)
 
 ### Performance

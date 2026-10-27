@@ -1216,3 +1216,20 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Conclusion provisoire :** pas de disparition chez Côme ; un « ⚠︎ » possible par moments. Correctif (lecture sur les événements de `usbmuxd`) facultatif, plus intéressant pour la conso (~480 lancements d'`idevice_id` par heure) que pour la fiabilité.
 **Testé sur appareil réel :** oui, par Côme.
 **Prochaine étape :** décision de Côme sur le correctif ; sinon, Nearcast v2 (#41).
+
+## 2026-10-27 (suite 1) — iPhone, iPad et Watch lus sur les événements d'`usbmuxd` (D-028)
+
+**Contexte :** `main` @ `505b6ab` (PR #61 fusionnée après son CI, avec l'accord de Côme ; doc remise à jour avant de commencer : guide EN/FR § Refresh, suivis de l'analyse, IDEAS, CLAUDE.md). Branche `feat/usbmuxd-events`.
+
+**Fait :**
+- Sonde en lecture seule (`listen.py` dans le scratchpad : socket `/var/run/usbmuxd`, requête « Listen ») : « Result 0 », « Attached » de l'iPhone en Wi-Fi (`ConnectionType` = `Network`, `SerialNumber` = UDID) puis « Detached » 94 s plus tard.
+- `Shared/Core/Usbmuxd.swift` + `Tests/AirBatteryCoreTests/UsbmuxdTests.swift` (6 tests ; 18 au total, `swift test`).
+- `UsbmuxdListener` et `readIfDue` dans `IDeviceBattery.swift` ; la minuterie de 15 s parcourt la liste des appareils attachés, ou retombe sur l'ancien scan.
+- **Compter les lancements d'outils :** l'échantillonnage de `ps` toutes les 50 ms rate presque tout (0 `idevice_id` vu en 3 min sur la 1.12.0). Le noyau consigne une ligne par lancement : « vm: idevice_id[pid] triggered unnest of range … of DYLD shared region » ; PID distincts comptés avec `log show --predicate 'process == "kernel" AND eventMessage CONTAINS "triggered unnest"'` (script `launches.sh`, scratchpad).
+- Mesure, 6 min : 1.12.0 installée (12:01:04 → 12:07:04) : `idevice_id` 32, `ideviceinfo` 3, `comptest` 1. Build Release de la branche, après 2 min de stabilisation (12:09:21 → 12:15:21) : `idevice_id` **0**, `ideviceinfo` 8, `comptest` 3 ; iPhone et Watch lus en Wi-Fi à 12:08:44, 12:10:01, 12:12:04, 12:13:05 et 12:14:12. « Listening to usbmuxd device events » 0 s après le lancement.
+- L'iPhone annonce aujourd'hui une autre adresse privée (`fe:…`) qu'hier (`ee:34:…`) : sans effet, l'app suit l'UDID.
+- 1.12.0 relancée, widget de `/Applications` seul enregistré, pas de nouveau rapport de plantage.
+
+**Testé sur appareil réel :** oui, en lecture (iPhone et Watch de Côme en Wi-Fi). Pas testé : USB, iPad, Pencil, redémarrage d'`usbmuxd`.
+**Décisions :** D-028
+**Prochaine étape :** PR ; test de Côme en USB (brancher puis débrancher l'iPhone) avec la prochaine version.
