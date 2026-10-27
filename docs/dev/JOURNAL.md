@@ -1233,3 +1233,15 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Testé sur appareil réel :** oui, en lecture (iPhone et Watch de Côme en Wi-Fi). Pas testé : USB, iPad, Pencil, redémarrage d'`usbmuxd`.
 **Décisions :** D-028
 **Prochaine étape :** PR ; test de Côme en USB (brancher puis débrancher l'iPhone) avec la prochaine version.
+
+## 2026-10-27 (suite 2) — Release 1.13.0 préparée
+
+**Contexte :** branche `release/1.13.0`, partie de `feat/usbmuxd-events` (PR #62, CI en cours au moment de la préparation).
+
+**Fait :**
+- `1fb3eb1` : version 1.13.0 (`CURRENT_PROJECT_VERSION` 1130). *Unreleased* → `## 1.13.0`. Note sur le réseau local limitée aux utilisateurs de Nearcast (COMPAT note 8, précision du 2026-10-27).
+- Build Release propre, DMG `AirBattery-Plus-1.13.0.dmg` (sortie d'`hdiutil` laissée visible, suite 1 du 26/10), `hdiutil verify` OK, SHA-256 `9f5a430d7bc3362e2cc7ed4beb40a7496b7ce5969380d220676111c1754fd303`. App : 1.13.0 (1130), widget 1130, flux et clé du fork, `codesign --verify --deep --strict` OK, exigence de signature de la 1.12.0 installée satisfaite, pas de mode démo, code d'écoute d'`usbmuxd` présent.
+- `appcast.xml` : 1.13.0 ajoutée (signature identique à `sign_update`). Copies de build désenregistrées, `build/DerivedData-release` supprimé.
+
+**Testé sur appareil réel :** pas encore (checklist dans la PR de release : USB surtout).
+**Prochaine étape :** fusion de #62, accord de Côme pour publier, mise à jour par Sparkle, checklist.

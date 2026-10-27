@@ -3,6 +3,29 @@
     <channel>
         <title>AirBattery Plus</title>
         <item>
+            <title>1.13.0</title>
+            <pubDate>Tue, 27 Oct 2026 12:21:48 +0100</pubDate>
+            <link>https://github.com/MsieurPafi/AirBattery-Plus</link>
+            <sparkle:fullReleaseNotesLink>https://github.com/MsieurPafi/AirBattery-Plus/blob/main/CHANGELOG.md</sparkle:fullReleaseNotesLink>
+            <sparkle:version>1130</sparkle:version>
+            <sparkle:shortVersionString>1.13.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>12.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h3>Fixes</h3>
+<ul>
+<li><strong>iPhones, iPads and Apple Watches are read as soon as they show up</strong>, over USB or Wi-Fi: the app now listens to macOS's device service (<code>usbmuxd</code>) instead of checking every 15 s. An idle iPhone turns on its Wi-Fi only a few seconds at a time, and the 15 s check often missed it. Then, as before, they're read once per refresh interval while they stay. Measured over 6 minutes: the iPhone and Watch were read 5 times instead of about 1 or 2.</li>
+</ul>
+<h3>Performance</h3>
+<ul>
+<li>No more <code>idevice_id</code> launches every 15 s (about 480 per hour): measured over 6 minutes, 32 → 0. If the device service can't be reached, the app goes back to checking every 15 s.</li>
+</ul>
+<h3>Note</h3>
+<ul>
+<li>If you use Nearcast, macOS asks again for local network access after the update: allow it.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/MsieurPafi/AirBattery-Plus/releases/download/v1.13.0/AirBattery-Plus-1.13.0.dmg" length="12866060" type="application/octet-stream" sparkle:edSignature="dMtDqKiOG4YAzGGAZLJAQQJVS0vCvaSThBVZpC/CgHcpdG8k6aG0VyvbjGgoLZmK+ynSgFl6InM/sE7/czhhBg=="/>
+        </item>
+        <item>
             <title>1.12.0</title>
             <pubDate>Mon, 26 Oct 2026 13:48:51 +0100</pubDate>
             <link>https://github.com/MsieurPafi/AirBattery-Plus</link>
