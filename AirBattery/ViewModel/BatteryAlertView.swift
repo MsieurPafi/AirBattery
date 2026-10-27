@@ -229,7 +229,7 @@ func batteryAlert() {
                 let body = String(format: "\"%@\" remaining battery %d%%".local, device.deviceName, device.batteryLevel)
                 createNotification(title: title, message: body, alertSound: alert.lowSound, delay: true, info: device.deviceName)
                 if nearCast {
-                    if let info = netcastService.createInfo(title: title, info: body) { netcastService.sendMessage(info) }
+                    netcastService.sendNotification(title: title, info: body)
                 }
             }
             if device.batteryLevel > alert.full && device.isCharging != 0 && alert.fullOn {
@@ -238,7 +238,7 @@ func batteryAlert() {
                 let body = String(format: "\"%@\" battery has reached %d%%".local, device.deviceName, device.batteryLevel)
                 createNotification(title: title, message: body, alertSound: alert.fullSound, delay: true, info: device.deviceName)
                 if nearCast {
-                    if let info = netcastService.createInfo(title: title, info: body) { netcastService.sendMessage(info) }
+                    netcastService.sendNotification(title: title, info: body)
                 }
             }
         }

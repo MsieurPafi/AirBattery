@@ -20,9 +20,8 @@ var statusBarItem: NSStatusItem!
 var pinnedItems = [NSStatusItem]()
 /// Icon name currently shown by each pinned item, keyed by device name.
 var pinnedIcons = [String: String]()
-var netcastService: MultipeerService = MultipeerService(serviceType: "airbattery-nc")
+var netcastService: MultipeerService = MultipeerService(serviceType: Nearcast.serviceType)
 let ncFolder = fd.urls(for: .libraryDirectory, in: .userDomainMask).first!.appendingPathComponent("Containers/\(AirBatteryModel.key)/Data/Documents/NearcastData")
-let systemUUID = getMacDeviceUUID()
 var dockWindow = AutoHideWindow()
 var menuPopover = NSPopover()
 let bleBattery = BLEBattery()
@@ -262,7 +261,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
         launchAtLogin = LoginItem.isEnabled
         Log.app.notice("Launch at login: \(self.launchAtLogin, privacy: .public)")
         Log.app.notice("Icon mode: \(self.showOn, privacy: .public)")
-        if nearCast && isGroupIDValid(id: ncGroupID) { netcastService.resume() }
+        if nearCast {
+            if Nearcast.normalize(ncGroupID) != nil {
+                netcastService.resume()
+            } else {
+                // A v1 Group ID (D-029): Nearcast v2 can't use it. Turn Nearcast off and say why.
+                nearCast = false
+                ncGroupID = ""
+                createNotification(title: "Nearcast".local, message: "Nearcast now uses a new, more secure protocol. Create a new Group ID in Settings › Nearcast, then enter it on your other Macs.".local)
+                Log.nearcast.notice("Nearcast turned off: the Group ID was a v1 one")
+            }
+        }
         if let result = process(path: "/usr/sbin/system_profiler", arguments: ["SPBluetoothDataType", "-json"]) { SPBluetoothDataModel.shared.data = result }
         
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
@@ -638,20 +647,8 @@ final class Scheduler {
     }
 
     private func broadcastNearcast() {
-        let ncGroupID = ud.string(forKey: "ncGroupID") ?? ""
-        guard ud.bool(forKey: "nearCast"), isGroupIDValid(id: ncGroupID) else { return }
-        var allDevices = AirBatteryModel.getAll()
-        allDevices.insert(ib2ab(InternalBattery.status), at: 0)
-        do {
-            let jsonData = try JSONEncoder().encode(allDevices)
-            guard let jsonString = String(data: jsonData, encoding: .utf8) else { return }
-            guard let data = encryptString(jsonString, password: ncGroupID) else { return }
-            let sender = systemUUID ?? (ud.string(forKey: "deviceName") ?? "Mac")
-            let message = NCMessage(id: String(ncGroupID.prefix(15)), sender: sender, command: "", content: data)
-            netcastService.sendMessage(message)
-        } catch {
-            Log.data.error("Write JSON error: \(String(describing: error), privacy: .public)")
-        }
+        guard ud.bool(forKey: "nearCast") else { return }
+        netcastService.sendData()
     }
 }
 

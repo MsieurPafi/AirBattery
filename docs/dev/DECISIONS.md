@@ -284,3 +284,15 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 **Pourquoi :** pas de binaire ni de processus en plus, supprime le scan périodique, lit l'iPhone pendant ses fenêtres de réveil sans le réveiller.
 **Conséquences :** dépend d'un protocole non documenté par Apple (stable depuis plus de 10 ans, celui de libimobiledevice) ; un bug de ce code est dans l'app elle-même (code défensif : taille de message bornée, flux illisible → déconnexion et repli). Non testé : iPhone en USB, iPad, Pencil, et redémarrage d'`usbmuxd`. Pour revenir en arrière : supprimer l'appel à `listener.start()` (le scan toutes les 15 s reprend tout seul).
 **Validée par Côme :** oui (2026-10-27, « do the usbmuxd-event fix »)
+
+## D-029 — Nearcast v2 seul, rupture nette avec v1, pas de reprise du client iOS   (2026-10-27, statut : acceptée)
+**Contexte :** étude `docs/dev/NEARCAST-V2.md` (issue #41). Côme n'utilise ni Nearcast ni l'app iOS AirBattery-Mobile ; il peut tester avec le MacBook Air de sa sœur et le MacBook Neo de ses parents.
+**Options envisagées :** A. v2 seul, rupture nette / B. v2 + option de compatibilité v1 désactivée par défaut (recommandation de l'étude si le client iOS devait rester servi) / C. v1 et v2 toujours actifs.
+**Décision :** A, choisie par Côme. Pas de fork du client iOS (« je ne vois pas trop l'utilité »).
+- v1 retirée entièrement : type de service `airbattery-nc`, Group ID `nc-` à 23 caractères, dérivation par les 8 derniers caractères, messages en clair.
+- v2 : type de service `airbattery-n2`, code de groupe `nc2-` + 26 caractères (130 bits), protocole dans `Shared/Core` avec tests unitaires, chiffrement MultipeerKit obligatoire, invitations filtrées par un jeton du groupe, `NSBonjourServices` déclaré.
+- Un Group ID v1 enregistré n'est plus valable : Nearcast est désactivé au lancement, avec un message invitant à créer un nouveau code.
+
+**Pourquoi :** le seul client qui a besoin de v1 est l'app iOS officielle, abandonnée et non utilisée ; tout Mac peut installer AirBattery Plus, qui se met à jour seul depuis la 1.11.0. La compatibilité garderait le niveau de sécurité de v1 pour les données.
+**Conséquences :** l'app iOS officielle et les Mac sous l'AirBattery officielle ne voient plus les Mac sous AirBattery Plus. Chaque utilisateur de Nearcast doit créer un nouveau code de groupe et le saisir sur ses Mac. Pour revenir en arrière : réintroduire v1 à côté (deux transceivers, voir l'étude, section 3).
+**Validée par Côme :** oui (2026-10-27)

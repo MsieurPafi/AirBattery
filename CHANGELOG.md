@@ -2,6 +2,18 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
+## Unreleased
+
+### Security
+
+- **Nearcast v2**: a new, more secure protocol ([#41](https://github.com/MsieurPafi/AirBattery-Plus/issues/41)). Group IDs carry 130 bits of secret instead of about 48; everything in a message (sender, command, data) is encrypted and authenticated; old messages can't be replayed; the connection between Macs is encrypted, and only Macs that know the Group ID are let in; a Mac is no longer identified by its hardware UUID.
+- **Breaking change**: Nearcast v2 can't talk to earlier versions, the original AirBattery, or the AirBattery Mobile iOS app. Group IDs from before no longer work: Nearcast is turned off after the update, with a notification. Create a new Group ID and enter it on all your Macs.
+
+### Changes
+
+- Nearcast sends a Mac's data when it changes (or every 5 minutes) instead of at every refresh interval, and a Mac that joins gets the others' data right away.
+- The app declares its Nearcast network service to macOS, which recent versions need to find the other Macs.
+
 ## 1.13.2 — 2026-10-27 (pre-release)
 
 ### Fixes

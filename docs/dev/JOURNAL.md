@@ -1330,3 +1330,21 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Testé sur appareil réel :** non (étude).
 **Prochaine étape :** réponses de Côme aux 5 questions de la section 4 de l'étude.
+
+## 2026-10-27 (suite 9) — Nearcast v2 (D-029)
+
+**Contexte :** réponses de Côme à l'étude : n'utilise ni Nearcast ni l'app iOS ; peut tester avec le MacBook Air de sa sœur et le MacBook Neo de ses parents ; pas de reprise de l'app iOS ; v2 seul lui semble idéal. Branche `feat/nearcast-v2`, partie de `docs/nearcast-v2-study` (PR #69).
+
+**Fait :**
+- D-029 consignée (`fd27732`).
+- **Étape 1** (`7b757f9`) : `Shared/Core/NearcastProtocol.swift` + `NearcastProtocolTests.swift` (12 tests ; 31 au total) : codes de groupe (base32 de Crockford, saisie tolérante), clés HKDF (`encryption`, `authentication`), étiquette de groupe HMAC de 8 octets, enveloppe `{v, tag, box}`, AAD = version + étiquette, `Sequence` (horodatage en ms strictement croissant), `ReplayGuard` (±300 s, séquence croissante par expéditeur), jeton d'invitation (8 octets d'heure + 16 octets de HMAC, comparaison en temps constant). Première version du contrôle du jeton fautive (`isValidAuthenticationCode` attend un MAC complet de 32 octets, repli `==` non constant) : corrigée avant tout test.
+- **Étape 2** : `Multipeer.swift` réécrit (v2 seul) : `encryptionPreference: .required`, invitation `.custom` avec jeton, contrôle à l'acceptation ; identifiant d'expéditeur aléatoire (`ncSenderID`) au lieu de l'UUID matériel ; données envoyées si elles changent ou toutes les 5 min ; à la connexion d'un pair, demande d'envoi et envoi de nos données ; alertes transmises par `sendNotification`. Supprimés : `isGroupIDValid`, `generateSymmetricKey`, `encryptString`, `decryptString`, `substring(from:)`, `systemUUID`, `NCMessage`. Réglages : code créé par `Nearcast.newGroupCode()`, forme canonique enregistrée. Lancement : un Group ID v1 désactive Nearcast et affiche une notification (traduite en français dans `Localizable.xcstrings`). `Info.plist` : `NSBonjourServices` = `_airbattery-n2._tcp`, `_airbattery-n2._udp`.
+- **Tests locaux** (un seul Mac ; réglages relevés avant : `nearCast`, `ncGroupID`, `ncSenderID` absents ; remis à l'identique après) :
+  - migration : `defaults write … nearCast -bool true` + Group ID v1 → au lancement de la copie de test, `nearCast = 0`, `ncGroupID` vide, « Nearcast turned off: the Group ID was a v1 one » ;
+  - découverte : code v2 + Nearcast activé → « Nearcast is running » ; `dns-sd -B _airbattery-n2._tcp local.` voit le service sur 4 interfaces ; `ncSenderID` créé.
+  - Pas de test entre deux Mac (à faire par Côme avec le Mac de sa sœur ou de ses parents).
+- Reporté (IDEAS) : liste de blocage et délai d'expiration pour les appareils Nearcast.
+- Docs : guide EN/FR (Nearcast : format du code, passage depuis une version précédente, incompatibilité avec l'app d'origine et l'app iOS), CHANGELOG (*Unreleased*, Sécurité et Changements), ARCHITECTURE, issue.
+
+**Testé sur appareil réel :** en partie (un seul Mac).
+**Prochaine étape :** PR ; version de test (1.14.0) à installer sur deux Mac du même réseau.

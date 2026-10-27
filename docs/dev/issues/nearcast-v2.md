@@ -28,6 +28,10 @@ v2 can't talk to v1: the official AirBattery-Mobile iOS app and Macs that aren't
 - read-only v1 support for a transition period;
 - a setting to keep v1, with a warning.
 
+## Decision and implementation (2026-10-27)
+
+Decision D-029: v2 only, a clean break with v1, no work on the iOS app. Implemented on branch `feat/nearcast-v2`: protocol in `Shared/Core/NearcastProtocol.swift` with unit tests, transport in `AirBattery/Supports/Multipeer.swift`, `NSBonjourServices` declared.
+
 ## Study (2026-10-27)
 
 A full study, in French, is in `docs/dev/NEARCAST-V2.md`: current protocol, proposed v2, whether v1 and v2 can coexist (yes, at the cost of v1's security level while it's on; recommended as an opt-in setting), and the decisions to make. It also notes that the app doesn't declare `NSBonjourServices`, which may stop Nearcast discovery on recent macOS (not verified).
