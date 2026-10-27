@@ -3,6 +3,21 @@
     <channel>
         <title>AirBattery Plus</title>
         <item>
+            <title>1.13.2</title>
+            <pubDate>Tue, 27 Oct 2026 17:56:46 +0100</pubDate>
+            <link>https://github.com/MsieurPafi/AirBattery-Plus</link>
+            <sparkle:fullReleaseNotesLink>https://github.com/MsieurPafi/AirBattery-Plus/blob/main/CHANGELOG.md</sparkle:fullReleaseNotesLink>
+            <sparkle:version>1132</sparkle:version>
+            <sparkle:shortVersionString>1.13.2</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>12.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h3>Fixes</h3>
+<ul>
+<li><strong>An iPhone or iPad plugged in shows the plug icon within a second</strong>, then the bolt once it reports charging: iOS reports a cable as connected right away, but as charging only 15 s to over a minute later, so the charging state took about a minute to appear in 1.13.1. A device plugged in over USB is also read again 10 s later, and a device attached over both USB and Wi-Fi is read over USB.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/MsieurPafi/AirBattery-Plus/releases/download/v1.13.2/AirBattery-Plus-1.13.2.dmg" length="12870280" type="application/octet-stream" sparkle:edSignature="VPoIW3WC5HMvviZRwz3BGTap5+Od9CZDlZH4EG+PwNqq1JyDQ1OAtIjnP20EuS48NKmxNOfNjPPpRDwF3EpSAw=="/>
+        </item>
+        <item>
             <title>1.13.1</title>
             <pubDate>Tue, 27 Oct 2026 13:32:01 +0100</pubDate>
             <link>https://github.com/MsieurPafi/AirBattery-Plus</link>
