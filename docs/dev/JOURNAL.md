@@ -1348,3 +1348,14 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Testé sur appareil réel :** en partie (un seul Mac).
 **Prochaine étape :** PR ; version de test (1.14.0) à installer sur deux Mac du même réseau.
+
+## 2026-10-27 (suite 10) — Release 1.14.0 préparée (Nearcast v2)
+
+**Contexte :** PR #69 (étude) puis #70 (Nearcast v2) fusionnées après leur CI, avec l'accord de Côme (`main` @ `db50cf4`) ; issue #41 fermée automatiquement. Branche `release/1.14.0`.
+
+**Fait :**
+- `4afb200` : version 1.14.0 (`CURRENT_PROJECT_VERSION` 1140). *Unreleased* → `## 1.14.0`.
+- Build Release propre, DMG `AirBattery-Plus-1.14.0.dmg`, `hdiutil verify` OK, SHA-256 `19da8d259d7a290f1840c7078437bf21bc2b7623825b14ce9f62b8a168e4b8e7`. App : 1.14.0 (1140), widget 1140, flux et clé du fork, `NSBonjourServices` présent, `codesign --verify --deep --strict` OK, exigence de signature de la 1.13.2 installée satisfaite, pas de mode démo ; le binaire ne contient que `airbattery-n2` (plus de `airbattery-nc`).
+- `appcast.xml` : 1.14.0 ajoutée (signature identique à `sign_update`). Copies de build désenregistrées, `build/DerivedData-release` supprimé.
+
+**Prochaine étape :** accord de Côme pour publier ; test entre deux Mac (checklist dans la PR de release).

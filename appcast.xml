@@ -3,6 +3,27 @@
     <channel>
         <title>AirBattery Plus</title>
         <item>
+            <title>1.14.0</title>
+            <pubDate>Tue, 27 Oct 2026 22:04:47 +0100</pubDate>
+            <link>https://github.com/MsieurPafi/AirBattery-Plus</link>
+            <sparkle:fullReleaseNotesLink>https://github.com/MsieurPafi/AirBattery-Plus/blob/main/CHANGELOG.md</sparkle:fullReleaseNotesLink>
+            <sparkle:version>1140</sparkle:version>
+            <sparkle:shortVersionString>1.14.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>12.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h3>Security</h3>
+<ul>
+<li><strong>Nearcast v2</strong>: a new, more secure protocol (<a href="https://github.com/MsieurPafi/AirBattery-Plus/issues/41">#41</a>). Group IDs carry 130 bits of secret instead of about 48; everything in a message (sender, command, data) is encrypted and authenticated; old messages can't be replayed; the connection between Macs is encrypted, and only Macs that know the Group ID are let in; a Mac is no longer identified by its hardware UUID.</li>
+<li><strong>Breaking change</strong>: Nearcast v2 can't talk to earlier versions, the original AirBattery, or the AirBattery Mobile iOS app. Group IDs from before no longer work: Nearcast is turned off after the update, with a notification. Create a new Group ID and enter it on all your Macs.</li>
+</ul>
+<h3>Changes</h3>
+<ul>
+<li>Nearcast sends a Mac's data when it changes (or every 5 minutes) instead of at every refresh interval, and a Mac that joins gets the others' data right away.</li>
+<li>The app declares its Nearcast network service to macOS, which recent versions need to find the other Macs.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/MsieurPafi/AirBattery-Plus/releases/download/v1.14.0/AirBattery-Plus-1.14.0.dmg" length="13099342" type="application/octet-stream" sparkle:edSignature="Z1EH9FDfKExeTKAYeNKvEQ0iZEmrRmvs7oQYtIsf3VMo2/riNwZy+ejM3JMHwURx9iHBq96eqyyJrae/5JVVCQ=="/>
+        </item>
+        <item>
             <title>1.13.2</title>
             <pubDate>Tue, 27 Oct 2026 17:56:46 +0100</pubDate>
             <link>https://github.com/MsieurPafi/AirBattery-Plus</link>
