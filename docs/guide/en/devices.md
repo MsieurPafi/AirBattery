@@ -51,4 +51,4 @@ With [Nearcast](nearcast.md), the batteries of your other Macs, and of their own
 
 ## Refresh
 
-Batteries are read again every **Refresh Interval** (1 minute by default, Settings › Nearbility). A device that hasn't reported for more than ten minutes gets a ⚠️ next to its name: it may be off or out of range.
+Batteries are read again every **Refresh Interval** (1 minute by default, Settings › Nearbility). A device that hasn't reported for more than ten minutes gets a ⚠️ next to its name: it may be off or out of range. The Mac's own battery is updated as soon as it changes. An idle iPhone or iPad only turns on its Wi-Fi now and then, so over Wi-Fi it may be read less often and briefly show the ⚠️.
