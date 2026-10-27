@@ -1302,3 +1302,17 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 - `appcast.xml` : 1.13.2 ajoutée (signature identique à `sign_update`). Copies de build désenregistrées, `build/DerivedData-release` supprimé.
 
 **Prochaine étape :** fusion de #66, accord de Côme pour publier.
+
+## 2026-10-27 (suite 7) — 1.13.2 publiée ; charge de la boîte des AirPods couvercle fermé
+
+**Contexte :** question de Côme : la boîte des AirPods branchée n'apparaît pas en charge, contrairement à l'iPhone.
+
+**Fait :**
+- Tag `v1.13.2` sur `e78e8dd`, pre-release publiée avec l'accord de Côme : https://github.com/MsieurPafi/AirBattery-Plus/releases/tag/v1.13.2 (DMG retéléchargé : même SHA-256). PR #66 puis #67 fusionnées après leur CI (`main` @ `9b3e38b`) ; flux en ligne à jour après ~20 s.
+- Copie de test (branche jetable `diag/airpods-messages`, supprimée ; diff gardé dans le scratchpad) : message de journal à chaque changement de ce que les AirPods annoncent, puis tout message Apple de type 7 ou 18, avec ou sans nom.
+- Test de Côme (boîte fermée débranchée, puis branchée 2 min, ouverture ~10 s, débranchement) : 18:08:32 « open: case 68%, L 90% charging, R 99% charging » (écouteurs rangés) ; **aucun message de 18:08:32 à 18:11:32**, couvercle fermé ; 18:11:32 « open: case 72% charging » (ouverture, boîte branchée) ; 18:11:35 « case 72% » sans charge. Côme : pas de charge affichée couvercle fermé ; niveau de la boîte mis à jour à l'ouverture.
+- Deuxième copie (tout type 7/18, avant le filtre sur le nom) : uniquement des messages Find My de 6 octets (`4c001202…`), sans nom ; le plus proche à −37 dBm, très probablement la boîte. Aucune information de batterie ou de charge dedans. COMPAT note 15.
+- **Conclusion :** impossible couvercle fermé ; l'app affiche la charge dès l'ouverture, comme l'iPhone. Rien à changer dans le code. 1.13.1 de Côme relancée, widget de `/Applications` seul enregistré.
+
+**Testé sur appareil réel :** oui, par Côme (AirPods Pro, boîte).
+**Prochaine étape :** Côme installe la 1.13.2 ; au choix ensuite : Nearcast v2.
