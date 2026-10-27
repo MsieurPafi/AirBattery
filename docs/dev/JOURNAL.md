@@ -1245,3 +1245,17 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Testé sur appareil réel :** pas encore (checklist dans la PR de release : USB surtout).
 **Prochaine étape :** fusion de #62, accord de Côme pour publier, mise à jour par Sparkle, checklist.
+
+## 2026-10-27 (suite 3) — 1.13.0 testée : USB, « ⚠︎ » de la Watch, icône de la MX
+
+**Contexte :** 1.13.0 installée par Sparkle (lancée à 12:37:33). Relevé des plantages : rien de nouveau. Branche `fix/usb-read-and-ble-type`.
+
+**Retours de Côme et analyse :**
+- **iPhone branché en USB :** l'indicateur de charge est apparu « quelques dizaines de secondes » après. Journaux : dernière lecture en Wi-Fi à 13:16:54, lecture en USB à 13:18:05. Cause : la lecture sur événement respectait le délai d'une lecture par intervalle (D-028), donc le branchement juste après une lecture en Wi-Fi attendait la minute. **Corrigé :** lecture forcée à chaque arrivée en USB (`readIfDue(…, force: !network)`).
+- **« ⚠︎ » devant la Watch au réveil, disparu aussitôt :** normal. Mac en veille de 12:43 à 13:16:50 (`pmset -g log`, avec un réveil complet de 10 s à 13:01:38) ; dernière lecture à 13:01:40, donc plus de 10 min au réveil ; nouvelle lecture 4 s après (13:16:54).
+- **Souris MX Anywhere 3 avec l'icône Bluetooth :** `system_profiler` la donne bien en `Mouse`. La source BLE (PR #2) prend le type dans le dernier relevé de `system_profiler` au moment de créer l'appareil (`BLEBattery.getType`), et ne le corrige jamais ensuite. L'app a redémarré à 12:37 (mise à jour) et la MX s'est reconnectée à 12:41:35 : lue avant d'apparaître dans un relevé, elle a reçu `general_bt`. Bug antérieur à la 1.13.0. **Corrigé :** un appareil `general_bt` reprend le type du relevé à chaque lecture.
+
+**Test (build Release de la branche à la place de la 1.13.0, 13:24:53 → 13:28:25) :** lecture en USB au lancement ; iPhone débranché vers 13:25:50 → « Could not reach a device over Wi-Fi » à 13:25:53, puis lectures en Wi-Fi à 13:26:09 et 13:27:24 ; rebranché → lecture en USB à 13:28:09, 45 s après la précédente (l'ancien délai l'aurait repoussée au-delà de 13:28:24). Correction de l'icône non vérifiée (le cas ne s'est pas reproduit dans la copie de test). 1.13.0 relancée, widget de `/Applications` seul enregistré.
+
+**Testé sur appareil réel :** oui, par Côme (débranchement et rebranchement de l'iPhone).
+**Prochaine étape :** PR, puis 1.13.1 si Côme le souhaite.

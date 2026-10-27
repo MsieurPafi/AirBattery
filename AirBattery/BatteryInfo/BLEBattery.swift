@@ -547,6 +547,9 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
                     if !isIOSConnection { device.deviceID = peripheral.identifier.uuidString }
                     device.batteryLevel = level
                     device.lastUpdate = now
+                    // A device first read before system_profiler listed it (just reconnected)
+                    // got the generic type, and kept the Bluetooth icon for good.
+                    if device.deviceType == "general_bt" { device.deviceType = getType(deviceName) }
                     if charging != -1 { device.isCharging = charging }
                     AirBatteryModel.updateDevice(device)
                 } else {

@@ -31,7 +31,8 @@ class IDeviceBattery {
         // Wi-Fi only a few seconds at a time), then once per refresh interval while they stay.
         listener.onAttach = { [weak self] udid, network in
             guard let self, self.readIDevice else { return }
-            self.readIfDue(udid, network: network)
+            // Plugged in over USB: read now, whatever the last Wi-Fi read (it starts charging).
+            self.readIfDue(udid, network: network, force: !network)
         }
         listener.start()
         // Own timer, independent of any view (upstream #91). With usbmuxd's events it only
@@ -64,12 +65,12 @@ class IDeviceBattery {
     }
 
     /// Reads a device reported by usbmuxd if its last read is older than the refresh interval
-    /// (or, for a device not in the list yet, at most once per interval).
-    private func readIfDue(_ udid: String, network: Bool) {
+    /// (or, for a device not in the list yet, at most once per interval), or right away when forced.
+    private func readIfDue(_ udid: String, network: Bool, force: Bool = false) {
         let type = network ? "-n" : ""
         if let d = AirBatteryModel.getByID(udid) {
             getPencil(d: d, type: type)
-            guard Date().timeIntervalSince1970 - d.lastUpdate > Double(60 * updateInterval) else { return }
+            guard force || Date().timeIntervalSince1970 - d.lastUpdate > Double(60 * updateInterval) else { return }
         } else if !mayRetry(udid + (network ? " network" : " usb")) {
             return
         }
