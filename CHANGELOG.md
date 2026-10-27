@@ -2,7 +2,7 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
-## Unreleased
+## 1.13.0 — 2026-10-27 (pre-release)
 
 ### Fixes
 
@@ -11,6 +11,10 @@ Changes in this fork compared with the official [AirBattery](https://github.com/
 ### Performance
 
 - No more `idevice_id` launches every 15 s (about 480 per hour): measured over 6 minutes, 32 → 0. If the device service can't be reached, the app goes back to checking every 15 s.
+
+### Note
+
+- If you use Nearcast, macOS asks again for local network access after the update: allow it.
 
 ## 1.12.0 — 2026-10-26 (pre-release)
 
