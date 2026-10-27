@@ -1259,3 +1259,14 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Testé sur appareil réel :** oui, par Côme (débranchement et rebranchement de l'iPhone).
 **Prochaine étape :** PR, puis 1.13.1 si Côme le souhaite.
+
+## 2026-10-27 (suite 4) — Release 1.13.1 préparée
+
+**Contexte :** branche `release/1.13.1`, partie de `fix/usb-read-and-ble-type` (PR #64, CI en cours au moment de la préparation).
+
+**Fait :**
+- `29282ca` : version 1.13.1 (`CURRENT_PROJECT_VERSION` 1131). *Unreleased* → `## 1.13.1`.
+- Build Release propre, DMG `AirBattery-Plus-1.13.1.dmg`, `hdiutil verify` OK, SHA-256 `3369212cd435d606fa73bc22c03bf234ca4c1cde01e63328adc06ce0e9bfc9c9`. App : 1.13.1 (1131), widget 1131, flux et clé du fork, `codesign --verify --deep --strict` OK, exigence de signature de la 1.13.0 installée satisfaite, pas de mode démo.
+- `appcast.xml` : 1.13.1 ajoutée (signature identique à `sign_update`). Copies de build désenregistrées, `build/DerivedData-release` supprimé.
+
+**Prochaine étape :** fusion de #64, accord de Côme pour publier ; après la mise à jour, l'icône de la MX doit redevenir une souris.
