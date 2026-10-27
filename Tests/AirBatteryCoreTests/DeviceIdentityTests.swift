@@ -71,6 +71,16 @@ final class BatteryParsingTests: XCTestCase {
         let result = BatteryParsing.ideviceBattery(output)
         XCTAssertEqual(result?.level, 85)
         XCTAssertEqual(result?.charging, true)
+        XCTAssertEqual(result?.state, 1)
+    }
+
+    func testPluggedInBeforeCharging() {
+        let pluggedIn = ["BatteryCurrentCapacity: 85", "BatteryIsCharging: false", "ExternalConnected: true"]
+        XCTAssertEqual(BatteryParsing.ideviceBattery(pluggedIn)?.state, 5)
+        let unplugged = ["BatteryCurrentCapacity: 85", "BatteryIsCharging: false", "ExternalConnected: false"]
+        XCTAssertEqual(BatteryParsing.ideviceBattery(unplugged)?.state, 0)
+        // comptest (Watch) may not report ExternalConnected
+        XCTAssertEqual(BatteryParsing.ideviceBattery(["BatteryCurrentCapacity: 50", "BatteryIsCharging: false"])?.state, 0)
     }
 
     func testLevelIsClamped() {

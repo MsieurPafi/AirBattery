@@ -2,6 +2,12 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
+## Unreleased
+
+### Fixes
+
+- **An iPhone or iPad plugged in shows the plug icon within a second**, then the bolt once it reports charging: iOS reports a cable as connected right away, but as charging only 15 s to over a minute later, so the charging state took about a minute to appear in 1.13.1. A device plugged in over USB is also read again 10 s later, and a device attached over both USB and Wi-Fi is read over USB.
+
 ## 1.13.1 — 2026-10-27 (pre-release)
 
 ### Fixes

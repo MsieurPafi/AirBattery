@@ -1270,3 +1270,24 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 - `appcast.xml` : 1.13.1 ajoutée (signature identique à `sign_update`). Copies de build désenregistrées, `build/DerivedData-release` supprimé.
 
 **Prochaine étape :** fusion de #64, accord de Côme pour publier ; après la mise à jour, l'icône de la MX doit redevenir une souris.
+
+## 2026-10-27 (suite 5) — 1.13.1 testée ; état « branché » de l'iPhone
+
+**Contexte :** 1.13.1 installée par Sparkle (lancée à 17:31:32). Relevé des plantages : rien de nouveau. Branche `fix/usb-charging-state`.
+
+**Retours de Côme :**
+- Icône de la MX Anywhere 3 redevenue une souris : **correctif de la 1.13.1 validé**.
+- iPhone branché en USB : en charge dans l'app au bout de 65 à 69 s. Journaux : lecture en USB 14 s après la lecture en Wi-Fi (17:31:52), donc la lecture forcée part bien ; l'état de charge n'arrive qu'à la lecture suivante (17:33:03).
+
+**Analyse :**
+- Premier essai (build : deuxième lecture 10 s après le branchement, état de charge dans les journaux) : branché vers 17:43:39 → 85 % sans charge à 17:43:40 et à 17:43:50, en charge à 17:44:51 (+71 s). « 1 min 10 » vu par Côme.
+- Relevé toutes les 2 s (`ideviceinfo -q com.apple.mobile.battery`, script en arrière-plan) : branché vers 17:47:12 → `ExternalConnected: true` dès 17:47:14, `BatteryIsCharging: true` à 17:47:31 (+17 s) ; débranché → les deux tombent aussitôt. **iOS annonce le câble tout de suite, la charge 15 s à plus d'une minute après.**
+
+**Fait :**
+- `BatteryParsing.ideviceBattery` renvoie aussi `state` : 1 en charge, 5 branché sans charge (`ExternalConnected`, valeur déjà prévue par l'app : icône de prise, alerte « batterie faible » suspendue, « ⚡︎ » dans la barre des menus), 0 sinon ; `comptest` (Watch) sans `ExternalConnected` → 0. Test unitaire ajouté (19 au total).
+- Deuxième lecture 10 s après un branchement en USB ; appareil attaché en USB et en Wi-Fi lu en USB ; état (« charging », « plugged in ») dans les journaux.
+- Test (build Release à la place de la 1.13.1, 17:50:04 → 17:53:24) : branché vers 17:52:55 → « Read iPhone over USB: 86%, plugged in » à 17:52:56 ; Côme : icône de prise en quelques secondes. La deuxième lecture (17:53:07) a échoué (« Could not reach a device over USB ») : l'iPhone finissait sans doute d'établir sa connexion USB ; sans conséquence, la suivante passera par l'intervalle.
+- 1.13.1 relancée, widget de `/Applications` seul enregistré.
+
+**Testé sur appareil réel :** oui, par Côme.
+**Prochaine étape :** PR, puis 1.13.2 si Côme le souhaite.

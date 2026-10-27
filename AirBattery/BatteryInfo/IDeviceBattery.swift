@@ -31,8 +31,14 @@ class IDeviceBattery {
         // Wi-Fi only a few seconds at a time), then once per refresh interval while they stay.
         listener.onAttach = { [weak self] udid, network in
             guard let self, self.readIDevice else { return }
-            // Plugged in over USB: read now, whatever the last Wi-Fi read (it starts charging).
+            // Plugged in over USB: read now, whatever the last Wi-Fi read, and again 10 s later:
+            // right after the plug-in, the iPhone doesn't report itself as charging yet.
             self.readIfDue(udid, network: network, force: !network)
+            if !network {
+                DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 10) { [weak self] in
+                    self?.readIfDue(udid, network: false, force: true)
+                }
+            }
         }
         listener.start()
         // Own timer, independent of any view (upstream #91). With usbmuxd's events it only
@@ -49,7 +55,11 @@ class IDeviceBattery {
     @objc func scanDevices() {
         guard readIDevice else { return }
         if let attached = listener.attachedDevices() {
-            for device in attached { readIfDue(device.udid, network: device.network) }
+            // A device attached over both USB and Wi-Fi is read over USB (faster, more reliable)
+            let usb = Set(attached.filter { !$0.network }.map(\.udid))
+            for device in attached where !device.network || !usb.contains(device.udid) {
+                readIfDue(device.udid, network: device.network)
+            }
             return
         }
         stateLock.lock()
@@ -144,8 +154,12 @@ class IDeviceBattery {
     /// Reads "BatteryCurrentCapacity" and "BatteryIsCharging" from ideviceinfo or comptest
     /// output. Returns nil instead of crashing when a field is missing or malformed: these
     /// lines come from external tools whose format may change.
-    static func parseBattery(_ lines: [String]) -> (level: Int, charging: Bool)? {
+    static func parseBattery(_ lines: [String]) -> (level: Int, charging: Bool, state: Int)? {
         return BatteryParsing.ideviceBattery(lines)
+    }
+
+    static func describe(_ state: Int) -> String {
+        return state == 1 ? ", charging" : (state == 5 ? ", plugged in" : "")
     }
 
     func writeBatteryInfo(_ id: String, _ connectType: String) {
@@ -162,8 +176,8 @@ class IDeviceBattery {
                let type = i.filter({ $0.contains("DeviceClass") }).first?.components(separatedBy: ": ").last {
                 if let batteryInfo = process(path: "\(Bundle.main.resourcePath!)/libimobiledevice/bin/ideviceinfo", arguments: [connectType, "-u", id, "-q", "com.apple.mobile.battery"]) {
                     if let battery = IDeviceBattery.parseBattery(batteryInfo.components(separatedBy: .newlines)) {
-                        AirBatteryModel.updateDevice(Device(deviceID: id, deviceType: type, deviceName: deviceName, deviceModel: model, batteryLevel: battery.level, isCharging: battery.charging ? 1 : 0, lastUpdate: lastUpdate))
-                        Log.idevice.notice("Read \(type, privacy: .public) \(deviceName) over \(via, privacy: .public): \(battery.level, privacy: .public)%")
+                        AirBatteryModel.updateDevice(Device(deviceID: id, deviceType: type, deviceName: deviceName, deviceModel: model, batteryLevel: battery.level, isCharging: battery.state, lastUpdate: lastUpdate))
+                        Log.idevice.notice("Read \(type, privacy: .public) \(deviceName) over \(via, privacy: .public): \(battery.level, privacy: .public)%\(IDeviceBattery.describe(battery.state), privacy: .public)")
                         // comptest occasionally hangs or crashes (upstream #198): don't let it
                         // block this background thread forever.
                         if let watchInfo = process(path: "\(Bundle.main.resourcePath!)/libimobiledevice/bin/comptest", arguments: [id], timeout: 15) {
@@ -172,8 +186,8 @@ class IDeviceBattery {
                                let watchName = w.filter({ $0.contains("DeviceName") }).first?.components(separatedBy: ": ").last,
                                let watchModel = w.filter({ $0.contains("ProductType") }).first?.components(separatedBy: ": ").last,
                                let watchBattery = IDeviceBattery.parseBattery(w) {
-                                AirBatteryModel.updateDevice(Device(deviceID: watchID, deviceType: "Watch", deviceName: watchName, deviceModel: watchModel, batteryLevel: watchBattery.level, isCharging: watchBattery.charging ? 1 : 0, parentName: deviceName, lastUpdate: lastUpdate))
-                                Log.idevice.notice("Read Watch \(watchName) through \(deviceName) over \(via, privacy: .public): \(watchBattery.level, privacy: .public)%")
+                                AirBatteryModel.updateDevice(Device(deviceID: watchID, deviceType: "Watch", deviceName: watchName, deviceModel: watchModel, batteryLevel: watchBattery.level, isCharging: watchBattery.state, parentName: deviceName, lastUpdate: lastUpdate))
+                                Log.idevice.notice("Read Watch \(watchName) through \(deviceName) over \(via, privacy: .public): \(watchBattery.level, privacy: .public)%\(IDeviceBattery.describe(watchBattery.state), privacy: .public)")
                             } else {
                                 Log.idevice.error("Could not parse Watch battery info for \(deviceName)")
                             }
