@@ -1316,3 +1316,17 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Testé sur appareil réel :** oui, par Côme (AirPods Pro, boîte).
 **Prochaine étape :** Côme installe la 1.13.2 ; au choix ensuite : Nearcast v2.
+
+## 2026-10-27 (suite 8) — 1.13.2 validée ; étude de Nearcast v2
+
+**Contexte :** macOS 27.0.1 (26A434), `main` @ `58c98ef`. Relevé des plantages : rien de nouveau. Branche `docs/nearcast-v2-study`.
+
+**Fait :**
+- **1.13.2 validée par Côme** (« ça fonctionne parfaitement ») : icône de prise dès le branchement en USB, puis l'éclair.
+- **Étude de Nearcast v2** (`docs/dev/NEARCAST-V2.md`), demandée par Côme avec une question : faire coexister v1 et v2 ? Lu : `Multipeer.swift` et la dérivation de clé du fork, le client iOS AirBattery-Mobile 0.1.3 (archive, lecture seule : reçoit seulement les données, envoie `resend`, même dérivation), MultipeerKit 0.4.0 (`Security.default` = pas de chiffrement de transport, toute invitation acceptée ; `.custom` permet de filtrer les invitations).
+- Réponse : **coexistence possible** (deux transceivers, deux types de service, deux codes), mais la sécurité des données retombe au niveau de v1 tant que v1 est active ; recommandation : v2 par défaut, option v1 désactivée par défaut, envoi seulement (pour le client iOS), aucune alerte v1 affichée.
+- **Trouvé en passant :** l'`Info.plist` ne déclare pas `NSBonjourServices` (vérifié dans la 1.13.2 installée ; `NSLocalNetworkUsageDescription` est bien là, par `INFOPLIST_KEY_…`). Depuis macOS 15, la découverte Bonjour pourrait être bloquée sans cette clé : Nearcast v1 ne marche peut-être plus. **Non vérifié** (deux appareils nécessaires).
+- `docs/dev/issues/nearcast-v2.md` renvoie à l'étude.
+
+**Testé sur appareil réel :** non (étude).
+**Prochaine étape :** réponses de Côme aux 5 questions de la section 4 de l'étude.
