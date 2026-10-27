@@ -3,6 +3,22 @@
     <channel>
         <title>AirBattery Plus</title>
         <item>
+            <title>1.13.1</title>
+            <pubDate>Tue, 27 Oct 2026 13:32:01 +0100</pubDate>
+            <link>https://github.com/MsieurPafi/AirBattery-Plus</link>
+            <sparkle:fullReleaseNotesLink>https://github.com/MsieurPafi/AirBattery-Plus/blob/main/CHANGELOG.md</sparkle:fullReleaseNotesLink>
+            <sparkle:version>1131</sparkle:version>
+            <sparkle:shortVersionString>1.13.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>12.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h3>Fixes</h3>
+<ul>
+<li><strong>An iPhone or iPad plugged in over USB is read right away</strong>, even if it was just read over Wi-Fi: its charging state shows up at once instead of up to a minute later.</li>
+<li><strong>A Bluetooth LE mouse or keyboard no longer keeps the generic Bluetooth icon</strong> when it was first read just as it reconnected (before macOS listed its type): its icon is corrected at the next read.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/MsieurPafi/AirBattery-Plus/releases/download/v1.13.1/AirBattery-Plus-1.13.1.dmg" length="12866570" type="application/octet-stream" sparkle:edSignature="WzgZzku8i85GkjC+lCXnVaG+oeWY0G2fwZ3RcXo/ud1+Q17sfwu587yMDCYFyRv4c3w8Hr8V9HmdabALSAEJDg=="/>
+        </item>
+        <item>
             <title>1.13.0</title>
             <pubDate>Tue, 27 Oct 2026 12:21:48 +0100</pubDate>
             <link>https://github.com/MsieurPafi/AirBattery-Plus</link>
