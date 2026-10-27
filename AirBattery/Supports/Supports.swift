@@ -388,12 +388,6 @@ func copyToClipboard(_ text: String) {
     pasteboard.setString(text, forType: .string)
 }
 
-func isGroupIDValid(id: String) -> Bool {
-    let pre = NSPredicate(format: "SELF MATCHES %@", "^[a-zA-Z0-9\\-]+$")
-    let pasd = pre.evaluate(with: id)
-    return (id.count == 23 && String(id.prefix(3)) == "nc-" && pasd)
-}
-
 func getMacDeviceType() -> String {
     guard let result = process(path: "/usr/sbin/system_profiler", arguments: ["SPHardwareDataType", "-json"]) else { return "Mac" }
     if let json = try? JSONSerialization.jsonObject(with: Data(result.utf8), options: []) as? [String: Any],
@@ -439,55 +433,6 @@ func getMacDeviceName() -> String {
     if let name = computerName as String? { return name }
     return machineType
 }
-
-/// Nil for a malformed Group ID (it could come from a hand-edited setting).
-func generateSymmetricKey(password: String) -> SymmetricKey? {
-    guard isGroupIDValid(id: password), let pass = substring(from: password, start: 15, length: 8) else { return nil }
-    let salt = String(password.prefix(15))
-    let passwordData = Data(pass.utf8)
-    let saltData = Data(salt.utf8)
-    let derivedKey = HKDF<SHA256>.deriveKey(inputKeyMaterial: SymmetricKey(data: passwordData), salt: saltData, info: Data(), outputByteCount: 32)
-    return derivedKey
-}
-
-func encryptString(_ string: String, password: String) -> String? {
-    guard let key = generateSymmetricKey(password: password) else { return nil }
-    let stringData = Data(string.utf8)
-    
-    do {
-        let sealedBox = try AES.GCM.seal(stringData, using: key)
-        return sealedBox.combined?.base64EncodedString()
-    } catch {
-        Log.nearcast.error("Encryption error: \(String(describing: error), privacy: .public)")
-        return nil
-    }
-}
-
-func decryptString(_ string: String, password: String) -> String? {
-    guard let key = generateSymmetricKey(password: password) else { return nil }
-    
-    do {
-        guard let data = Data(base64Encoded: string) else { return nil }
-        let sealedBox = try AES.GCM.SealedBox(combined: data)
-        let decryptedData = try AES.GCM.open(sealedBox, using: key)
-        return String(data: decryptedData, encoding: .utf8)
-    } catch {
-        Log.nearcast.error("Decryption error: \(String(describing: error), privacy: .public)")
-        return nil
-    }
-}
-
-func substring(from string: String, start: Int, length: Int) -> String? {
-    guard start >= 0, length > 0, start + length <= string.count else {
-        return nil
-    }
-
-    let startIndex = string.index(string.startIndex, offsetBy: start)
-    let endIndex = string.index(startIndex, offsetBy: length)
-    let substring = string[startIndex..<endIndex]
-    return String(substring)
-}
-
 
 func getFiles(withExtension fileExtension: String, in directory: URL) -> [URL] {
     do {

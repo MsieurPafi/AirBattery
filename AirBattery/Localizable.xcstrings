@@ -2375,6 +2375,17 @@
         }
       }
     },
+    "Nearcast now uses a new, more secure protocol. Create a new Group ID in Settings › Nearcast, then enter it on your other Macs.": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nearcast utilise désormais un nouveau protocole, plus sûr. Créez un nouvel identifiant de groupe dans Réglages › Nearcast, puis saisissez-le sur vos autres Mac."
+          }
+        }
+      }
+    },
     "Nearcast will broadcast your battery data within the local network.": {
       "extractionState": "manual",
       "localizations": {

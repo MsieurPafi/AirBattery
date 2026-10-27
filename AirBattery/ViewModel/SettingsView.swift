@@ -320,7 +320,8 @@ struct NearcastView: View {
                 SToggle("Enable Nearcast", isOn: $nearCast)
                     .onChange(of: nearCast) { newValue in
                         if newValue {
-                            if ncGroupID != "" && isGroupIDValid(id: ncGroupID) {
+                            if let code = Nearcast.normalize(ncGroupID) {
+                                if code != ncGroupID { ncGroupID = code }
                                 netcastService.resume()
                             } else {
                                 DispatchQueue.main.async { nearCast = false; ncGroupID = "" }
@@ -338,7 +339,7 @@ struct NearcastView: View {
                 HStack(spacing: 4) {
                     SField("Group ID", text: $ncGroupID).disabled(nearCast)
                     Button(action: {
-                        ncGroupID = "nc-" + randomString(length: 20)
+                        ncGroupID = Nearcast.newGroupCode()
                     }, label: {
                         if ncGroupID != "" {
                             Image(systemName: "arrow.clockwise.circle")
@@ -351,8 +352,9 @@ struct NearcastView: View {
                     .buttonStyle(.plain)
                     .disabled(nearCast)
                     Button(action: {
-                        if ncGroupID != "" && isGroupIDValid(id: ncGroupID) {
-                            copyToClipboard(ncGroupID)
+                        if let code = Nearcast.normalize(ncGroupID) {
+                            ncGroupID = code
+                            copyToClipboard(code)
                             _ = createAlert(title: "Group ID Copied".local,
                                             message: String(format: "Group ID has been copied to the clipboard.".local, ncGroupID),
                                             button1: "OK".local).runModal()

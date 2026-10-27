@@ -15,6 +15,11 @@
 	</array>
 	<key>NSAppleScriptEnabled</key>
 	<true/>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_airbattery-n2._tcp</string>
+		<string>_airbattery-n2._udp</string>
+	</array>
 	<key>NSDisableAutomaticTermination</key>
 	<true/>
 	<key>NSSupportsSuddenTermination</key>
