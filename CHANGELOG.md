@@ -2,6 +2,13 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
+## Unreleased
+
+### Fixes
+
+- **An iPhone or iPad plugged in over USB is read right away**, even if it was just read over Wi-Fi: its charging state shows up at once instead of up to a minute later.
+- **A Bluetooth LE mouse or keyboard no longer keeps the generic Bluetooth icon** when it was first read just as it reconnected (before macOS listed its type): its icon is corrected at the next read.
+
 ## 1.13.0 — 2026-10-27 (pre-release)
 
 ### Fixes
