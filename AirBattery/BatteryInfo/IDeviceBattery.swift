@@ -22,22 +22,37 @@ class IDeviceBattery {
     /// blocked ones, or ones whose read fails, were retried every 15 s.
     private var lastAttempt: [String: Double] = [:]
     private var pencilReads: Set<String> = []
+    /// Devices being read: a device that reappears during its own read isn't read twice.
+    private var reading: Set<String> = []
+    private let listener = UsbmuxdListener()
 
     func startScan() {
-        // Own timer, independent of any view. The scan used to be driven by a SwiftUI view's
-        // 5 s dockTimer: two idevice_id launches every 5 s, and only while that view was
-        // alive (upstream #91). Battery reads stay throttled to the refresh interval in
-        // getIDeviceBattery(); 15 s is how long a newly plugged device can take to appear.
+        // Devices are read as soon as usbmuxd reports them (an idle iPhone is reachable over
+        // Wi-Fi only a few seconds at a time), then once per refresh interval while they stay.
+        listener.onAttach = { [weak self] udid, network in
+            guard let self, self.readIDevice else { return }
+            self.readIfDue(udid, network: network)
+        }
+        listener.start()
+        // Own timer, independent of any view (upstream #91). With usbmuxd's events it only
+        // re-reads the devices still attached, without launching anything; without them, it
+        // falls back to polling idevice_id.
         scanTimer = Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { [weak self] _ in
             self?.scanDevices()
         }
+        scanTimer?.tolerance = 3
         Log.idevice.notice("Start scanning iPhone, iPad and Watch")
         scanDevices()
     }
-    
+
     @objc func scanDevices() {
+        guard readIDevice else { return }
+        if let attached = listener.attachedDevices() {
+            for device in attached { readIfDue(device.udid, network: device.network) }
+            return
+        }
         stateLock.lock()
-        if scanning || !readIDevice { stateLock.unlock(); return }
+        if scanning { stateLock.unlock(); return }
         scanning = true
         stateLock.unlock()
         Thread.detachNewThread {
@@ -45,6 +60,26 @@ class IDeviceBattery {
             self.stateLock.lock()
             self.scanning = false
             self.stateLock.unlock()
+        }
+    }
+
+    /// Reads a device reported by usbmuxd if its last read is older than the refresh interval
+    /// (or, for a device not in the list yet, at most once per interval).
+    private func readIfDue(_ udid: String, network: Bool) {
+        let type = network ? "-n" : ""
+        if let d = AirBatteryModel.getByID(udid) {
+            getPencil(d: d, type: type)
+            guard Date().timeIntervalSince1970 - d.lastUpdate > Double(60 * updateInterval) else { return }
+        } else if !mayRetry(udid + (network ? " network" : " usb")) {
+            return
+        }
+        stateLock.lock()
+        if reading.contains(udid) { stateLock.unlock(); return }
+        reading.insert(udid)
+        stateLock.unlock()
+        Thread.detachNewThread {
+            defer { self.stateLock.lock(); self.reading.remove(udid); self.stateLock.unlock() }
+            self.writeBatteryInfo(udid, type)
         }
     }
 
@@ -152,3 +187,90 @@ class IDeviceBattery {
         }
     }
 }
+
+/// Listens to usbmuxd (the macOS service behind iPhones over USB and Wi-Fi) for devices that
+/// appear and disappear, like libimobiledevice's idevice_event_subscribe. Protocol and framing:
+/// Shared/Core/Usbmuxd.swift. Reconnects if usbmuxd restarts.
+final class UsbmuxdListener {
+    struct AttachedDevice { let udid: String; let network: Bool }
+
+    /// Called on the listener's queue when a device appears.
+    var onAttach: ((String, Bool) -> Void)?
+    private let queue = DispatchQueue(label: "\(AppIdentifiers.app).usbmuxd", qos: .utility)
+    private let lock = NSLock()
+    private var listening = false
+    private var attached: [Int: AttachedDevice] = [:]
+    private var source: DispatchSourceRead?
+    private var buffer = Data()
+
+    func start() { queue.async { self.connect() } }
+
+    /// The devices usbmuxd reports as attached, or nil while not listening (fall back to polling).
+    func attachedDevices() -> [AttachedDevice]? {
+        lock.lock(); defer { lock.unlock() }
+        return listening ? Array(attached.values) : nil
+    }
+
+    private func connect() {
+        let fd = socket(AF_UNIX, SOCK_STREAM, 0)
+        guard fd >= 0 else { return retry("socket() failed: \(errno)") }
+        var noSigPipe: Int32 = 1
+        setsockopt(fd, SOL_SOCKET, SO_NOSIGPIPE, &noSigPipe, socklen_t(MemoryLayout<Int32>.size))
+        var address = sockaddr_un()
+        address.sun_family = sa_family_t(AF_UNIX)
+        let path = Array(Usbmuxd.socketPath.utf8CString)
+        withUnsafeMutableBytes(of: &address.sun_path) { $0.copyBytes(from: path.map { UInt8(bitPattern: $0) }) }
+        let connected = withUnsafePointer(to: &address) {
+            $0.withMemoryRebound(to: sockaddr.self, capacity: 1) { Darwin.connect(fd, $0, socklen_t(MemoryLayout<sockaddr_un>.size)) }
+        }
+        guard connected == 0 else { close(fd); return retry("connect() failed: \(errno)") }
+        let request = Usbmuxd.listenRequest()
+        let sent = request.withUnsafeBytes { send(fd, $0.baseAddress, $0.count, 0) }
+        guard sent == request.count else { close(fd); return retry("send() failed: \(errno)") }
+
+        buffer = Data()
+        let source = DispatchSource.makeReadSource(fileDescriptor: fd, queue: queue)
+        source.setEventHandler { [weak self] in self?.readAvailable(fd) }
+        source.setCancelHandler { close(fd) }
+        self.source = source
+        source.resume()
+    }
+
+    private func readAvailable(_ fd: Int32) {
+        var chunk = [UInt8](repeating: 0, count: 65536)
+        let count = recv(fd, &chunk, chunk.count, 0)
+        guard count > 0 else { return disconnect("connection closed") }
+        buffer.append(contentsOf: chunk[0..<count])
+        guard let events = Usbmuxd.takeEvents(from: &buffer) else { return disconnect("unreadable message") }
+        for event in events {
+            switch event {
+            case .result(0):
+                lock.lock(); listening = true; lock.unlock()
+                Log.idevice.notice("Listening to usbmuxd device events")
+            case .result(let number):
+                return disconnect("Listen refused: \(number)")
+            case .attached(let deviceID, let udid, let network):
+                lock.lock(); attached[deviceID] = AttachedDevice(udid: udid, network: network); lock.unlock()
+                onAttach?(udid, network)
+            case .detached(let deviceID):
+                lock.lock(); attached[deviceID] = nil; lock.unlock()
+            case .other:
+                break
+            }
+        }
+    }
+
+    private func disconnect(_ reason: String) {
+        source?.cancel()
+        source = nil
+        lock.lock(); listening = false; attached = [:]; lock.unlock()
+        retry(reason)
+    }
+
+    /// Polling takes over meanwhile.
+    private func retry(_ reason: String) {
+        Log.idevice.error("usbmuxd events unavailable (\(reason, privacy: .public)), retrying in 30 s")
+        queue.asyncAfter(deadline: .now() + 30) { [weak self] in self?.connect() }
+    }
+}
+
