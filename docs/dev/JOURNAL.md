@@ -1291,3 +1291,14 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Testé sur appareil réel :** oui, par Côme.
 **Prochaine étape :** PR, puis 1.13.2 si Côme le souhaite.
+
+## 2026-10-27 (suite 6) — Release 1.13.2 préparée
+
+**Contexte :** branche `release/1.13.2`, partie de `fix/usb-charging-state` (PR #66, CI en cours au moment de la préparation).
+
+**Fait :**
+- `e78e8dd` : version 1.13.2 (`CURRENT_PROJECT_VERSION` 1132). *Unreleased* → `## 1.13.2`.
+- Build Release propre, DMG `AirBattery-Plus-1.13.2.dmg`, `hdiutil verify` OK, SHA-256 `dacae2cd3164771793069fee3a03d3d173e34a387dcdc360ecaa52de64686473`. App : 1.13.2 (1132), widget 1132, flux et clé du fork, `codesign --verify --deep --strict` OK, exigence de signature de la 1.13.1 installée satisfaite, pas de mode démo.
+- `appcast.xml` : 1.13.2 ajoutée (signature identique à `sign_update`). Copies de build désenregistrées, `build/DerivedData-release` supprimé.
+
+**Prochaine étape :** fusion de #66, accord de Côme pour publier.
