@@ -51,4 +51,4 @@ Avec [Nearcast](nearcast.md), la batterie de vos autres Mac, et celle de leurs p
 
 ## Actualisation
 
-Les batteries sont relues selon la **Fréquence d'actualisation** (1 minute par défaut, Réglages › Proximité). Un appareil qui ne s'est pas manifesté depuis plus de dix minutes est marqué d'un ⚠️ devant son nom : il est peut-être éteint ou hors de portée.
+Les batteries sont relues selon la **Fréquence d'actualisation** (1 minute par défaut, Réglages › Proximité). Un appareil qui ne s'est pas manifesté depuis plus de dix minutes est marqué d'un ⚠️ devant son nom : il est peut-être éteint ou hors de portée. La batterie du Mac est mise à jour dès qu'elle change. Un iPhone ou un iPad inutilisé n'active son Wi-Fi que de temps en temps : en Wi-Fi, il peut être lu moins souvent et porter brièvement le ⚠️.

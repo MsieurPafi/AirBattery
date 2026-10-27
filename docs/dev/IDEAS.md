@@ -14,7 +14,7 @@ Pistes **non engagées**. Rien ici ne s'implémente sans le feu vert de Côme.
 | ~~Tri du widget par batterie la plus faible~~ | upstream #188 | Fait en 1.7.2 (réglage « Trier les appareils ») |
 | ~~Batterie des périphériques BLE HID déjà connectés~~ | Côme (MX Anywhere 3), 2026-10-21 | Fait : branche `fix/ble-hid-battery` |
 | ~~Réduire le scan BLE actif~~ | Claude, 2026-10-21 | Fait : branche `perf/ble-scan` (D-011). #207 n'avait rien à voir avec le scan (voir COMPAT note 4) |
-| ~~`RetrieveAddressForPeripheral` ×12 toutes les 24 s~~ **Fait le 2026-10-25** (branche `perf/accessories-per-interval`) : accessoires relus une fois par intervalle (5 min au plus). : `IOBluetoothDevice.pairedDevices()` + `addressString` dans `MagicBattery.scanDevices()` (minuteur `widgetDataTimer`) | Claude, 2026-10-21 | Messages XPC légers ; à n'optimiser que si une mesure le justifie |
+| ~~`RetrieveAddressForPeripheral` ×12 toutes les 24 s~~ **Fait le 2026-10-25**, publié en 1.12.0 (PR #57) : accessoires relus une fois par intervalle (5 min au plus). : `IOBluetoothDevice.pairedDevices()` + `addressString` dans `MagicBattery.scanDevices()` (minuteur `widgetDataTimer`) | Claude, 2026-10-21 | Messages XPC légers ; à n'optimiser que si une mesure le justifie |
 | ~~Réactiver ou supprimer `MagicBattery.getAirpods()`~~ | Claude | **Supprimée** le 2026-10-25 (PR 7, nettoyage), toujours dans l'historique git (`git log -S getAirpods`) |
 | ~~`abt` : lire les données hors du container sandboxé du widget~~ | Claude, 2026-10-21 | Fait : branche `fix/abt-data-access` |
 | ~~**À faire :** soucis d'UI signalés par Côme~~ | Côme, 2026-10-21 | Fait : coins, boutons et position du popover (D-012, branche `ui/liquid-glass`) |

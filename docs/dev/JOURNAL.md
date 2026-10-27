@@ -1196,3 +1196,23 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Testé sur appareil réel :** pas encore (checklist dans la PR de release).
 **Prochaine étape :** fusion de #59, accord de Côme pour publier, mise à jour par Sparkle chez lui, puis une journée d'observation.
+
+## 2026-10-27 — 1.12.0 testée ; lectures de l'iPhone sur une journée
+
+**Contexte :** macOS 27.0.1 (26A434). 1.12.0 (1120) installée par Sparkle, lancée le 26/10 à 13:56:56. Côme a pris le train et utilisé son Mac à destination entre-temps. Relevé des plantages : rien de nouveau (dernier `comptest` le 22/10).
+
+**Test de Côme (checklist de la PR #60) :**
+- Mise à jour par Sparkle : OK. **Pas de demande d'accès au réseau local** : normal, Nearcast désactivé (COMPAT note 8, précision du jour).
+- Chargeur débranché puis rebranché : l'icône de la barre des menus change tout de suite. **Lecture de la batterie sur notification validée.**
+- Appareils et widget : OK.
+
+**Lectures de l'iPhone** (`log show --start "2026-10-26 13:57:00" … category == "idevice"`, croisé avec les veilles de `pmset -g log` : `Sleep`/`DarkWake` = Mac en veille, `Wake` = réveillé) :
+- 146 lectures de l'iPhone, **toutes en Wi-Fi** ; 136 de la Watch ; 10 « Could not parse Watch battery info » ; aucun « Could not reach » après le lancement.
+- Mac réveillé 19,5 h, en 119 périodes. Écart médian entre deux lectures : 1,8 min.
+- **47 écarts de plus de 10 min** (seuil du « ⚠︎ »), 246 min au-delà du seuil, soit 21 % du temps réveillé ; le plus long : 18 min. **Aucun écart de plus de 20 min** : l'iPhone n'a jamais pu disparaître de la liste (`disappearTime` = 20 min).
+- Le soir à la maison (26/10 20:12 → 23:05, Mac réveillé sans interruption) : 105 lectures en 173 min.
+- Limite : on ne sait pas quand l'iPhone était hors de portée (train, trajets) ; une partie des écarts y correspond peut-être.
+
+**Conclusion provisoire :** pas de disparition chez Côme ; un « ⚠︎ » possible par moments. Correctif (lecture sur les événements de `usbmuxd`) facultatif, plus intéressant pour la conso (~480 lancements d'`idevice_id` par heure) que pour la fiabilité.
+**Testé sur appareil réel :** oui, par Côme.
+**Prochaine étape :** décision de Côme sur le correctif ; sinon, Nearcast v2 (#41).
