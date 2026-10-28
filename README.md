@@ -30,6 +30,12 @@
 
 macOS 12 or later. Download the DMG from the [releases page](../../releases), open it and drag **AirBattery Plus** to Applications. The app is not notarized: on first launch, allow it in **System Settings › Privacy & Security**. Step by step: [Getting started](docs/guide/en/getting-started.md).
 
+> [!TIP]
+> **Installed from a DMG downloaded with a browser?** macOS keeps the app in quarantine, which blocks updates. Run this once in Terminal, then relaunch AirBattery Plus:
+> ```
+> xattr -dr com.apple.quarantine "/Applications/AirBattery Plus.app"
+> ```
+
 ## Documentation
 
 - [User guide](docs/guide/en/README.md): supported devices, settings, Nearcast, `abtp`, troubleshooting.
