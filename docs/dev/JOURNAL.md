@@ -1424,3 +1424,11 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Testé sur appareil réel :** oui (Nearcast, par Côme) ; correctif de quarantaine : à confirmer sur le Mac d'Éléonore (commande `xattr -dr …` puis prochaine mise à jour par Sparkle).
 **Prochaine étape :** PR ; Éléonore lance la commande une fois ; la prochaine version confirmera la cause.
+
+## 2026-10-28 (suite 4) — Correction : changement de certificat et Sparkle
+
+**Question de Côme :** avec un compte payant, le problème de quarantaine disparaît-il ? Oui, à condition de **notariser** chaque version (Developer ID + notarisation + ticket agrafé) : Gatekeeper accepte alors l'app et ses outils inclus, même en quarantaine. Tous les exécutables doivent être signés Developer ID avec le runtime renforcé (app, widget, helper, `abtp`, outils libimobiledevice, outils de Sparkle).
+
+**Correction de la suite 26 du 2026-10-25** (« si un jour Xcode signe avec un autre certificat, les mises à jour seront refusées par la version installée (la clé EdDSA seule ne suffit pas quand les deux apps sont signées) ») : **faux.** `Sparkle/SUUpdateValidator.m` (2.6.2) : une mise à jour d'app est acceptée si la signature EdDSA est valide **ou** si la signature de code correspond (« We allow failure of one of them, because this allows key rotation without breaking chain of trust ») ; seule une signature de code présente mais corrompue est refusée. Passer du certificat gratuit au Developer ID est donc accepté tant que la clé EdDSA ne change pas (et inversement). Il ne faut pas changer les deux dans la même version.
+
+**Reste vrai :** pour la première version notarisée, c'est l'installeur de la version déjà installée qui tourne : une copie encore en quarantaine ne pourra pas l'installer seule (commande `xattr` une dernière fois, ou installation à la main). macOS redemandera sans doute une fois les autorisations liées à l'identité de signature (Bluetooth, réseau local).
