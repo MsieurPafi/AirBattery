@@ -30,6 +30,12 @@
 
 macOS 12 ou plus récent. Téléchargez le DMG sur la [page des versions](../../releases), ouvrez-le et glissez **AirBattery Plus** dans Applications. L'app n'est pas notarisée : au premier lancement, autorisez-la dans **Réglages Système › Confidentialité et sécurité**. Pas à pas : [Prise en main](docs/guide/fr/getting-started.md).
 
+> [!TIP]
+> **Installée depuis un DMG téléchargé avec un navigateur ?** macOS garde l'app en quarantaine, ce qui bloque les mises à jour. Lancez une fois cette commande dans le Terminal, puis relancez AirBattery Plus :
+> ```
+> xattr -dr com.apple.quarantine "/Applications/AirBattery Plus.app"
+> ```
+
 ## Documentation
 
 - [Guide d'utilisation](docs/guide/fr/README.md) : appareils pris en charge, réglages, Nearcast, `abtp`, dépannage.
