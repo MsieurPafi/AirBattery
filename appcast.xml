@@ -3,6 +3,26 @@
     <channel>
         <title>AirBattery Plus</title>
         <item>
+            <title>1.14.1</title>
+            <pubDate>Wed, 28 Oct 2026 11:38:26 +0100</pubDate>
+            <link>https://github.com/MsieurPafi/AirBattery-Plus</link>
+            <sparkle:fullReleaseNotesLink>https://github.com/MsieurPafi/AirBattery-Plus/blob/main/CHANGELOG.md</sparkle:fullReleaseNotesLink>
+            <sparkle:version>1141</sparkle:version>
+            <sparkle:shortVersionString>1.14.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>12.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h3>Changes</h3>
+<ul>
+<li><strong>Simpler Nearcast setup</strong>: <strong>Create a Group</strong> on one Mac, then <strong>Join a Group</strong> on the others, with a <strong>Paste</strong> button (a copied code is filled in automatically) and a share button (AirDrop, Messages…) for the code. Settings also show the connected Macs, a switch to pause Nearcast, and <strong>Leave Group</strong>. Errors are shown in place, not in an alert.</li>
+</ul>
+<h3>Fixes</h3>
+<ul>
+<li><strong>The Settings button opens Settings on a first launch too</strong>: the app looked for Settings at a fixed place in its menu, which wasn't always right (upstream <a href="https://github.com/lihaoyun6/AirBattery/issues/175">#175</a>).</li>
+<li>The tips shown when you put the app in the Dock or turn on "Discover more BLE devices" never appeared: macOS 27 blocks alerts opened at that moment.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/MsieurPafi/AirBattery-Plus/releases/download/v1.14.1/AirBattery-Plus-1.14.1.dmg" length="13155725" type="application/octet-stream" sparkle:edSignature="tOH4hZCFzpdkp2P7tQcDnZgDZrZlm9cZZPyI0My7h2mpFIE4PvPS1hVfLz97nYiv3BJrguhvipbsDeCZ9W4TCQ=="/>
+        </item>
+        <item>
             <title>1.14.0</title>
             <pubDate>Tue, 27 Oct 2026 22:04:47 +0100</pubDate>
             <link>https://github.com/MsieurPafi/AirBattery-Plus</link>

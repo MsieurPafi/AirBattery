@@ -1393,3 +1393,14 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 - Non vérifié : affichage du panneau (pas de clic possible de mon côté) ; à voir par Côme dans la version de test.
 
 **Prochaine étape :** PR, puis 1.14.1 pour refaire le test à deux Mac.
+
+## 2026-10-28 (suite 2) — Release 1.14.1 préparée
+
+**Contexte :** branche `release/1.14.1`, partie de `feat/nearcast-flow` (PR #73, CI en cours au moment de la préparation).
+
+**Fait :**
+- `663be5d` : version 1.14.1 (`CURRENT_PROJECT_VERSION` 1141). *Unreleased* → `## 1.14.1`.
+- Build Release propre, DMG `AirBattery-Plus-1.14.1.dmg`, `hdiutil verify` OK, SHA-256 `50421e59de1398d9b68adc0daebc040beff9ff29e12b8151be79a233cc7b7bf5`. App : 1.14.1 (1141), flux et clé du fork, `NSBonjourServices`, `codesign --verify --deep --strict` OK, exigence de signature de la 1.14.0 installée satisfaite, pas de mode démo.
+- `appcast.xml` : 1.14.1 ajoutée (signature identique à `sign_update`). Copies de build désenregistrées, `build/DerivedData-release` supprimé.
+
+**Prochaine étape :** fusion de #73, accord de Côme pour publier, nouveau test à deux Mac.
