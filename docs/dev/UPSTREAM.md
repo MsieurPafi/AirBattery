@@ -90,3 +90,7 @@ Binaire non audité : ne pas l'exécuter.
 | Siri Remote (#85) | non vérifiée par l'autrice ; image `appletvremote.gen1` absente → plantage |
 
 Pour la concurrence, voir D-008 : son code ne corrige pas la capture de `device` dans `deviceIsConnected`.
+
+## Issue #175 (bouton Réglages sans effet sur macOS 26)
+
+2026-10-28 : reproduit sur le Mac de la sœur de Côme (1.14.0, premier lancement ; marche après relance). Cause probable : `openSettingPanel()` cliquait le 3e élément du menu de l'app (`item(at: 2)`), pas forcément « Réglages… » (menu pas encore complet, ou disposition différente). Corrigé : élément trouvé par son raccourci ⌘, (ou une action contenant « Settings »), nouvel essai 0,5 s plus tard s'il manque. Vérifié sur le Mac de Côme ; le cas du premier lancement reste à confirmer.

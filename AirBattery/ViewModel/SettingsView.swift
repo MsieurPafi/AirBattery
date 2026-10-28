@@ -91,7 +91,8 @@ struct GeneralView: View {
                         NSApp.setActivationPolicy(.accessory)
                     }
                     if newValue == "dock" || newValue == "both" {
-                        _ = createAlert(title: "AirBattery Plus Tips".local, message: "Displaying AirBattery Plus on the Dock will consume more power, it is better to use Menu Bar mode or Widgets.".local, button1: "OK").runModal()
+                        // After the change: macOS 27 suppresses runModal inside onChange
+                        DispatchQueue.main.async { _ = createAlert(title: "AirBattery Plus Tips".local, message: "Displaying AirBattery Plus on the Dock will consume more power, it is better to use Menu Bar mode or Widgets.".local, button1: "OK").runModal() }
                     }
                 }
             }
@@ -176,7 +177,7 @@ struct NearbilityView: View {
                     .foregroundColor(.orange)
                     .onChange(of: readBLEDevice) { newValue in
                         if newValue {
-                            _ = createAlert(title: "AirBattery Plus Tips".local, message: "If you see a bluetooth pairing request from any device that isn't yours, add it to your blocklist!".local, button1: "OK").runModal()
+                            DispatchQueue.main.async { _ = createAlert(title: "AirBattery Plus Tips".local, message: "If you see a bluetooth pairing request from any device that isn't yours, add it to your blocklist!".local, button1: "OK").runModal() }
                         }
                     }
                 Divider().opacity(0.5)
@@ -324,12 +325,17 @@ struct NearcastView: View {
                                 if code != ncGroupID { ncGroupID = code }
                                 netcastService.resume()
                             } else {
-                                DispatchQueue.main.async { nearCast = false; ncGroupID = "" }
-                                _ = createAlert(
-                                    title: "Invalid group ID".local,
-                                    message: "Please create or enter a valid Group ID before use!",
-                                    button1: "OK".local
-                                ).runModal()
+                                // After the change: macOS 27 suppresses runModal inside onChange,
+                                // so the toggle just switched back with no explanation. The typed
+                                // code is kept, to be fixed.
+                                DispatchQueue.main.async {
+                                    nearCast = false
+                                    _ = createAlert(
+                                        title: "Invalid group ID".local,
+                                        message: "Please create or enter a valid Group ID before use!",
+                                        button1: "OK".local
+                                    ).runModal()
+                                }
                             }
                         } else {
                             netcastService.stop()

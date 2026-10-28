@@ -1359,3 +1359,24 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 - `appcast.xml` : 1.14.0 ajoutée (signature identique à `sign_update`). Copies de build désenregistrées, `build/DerivedData-release` supprimé.
 
 **Prochaine étape :** accord de Côme pour publier ; test entre deux Mac (checklist dans la PR de release).
+
+## 2026-10-28 — Test de Nearcast v2 bloqué : alerte bloquée par macOS, bouton Réglages, collage
+
+**Contexte :** macOS 27.0.1 (26A434), 1.14.0 installée chez Côme (lancée à 10:31:30). Relevé des plantages : rien de nouveau. Branche `fix/settings-and-alerts`.
+
+**Retours de Côme (premier test à deux Mac) :**
+- Mac de sa sœur, premier lancement de la 1.14.0 : le bouton Réglages ne faisait rien ; marche après avoir quitté et relancé. La question des mises à jour automatiques n'est venue qu'au deuxième lancement : **normal** (Sparkle ne demande qu'au deuxième lancement, comportement par défaut, D-026).
+- Son Mac : l'interrupteur « Activer Nearcast » ne restait pas activé, sans aucun message.
+
+**Analyse :**
+- Journaux : 5 « Nearcast has stopped » (10:31:10 → 10:31:36), jamais « running », `ncGroupID` vide. AppKit : « Suppressing invocation of -[NSAlert runModal]. -[NSAlert runModal] cannot run inside a transaction begin/commit pair… », pile `NearcastView … onChange`. Côme avait activé Nearcast **avant** de créer un code : l'alerte « identifiant non valide » était bloquée par macOS 27, l'interrupteur revenait à « désactivé » et le champ était vidé. COMPAT note 16. Même défaut pour les astuces Dock et « Discover more BLE devices ».
+- Réglages (#175) : `item(at: 2)` du menu de l'app. Menu relevé sur le Mac de Côme (copie de test temporaire, retirée) : À propos, -, Réglages… (⌘,), …, donc l'index tombe juste chez lui ; au premier lancement chez sa sœur, menu sans doute incomplet. Le menu Édition (Coller ⌘V) existe bien.
+
+**Fait :**
+- Alertes ouvertes après le changement (`DispatchQueue.main.async`) ; le code saisi n'est plus effacé.
+- `openSettingPanel` : élément trouvé par son raccourci ⌘,, nouvel essai 0,5 s plus tard s'il manque. Vérifié avec la copie de test : 0 fenêtre → fenêtre de 600 × 472 à la réouverture de l'app.
+- Test de Côme sur la copie de test : sans code, l'alerte s'affiche ; après « + », Nearcast reste activé. (Son réglage garde ce code et Nearcast activé.)
+- **Pas encore traité** : collage impossible dans le champ sur le Mac de sa sœur (champ `TextField` standard, cause non confirmée : menu Édition peut-être incomplet au premier lancement, comme Réglages) ; parcours peu clair (Côme pensait pouvoir saisir n'importe quel code). IDEAS, à concevoir avec Côme.
+
+**Testé sur appareil réel :** oui, par Côme (alerte Nearcast).
+**Prochaine étape :** PR ; décider avec Côme du parcours de Nearcast (créer / rejoindre, bouton Coller) avant de refaire le test à deux Mac.
