@@ -1432,3 +1432,16 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Correction de la suite 26 du 2026-10-25** (« si un jour Xcode signe avec un autre certificat, les mises à jour seront refusées par la version installée (la clé EdDSA seule ne suffit pas quand les deux apps sont signées) ») : **faux.** `Sparkle/SUUpdateValidator.m` (2.6.2) : une mise à jour d'app est acceptée si la signature EdDSA est valide **ou** si la signature de code correspond (« We allow failure of one of them, because this allows key rotation without breaking chain of trust ») ; seule une signature de code présente mais corrompue est refusée. Passer du certificat gratuit au Developer ID est donc accepté tant que la clé EdDSA ne change pas (et inversement). Il ne faut pas changer les deux dans la même version.
 
 **Reste vrai :** pour la première version notarisée, c'est l'installeur de la version déjà installée qui tourne : une copie encore en quarantaine ne pourra pas l'installer seule (commande `xattr` une dernière fois, ou installation à la main). macOS redemandera sans doute une fois les autorisations liées à l'identité de signature (Bluetooth, réseau local).
+
+## 2026-10-28 (suite 5) — Release 1.14.2 préparée
+
+**Contexte :** PR #75 fusionnée après son CI (vérifié sur son dernier commit `5173537`), avec l'accord de Côme (`main` @ `2d2ff63`). Branche `release/1.14.2`.
+
+**Fait :**
+- `14532a9` : version 1.14.2 (`CURRENT_PROJECT_VERSION` 1142). *Unreleased* → `## 1.14.2`.
+- Build Release propre, DMG `AirBattery-Plus-1.14.2.dmg`, `hdiutil verify` OK, SHA-256 `6443b3bc627a8b84fb64c9cb4381628522291a2d338012f386ba8ac1ae0c6b11`. App : 1.14.2 (1142), widget 1142, flux et clé du fork, `NSBonjourServices`, `codesign --verify --deep --strict` OK, exigence de signature de la 1.14.1 installée satisfaite, pas de mode démo, détection de la quarantaine présente.
+- `appcast.xml` : 1.14.2 ajoutée (signature identique à `sign_update`). Copies de build désenregistrées, `build/DerivedData-release` supprimé.
+
+**Plan de test :** le Mac d'Éléonore (1.14.1, en quarantaine) ne peut pas recevoir la 1.14.2 par Sparkle sans la commande : la lancer d'abord, puis la mise à jour confirmera la cause (COMPAT note 17). L'affichage du message sera vérifié sur le Mac de Côme en marquant temporairement son app comme en quarantaine (attribut seul sur le paquet, retiré juste après, app déjà lancée donc pas de nouvelle évaluation par Gatekeeper).
+
+**Prochaine étape :** accord de Côme pour publier ; tests ci-dessus.
