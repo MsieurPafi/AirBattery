@@ -22,5 +22,5 @@ Nearcast switched to a new, more secure protocol. Group IDs from before (`nc-` f
 
 - Everything sent over Nearcast is encrypted and authenticated with keys derived from the group code, and only Macs that know it are let in. Don't share it with anyone outside your own Macs.
 - Nearcast only works between Macs on the same network.
-- Every Mac needs local network access (see [Permissions and privacy](permissions-privacy.md)).
+- Every Mac needs local network access (see [Permissions and privacy](permissions-privacy.md)). If the macOS firewall is on, it asks the first time another Mac connects whether AirBattery Plus may accept incoming connections: click **Allow**.
 - Don't put too many Macs in one group: each one talks to all the others.

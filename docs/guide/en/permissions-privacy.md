@@ -8,6 +8,7 @@
 | --- | --- | --- |
 | Bluetooth | Reads AirPods, Beats and Bluetooth accessories, and iPhones you authorize over Bluetooth | Only this Mac, iPhone/iPad/Watch over USB or Wi-Fi, and Nearcast |
 | Local network | iPhone, iPad and Apple Watch over Wi-Fi; Nearcast | No Wi-Fi devices, no Nearcast. macOS asks again after most updates |
+| Incoming connections (firewall) | Only if the macOS firewall is on and Nearcast is used: lets your other Macs connect to this one. Asked the first time another Mac connects | Nearcast only works when this Mac is the one connecting |
 | Notifications | Battery alerts | No alerts |
 | Administrator password | Only to install or remove the `abtp` command, which writes in `/usr/local/bin` | No `abtp` |
 

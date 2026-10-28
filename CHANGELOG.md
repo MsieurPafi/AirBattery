@@ -2,6 +2,12 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
+## Unreleased
+
+### Fixes
+
+- **Nearcast no longer drops messages that arrive out of order**: when two Macs connect, each sends several messages at once, and one could be refused as a replay. A message is now refused only if it was already received.
+
 ## 1.14.2 — 2026-10-28 (pre-release)
 
 ### Fixes

@@ -78,10 +78,20 @@ final class NearcastProtocolTests: XCTestCase {
         let first = payload()
         XCTAssertTrue(guardian.accept(first, now: now))
         XCTAssertFalse(guardian.accept(first, now: now))
-        XCTAssertFalse(guardian.accept(payload(at: now.addingTimeInterval(-1)), now: now))
         XCTAssertTrue(guardian.accept(payload(at: now.addingTimeInterval(1)), now: now))
         // Senders are tracked separately
         XCTAssertTrue(guardian.accept(payload(sender: "B"), now: now))
+    }
+
+    func testOutOfOrderMessagesAreAccepted() {
+        // Sent at once when a peer connects (request, then data): they may arrive swapped
+        let guardian = Nearcast.ReplayGuard()
+        let base = UInt64(now.timeIntervalSince1970 * 1000)
+        let earlier = Nearcast.Payload(sender: "A", name: "Mac A", command: .resend, sequence: base + 1)
+        let later = Nearcast.Payload(sender: "A", name: "Mac A", command: .data, sequence: base + 2)
+        XCTAssertTrue(guardian.accept(later, now: now))
+        XCTAssertTrue(guardian.accept(earlier, now: now))
+        XCTAssertFalse(guardian.accept(earlier, now: now))
     }
 
     func testOldOrFutureMessagesAreRejected() {
