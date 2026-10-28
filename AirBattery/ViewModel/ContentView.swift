@@ -916,16 +916,31 @@ func openAboutPanel() {
     NSApp.orderFrontStandardAboutPanel(options: [.applicationName: name])
 }
 
-func openSettingPanel() {
+func openSettingPanel(retry: Bool = true) {
     dockWindow.orderOut(nil)
     NSApp.activate(ignoringOtherApps: true)
     if #available(macOS 14, *) {
-        NSApp.mainMenu?.items.first?.submenu?.item(at: 2)?.performAction()
+        // The app menu's Settings item (⌘,), found by its shortcut: the fixed item(at: 2) could
+        // hit another item, e.g. before the menu was complete on a first launch, and nothing
+        // opened (upstream #175). Not there yet: try again once, a moment later.
+        if let item = settingsMenuItem() {
+            item.performAction()
+        } else if retry {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { openSettingPanel(retry: false) }
+        } else {
+            Log.app.error("Settings menu item not found")
+        }
     }else if #available(macOS 13, *) {
         NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
     } else {
         NSApp.sendAction(Selector(("showPreferencesWindow:")), to: nil, from: nil)
     }
+}
+
+private func settingsMenuItem() -> NSMenuItem? {
+    guard let appMenu = NSApp.mainMenu?.items.first?.submenu else { return nil }
+    return appMenu.items.first { $0.keyEquivalent == "," && $0.keyEquivalentModifierMask.contains(.command) }
+        ?? appMenu.items.first { $0.action.map(NSStringFromSelector)?.contains("Settings") == true }
 }
 
 func findNSSplitVIew(view: NSView?) -> NSSplitView? {

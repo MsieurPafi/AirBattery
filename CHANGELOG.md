@@ -2,6 +2,13 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
+## Unreleased
+
+### Fixes
+
+- **Turning on Nearcast without a valid Group ID now explains why**: macOS 27 silently blocked the alert, so the switch just went back to off. The code you typed is also kept, so you can fix it. The tips shown when you put the app in the Dock or turn on "Discover more BLE devices" were blocked the same way.
+- **The Settings button opens Settings on a first launch too**: the app looked for Settings at a fixed place in its menu, which wasn't always right (upstream [#175](https://github.com/lihaoyun6/AirBattery/issues/175)).
+
 ## 1.14.0 — 2026-10-27 (pre-release)
 
 ### Security
