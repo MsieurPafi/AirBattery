@@ -285,6 +285,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
         IDeviceBattery.shared.startScan()
         Scheduler.shared.start()
         PowerSourceMonitor.shared.start()
+        if updatesEnabled, let blocker = UpdateBlocker.current {
+            Log.app.notice("Updates can't be installed: \(blocker == .quarantined ? "the app is quarantined" : "the app is translocated", privacy: .public)")
+        }
         #if DEBUG
         DemoDevices.start()
         #endif

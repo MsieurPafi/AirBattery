@@ -5,6 +5,9 @@
 **macOS refuse d'ouvrir l'app.**
 Elle n'est pas notarisée : autorisez-la une fois dans **Réglages Système › Confidentialité et sécurité › Ouvrir quand même**.
 
+**Les mises à jour échouent avec « An error occurred while running the updater ».**
+L'app est encore en quarantaine (elle a été téléchargée avec un navigateur), ce qui bloque la mise à jour d'une app non notarisée. Lancez une fois `xattr -dr com.apple.quarantine "/Applications/AirBattery Plus.app"` dans le Terminal, relancez l'app, puis recherchez à nouveau les mises à jour. **Réglages › Général › Mise à jour** affiche cette commande quand elle est nécessaire. Si l'app s'exécute depuis le DMG ou le dossier Téléchargements, déplacez-la d'abord dans Applications.
+
 **Mon iPhone, iPad ou Apple Watch n'apparaît pas.**
 Branchez une fois l'iPhone ou l'iPad au Mac avec un câble et touchez **Se fier**, puis cochez **Afficher cet iPhone en Wi-Fi** dans le Finder. Laissez-le sur le même réseau que le Mac, et vérifiez qu'AirBattery Plus a accès au réseau local (**Réglages Système › Confidentialité et sécurité › Réseau local**). Détails dans [Appareils pris en charge](devices.md#iphone-ipad-et-apple-watch).
 

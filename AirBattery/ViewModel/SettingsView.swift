@@ -107,7 +107,10 @@ struct GeneralView: View {
                 }.onAppear { cltInstalled = CommandLineTool.isInstalled() }
             }.padding(.top, -20)
             if updatesEnabled {
-                SGroupBox(label: "Update") { UpdaterSettingsView(updater: updaterController.updater) }
+                SGroupBox(label: "Update") {
+                    UpdaterSettingsView(updater: updaterController.updater)
+                    if let blocker = UpdateBlocker.current { UpdateBlockerNotice(blocker: blocker) }
+                }
             }
             VStack(spacing: 8) {
                 if updatesEnabled {

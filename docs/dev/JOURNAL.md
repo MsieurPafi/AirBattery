@@ -1404,3 +1404,23 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 - `appcast.xml` : 1.14.1 ajoutée (signature identique à `sign_update`). Copies de build désenregistrées, `build/DerivedData-release` supprimé.
 
 **Prochaine étape :** fusion de #73, accord de Côme pour publier, nouveau test à deux Mac.
+
+## 2026-10-28 (suite 3) — Nearcast v2 validé entre deux Mac ; mises à jour bloquées par la quarantaine (D-030)
+
+**Contexte :** 1.14.1 publiée (tag `v1.14.1` sur `663be5d`, DMG `50421e59…`, retéléchargé à l'identique), PR #73 puis #74 fusionnées après leur CI avec l'accord de Côme (`main` @ `1ca88d6`). Branche `fix/quarantine-notice`.
+
+**Nearcast v2 : validé entre deux Mac** (Mac de Côme, 1.14.1 par Sparkle ; MacBook Air de sa sœur Éléonore, 1.14.1 installée à la main) : capture de Côme, la liste de son Mac affiche une section « MacBook Air de Eléonore » (63 %) avec ses appareils (iPhone « Éléonore », AirPods Pro et boîtier). Côme : « ça marche très bien ». Détail relevé : l'iPhone d'Éléonore porte l'icône Bluetooth (type générique sur son Mac, IDEAS).
+
+**Mise à jour par Sparkle en échec sur le Mac d'Éléonore** (« An error occurred while running the updater, please try again later ») ; aucun souci sur le Mac de Côme. Commandes lancées par Côme sur le Mac d'Éléonore :
+- `xattr -p com.apple.quarantine "/Applications/AirBattery Plus.app"` → `01c3;6ae1c03b;Safari;247AEB18-…` : **app en quarantaine** (DMG téléchargé avec Safari) ;
+- `syspolicyd` : seulement le premier lancement (invite, « Open Anyway ») ;
+- `Updater` (11:50:01) : « failed to do a bootstrap look-up: xpc_error=[3: No such process] » sur `…-spkp`, puis « Agent failed.. » / « Agent Invalidating without having the chance to reply to installer » : l'installeur ne démarre pas. Message d'erreur retrouvé dans `SPUInstallerDriver.m` (invalidation de la connexion à l'installeur). COMPAT note 17.
+- Recherche sur les pratiques des autres apps (Sparkle, apps non notarisées, Homebrew 5.0) : D-030. Choix de Côme : commande guidée.
+
+**Fait :**
+- `UpdateBlocker` + `UpdateBlockerNotice` (`Supports/Sparkle.swift`) : quarantaine (`getxattr`) ou translocation détectée ; message et commande (chemin réel de l'app) avec bouton Copier dans Réglages › Général › Mise à jour ; ligne de journal au lancement. 5 chaînes traduites en français.
+- Vérification de la détection (script Swift sur deux dossiers `.app` de test dans le scratchpad, dont un marqué avec `xattr -w com.apple.quarantine …`) : « quarantined » / « not quarantined » ; l'app de Côme : « not quarantined » (pas de message chez lui). Affichage du message non vu (copie en quarantaine non lancée, pour éviter une invite de Gatekeeper chez Côme).
+- Guide EN/FR (installation étape 4, dépannage), CHANGELOG, COMPAT note 17, D-030, IDEAS.
+
+**Testé sur appareil réel :** oui (Nearcast, par Côme) ; correctif de quarantaine : à confirmer sur le Mac d'Éléonore (commande `xattr -dr …` puis prochaine mise à jour par Sparkle).
+**Prochaine étape :** PR ; Éléonore lance la commande une fois ; la prochaine version confirmera la cause.

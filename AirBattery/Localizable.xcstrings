@@ -4005,6 +4005,61 @@
           }
         }
       }
+    },
+    "Updates can’t be installed yet": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les mises à jour ne peuvent pas encore être installées"
+          }
+        }
+      }
+    },
+    "Updates can’t be installed from here": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les mises à jour ne peuvent pas être installées depuis cet emplacement"
+          }
+        }
+      }
+    },
+    "macOS keeps apps downloaded with a browser in quarantine, which blocks the updater of an app that isn’t notarized. Run this command once in Terminal, then relaunch AirBattery Plus:": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS met en quarantaine les apps téléchargées avec un navigateur, ce qui bloque la mise à jour d'une app non notarisée. Lancez une fois cette commande dans le Terminal, puis relancez AirBattery Plus :"
+          }
+        }
+      }
+    },
+    "Copied": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copié"
+          }
+        }
+      }
+    },
+    "AirBattery Plus is running from a temporary copy. Move it to the Applications folder, then open it from there.": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AirBattery Plus s'exécute depuis une copie temporaire. Déplacez-la dans le dossier Applications, puis ouvrez-la depuis celui-ci."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
