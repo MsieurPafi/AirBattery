@@ -22,5 +22,5 @@ Nearcast passe à un nouveau protocole, plus sûr. Les identifiants de groupe d'
 
 - Tout ce qui passe par Nearcast est chiffré et authentifié avec des clés tirées du code du groupe, et seuls les Mac qui le connaissent sont admis. Ne le communiquez à personne en dehors de vos propres Mac.
 - Nearcast ne fonctionne qu'entre Mac d'un même réseau.
-- Chaque Mac a besoin de l'accès au réseau local (voir [Autorisations et confidentialité](permissions-privacy.md)).
+- Chaque Mac a besoin de l'accès au réseau local (voir [Autorisations et confidentialité](permissions-privacy.md)). Si le coupe-feu de macOS est activé, il demande la première fois qu'un autre Mac se connecte si AirBattery Plus peut accepter les connexions entrantes : cliquez sur **Autoriser**.
 - Ne mettez pas trop de Mac dans un même groupe : chacun échange avec tous les autres.

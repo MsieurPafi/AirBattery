@@ -137,18 +137,22 @@ public enum Nearcast {
         }
     }
 
-    /// Refuses a message whose sequence is too far from the local clock, or not newer than the
-    /// last one accepted from the same sender.
+    /// Refuses a message whose sequence is too far from the local clock, or that was already
+    /// accepted from the same sender. Messages may arrive out of order (a Mac sends several at
+    /// once when a peer connects): "not newer than the last one" refused valid ones.
     public final class ReplayGuard {
         private let lock = NSLock()
-        private var lastSequence: [String: UInt64] = [:]
+        private var seen: [String: Set<UInt64>] = [:]
         public init() {}
         public func accept(_ payload: Payload, now: Date = Date()) -> Bool {
             let sent = Double(payload.sequence) / 1000
             guard abs(sent - now.timeIntervalSince1970) <= maxClockSkew else { return false }
             lock.lock(); defer { lock.unlock() }
-            if let last = lastSequence[payload.sender], payload.sequence <= last { return false }
-            lastSequence[payload.sender] = payload.sequence
+            // Sequences older than the window are refused by the clock check: forget them
+            let oldest = UInt64(max(0, (now.timeIntervalSince1970 - maxClockSkew) * 1000))
+            var sequences = seen[payload.sender, default: []].filter { $0 >= oldest }
+            guard sequences.insert(payload.sequence).inserted else { return false }
+            seen[payload.sender] = sequences
             return true
         }
     }

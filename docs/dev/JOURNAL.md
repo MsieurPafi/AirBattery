@@ -1445,3 +1445,17 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 **Plan de test :** le Mac d'Éléonore (1.14.1, en quarantaine) ne peut pas recevoir la 1.14.2 par Sparkle sans la commande : la lancer d'abord, puis la mise à jour confirmera la cause (COMPAT note 17). L'affichage du message sera vérifié sur le Mac de Côme en marquant temporairement son app comme en quarantaine (attribut seul sur le paquet, retiré juste après, app déjà lancée donc pas de nouvelle évaluation par Gatekeeper).
 
 **Prochaine étape :** accord de Côme pour publier ; tests ci-dessus.
+
+## 2026-10-28 (suite 6) — Invite du coupe-feu ; messages Nearcast reçus dans le désordre
+
+**Contexte :** `main` @ `c787c89` (PR #77, encadré quarantaine du README EN/FR, fusionnée après son CI avec l'accord de Côme). Côme est encore en 1.14.1. Branche `fix/nearcast-reorder-and-firewall`.
+
+**Invite du coupe-feu** (« Voulez-vous que l'application AirBattery Plus.app accepte les connexions réseau entrantes ? », après un retour de veille) :
+- `socketfilterfw --getglobalstate` : coupe-feu activé ; « Automatically allow downloaded signed software ENABLED » (vaut pour les signatures Developer ID, pas pour le certificat gratuit) ; AirBattery Plus absente de `--listapps`.
+- Journal d'ALF : premier flux entrant à 19:38:48 (« Enqueuing new inbound flow… Prompting for a filtering decision »), pendant un réveil bref. Pourquoi seulement maintenant : le coupe-feu ne réagit qu'aux connexions entrantes ; au test de midi, c'est le Mac de Côme qui s'était connecté à celui de sa sœur (« Peer connected » à 12:02:15, connexion sortante).
+- Conseil : « Autoriser ». Guide EN/FR : ligne « Connexions entrantes (coupe-feu) » dans le tableau des autorisations, phrase dans la page Nearcast.
+
+**Bogue trouvé :** « Ignored a replayed or out-of-date Nearcast message » à 12:02:15. À la connexion d'un pair, chaque Mac envoie une demande d'envoi puis ses données, parfois en même temps qu'une diffusion : deux messages scellés sur des fils différents peuvent partir dans l'ordre inverse de leurs séquences, et `ReplayGuard` exigeait une séquence strictement croissante. **Corrigé :** dans la fenêtre de ±300 s, un message n'est refusé que s'il a déjà été vu (ensemble des séquences récentes par expéditeur, purgé hors fenêtre). Test unitaire ajouté (32 au total) ; premier essai du test en échec à cause de l'arrondi de `Double` (`now + 0.001 s` et `+ 0.002 s` donnaient la même séquence), refait avec des séquences explicites.
+
+**Testé sur appareil réel :** non (le correctif se vérifiera au prochain test entre deux Mac).
+**Prochaine étape :** PR ; tests de la 1.14.2 en attente (message de quarantaine, Mac d'Éléonore).
