@@ -40,7 +40,7 @@ Les sources de lecture des batteries (détails dans [Appareils pris en charge](d
 
 ## Nearcast
 
-Activation de Nearcast et identifiant de groupe : voir [Nearcast](nearcast.md). **Ce Mac** affiche l'identifiant de ce Mac dans le groupe.
+Créer ou rejoindre un groupe, partager son code, voir les Mac connectés : voir [Nearcast](nearcast.md).
 
 ## Widget
 

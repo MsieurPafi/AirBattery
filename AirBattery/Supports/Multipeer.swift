@@ -16,6 +16,8 @@ import MultipeerKit
 
 class MultipeerService: ObservableObject {
     let transceiver: MultipeerTransceiver
+    /// Names of the Macs in the session (only group members get in), for the settings.
+    @Published private(set) var connectedNames: [String] = []
     private let sequence = Nearcast.Sequence()
     private let replays = Nearcast.ReplayGuard()
     private let sendLock = NSLock()
@@ -55,9 +57,15 @@ class MultipeerService: ObservableObject {
         transceiver.receive(Data.self) { [weak self] data, peer in
             DispatchQueue.global().async { self?.handle(data, from: peer) }
         }
+        transceiver.availablePeersDidChange = { [weak self] _ in self?.updateConnectedPeers() }
+        transceiver.peerDisconnected = { [weak self] peer in
+            Log.nearcast.notice("Peer disconnected: \(peer.name)")
+            self?.updateConnectedPeers()
+        }
         // A Mac that joins gets our data, and sends us its own
         transceiver.peerConnected = { [weak self] peer in
             Log.nearcast.notice("Peer connected: \(peer.name)")
+            self?.updateConnectedPeers()
             DispatchQueue.global().async {
                 self?.send(.resend, to: peer)
                 self?.sendData(to: peer)
@@ -91,6 +99,11 @@ class MultipeerService: ObservableObject {
         }
     }
 
+    private func updateConnectedPeers() {
+        let names = connectedPeers().map(\.name).sorted()
+        DispatchQueue.main.async { if self.connectedNames != names { self.connectedNames = names } }
+    }
+
     func resume() {
         guard MultipeerService.groupKeys != nil else { return }
         transceiver.resume()
@@ -99,6 +112,7 @@ class MultipeerService: ObservableObject {
 
     func stop() {
         transceiver.stop()
+        DispatchQueue.main.async { self.connectedNames = [] }
         Log.nearcast.notice("Nearcast has stopped")
     }
 

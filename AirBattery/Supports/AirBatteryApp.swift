@@ -268,7 +268,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, UNUserNotifi
                 // A v1 Group ID (D-029): Nearcast v2 can't use it. Turn Nearcast off and say why.
                 nearCast = false
                 ncGroupID = ""
-                createNotification(title: "Nearcast".local, message: "Nearcast now uses a new, more secure protocol. Create a new Group ID in Settings › Nearcast, then enter it on your other Macs.".local)
+                createNotification(title: "Nearcast".local, message: "Nearcast now uses a new, more secure protocol. Create a new group in Settings › Nearcast, then join it from your other Macs.".local)
                 Log.nearcast.notice("Nearcast turned off: the Group ID was a v1 one")
             }
         }

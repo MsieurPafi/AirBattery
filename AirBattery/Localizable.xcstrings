@@ -2375,13 +2375,13 @@
         }
       }
     },
-    "Nearcast now uses a new, more secure protocol. Create a new Group ID in Settings › Nearcast, then enter it on your other Macs.": {
+    "Nearcast now uses a new, more secure protocol. Create a new group in Settings › Nearcast, then join it from your other Macs.": {
       "extractionState": "manual",
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nearcast utilise désormais un nouveau protocole, plus sûr. Créez un nouvel identifiant de groupe dans Réglages › Nearcast, puis saisissez-le sur vos autres Mac."
+            "value": "Nearcast utilise désormais un nouveau protocole, plus sûr. Créez un nouveau groupe dans Réglages › Nearcast, puis rejoignez-le depuis vos autres Mac."
           }
         }
       }
@@ -3785,6 +3785,226 @@
     },
     "macOS": {
       "shouldTranslate": false
+    },
+    "Share your devices’ batteries between your Macs on the same network.": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Partagez la batterie de vos appareils entre vos Mac du même réseau."
+          }
+        }
+      }
+    },
+    "Create a Group": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Créer un groupe"
+          }
+        }
+      }
+    },
+    "Join a Group": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rejoindre un groupe"
+          }
+        }
+      }
+    },
+    "Paste the code shown on your other Mac.": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Collez le code affiché sur votre autre Mac."
+          }
+        }
+      }
+    },
+    "Paste": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coller"
+          }
+        }
+      }
+    },
+    "Valid code": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code valide"
+          }
+        }
+      }
+    },
+    "This isn’t a group code. It starts with nc2- followed by 26 letters and digits.": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce n'est pas un code de groupe. Il commence par nc2- suivi de 26 lettres et chiffres."
+          }
+        }
+      }
+    },
+    "Join": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rejoindre"
+          }
+        }
+      }
+    },
+    "Group Code": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code du groupe"
+          }
+        }
+      }
+    },
+    "Hide": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masquer"
+          }
+        }
+      }
+    },
+    "Show": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher"
+          }
+        }
+      }
+    },
+    "Copy": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copier"
+          }
+        }
+      }
+    },
+    "Share": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Partager"
+          }
+        }
+      }
+    },
+    "Enter this code on your other Macs with Join a Group. Don’t share it with anyone else.": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saisissez ce code sur vos autres Mac avec « Rejoindre un groupe ». Ne le communiquez à personne d'autre."
+          }
+        }
+      }
+    },
+    "Connected Macs": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mac connectés"
+          }
+        }
+      }
+    },
+    "Nearcast is off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nearcast est désactivé."
+          }
+        }
+      }
+    },
+    "No other Mac connected yet. They need to be on the same network, with Nearcast on.": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun autre Mac connecté pour l'instant. Ils doivent être sur le même réseau, avec Nearcast activé."
+          }
+        }
+      }
+    },
+    "Nearcast stops on this Mac.": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nearcast s'arrête sur ce Mac."
+          }
+        }
+      }
+    },
+    "Leave": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitter"
+          }
+        }
+      }
+    },
+    "Leave Group": {
+      "extractionState": "manual",
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitter le groupe"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
