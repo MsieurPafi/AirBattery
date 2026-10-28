@@ -1380,3 +1380,16 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Testé sur appareil réel :** oui, par Côme (alerte Nearcast).
 **Prochaine étape :** PR ; décider avec Côme du parcours de Nearcast (créer / rejoindre, bouton Coller) avant de refaire le test à deux Mac.
+
+## 2026-10-28 (suite 1) — Parcours Nearcast « créer / rejoindre »
+
+**Contexte :** PR #72 fusionnée après son CI (`main` @ `14512f5`). Maquette du nouveau parcours montrée à Côme (trois états) et validée. Branche `feat/nearcast-flow`.
+
+**Fait :**
+- `NearcastView` réécrite : pas de groupe → « Créer un groupe » (code créé, Nearcast activé) ou « Rejoindre un groupe » (champ prérempli si le presse-papiers contient un code valide, bouton Coller qui lit `NSPasteboard` directement, validation en place, « Rejoindre » activé seulement si le code est valide) ; dans un groupe → interrupteur, code masqué (œil pour l'afficher), Copier, Partager (`NSSharingServicePicker` : AirDrop, Messages…), Mac connectés, « Quitter le groupe » avec confirmation en place. Plus aucune alerte modale dans ce panneau. Encadré « Ce Mac / Identifiant local » remplacé par la liste des Mac connectés.
+- `MultipeerService.connectedNames` (`@Published`), mis à jour par `availablePeersDidChange`, `peerConnected`, `peerDisconnected`, vidé à l'arrêt. Premier essai : conflit de nom avec la fonction `connectedPeers()` (« invalid redeclaration »), renommé.
+- 20 chaînes traduites en français. Premier essai d'ajout au catalogue par `json.dump` : tout le fichier retrié (5 136 lignes de différence, ordre de Xcode différent) ; annulé, entrées ajoutées à la fin sans toucher au reste (220 lignes), au format `"clé": valeur` du fichier.
+- Message de migration v1 et guide EN/FR alignés sur « créer / rejoindre ». CHANGELOG : par erreur, le titre `## 1.14.0` avait été retiré (section fusionnée dans *Unreleased*) ; rétabli et vérifié.
+- Non vérifié : affichage du panneau (pas de clic possible de mon côté) ; à voir par Côme dans la version de test.
+
+**Prochaine étape :** PR, puis 1.14.1 pour refaire le test à deux Mac.

@@ -4,10 +4,14 @@ Changes in this fork compared with the official [AirBattery](https://github.com/
 
 ## Unreleased
 
+### Changes
+
+- **Simpler Nearcast setup**: **Create a Group** on one Mac, then **Join a Group** on the others, with a **Paste** button (a copied code is filled in automatically) and a share button (AirDrop, Messages…) for the code. Settings also show the connected Macs, a switch to pause Nearcast, and **Leave Group**. Errors are shown in place, not in an alert.
+
 ### Fixes
 
-- **Turning on Nearcast without a valid Group ID now explains why**: macOS 27 silently blocked the alert, so the switch just went back to off. The code you typed is also kept, so you can fix it. The tips shown when you put the app in the Dock or turn on "Discover more BLE devices" were blocked the same way.
 - **The Settings button opens Settings on a first launch too**: the app looked for Settings at a fixed place in its menu, which wasn't always right (upstream [#175](https://github.com/lihaoyun6/AirBattery/issues/175)).
+- The tips shown when you put the app in the Dock or turn on "Discover more BLE devices" never appeared: macOS 27 blocks alerts opened at that moment.
 
 ## 1.14.0 — 2026-10-27 (pre-release)
 

@@ -40,7 +40,7 @@ Where batteries are read from (details in [Supported devices](devices.md)):
 
 ## Nearcast
 
-Enable Nearcast and its Group ID: see [Nearcast](nearcast.md). **Peer Info** shows this Mac's ID in the group.
+Create or join a group, share its code, see the connected Macs: see [Nearcast](nearcast.md).
 
 ## Widget
 

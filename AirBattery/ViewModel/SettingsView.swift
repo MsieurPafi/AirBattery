@@ -313,94 +313,167 @@ struct IOSBluetoothDevicesView: View {
 struct NearcastView: View {
     @AppStorage("nearCast") var nearCast = false
     @AppStorage("ncGroupID") var ncGroupID = ""
-    @State var debug: Bool = false
-    
+    @ObservedObject private var service = netcastService
+    @State private var joining = false
+    @State private var joinCode = ""
+    @State private var showCode = false
+    @State private var confirmLeave = false
+
+    /// Create a group or join one, instead of a free text field (testers thought any code
+    /// would do, and pasting failed on a first launch). Errors are shown inline: macOS 27
+    /// suppresses alerts opened from onChange (COMPAT note 16).
     var body: some View {
         SForm {
             SGroupBox(label: "Nearcast") {
-                SToggle("Enable Nearcast", isOn: $nearCast)
-                    .onChange(of: nearCast) { newValue in
-                        if newValue {
-                            if let code = Nearcast.normalize(ncGroupID) {
-                                if code != ncGroupID { ncGroupID = code }
-                                netcastService.resume()
-                            } else {
-                                // After the change: macOS 27 suppresses runModal inside onChange,
-                                // so the toggle just switched back with no explanation. The typed
-                                // code is kept, to be fixed.
-                                DispatchQueue.main.async {
-                                    nearCast = false
-                                    _ = createAlert(
-                                        title: "Invalid group ID".local,
-                                        message: "Please create or enter a valid Group ID before use!",
-                                        button1: "OK".local
-                                    ).runModal()
-                                }
-                            }
-                        } else {
-                            netcastService.stop()
-                        }
+                if let code = Nearcast.normalize(ncGroupID) {
+                    inGroup(code)
+                } else if joining {
+                    joinForm
+                } else {
+                    noGroup
+                }
+            }
+        }
+    }
+
+    private var noGroup: some View {
+        VStack(spacing: 10) {
+            Text("Share your devices\u{2019} batteries between your Macs on the same network.")
+                .font(.callout)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+            HStack(spacing: 10) {
+                Button(action: {
+                    ncGroupID = Nearcast.newGroupCode()
+                    nearCast = true
+                    netcastService.resume()
+                }) { Label("Create a Group", systemImage: "plus.circle") }
+                Button(action: {
+                    // A code copied on the other Mac is ready to use
+                    joinCode = Nearcast.normalize(NSPasteboard.general.string(forType: .string) ?? "") ?? ""
+                    joining = true
+                }) { Label("Join a Group", systemImage: "person.2") }
+            }
+        }
+    }
+
+    private var joinForm: some View {
+        let valid = Nearcast.normalize(joinCode)
+        return VStack(alignment: .leading, spacing: 8) {
+            Text("Paste the code shown on your other Mac.")
+                .font(.callout)
+                .foregroundColor(.secondary)
+            HStack(spacing: 6) {
+                TextField("nc2-…", text: $joinCode)
+                    .textFieldStyle(.roundedBorder)
+                    .font(.system(.body, design: .monospaced))
+                Button(action: {
+                    // Reads the clipboard directly: works even when the Edit menu (⌘V) doesn't
+                    joinCode = NSPasteboard.general.string(forType: .string) ?? ""
+                }) { Label("Paste", systemImage: "doc.on.clipboard") }
+            }
+            if !joinCode.isEmpty {
+                if valid != nil {
+                    Label("Valid code", systemImage: "checkmark.circle").font(.footnote).foregroundColor(.green)
+                } else {
+                    Label("This isn\u{2019}t a group code. It starts with nc2- followed by 26 letters and digits.", systemImage: "exclamationmark.circle")
+                        .font(.footnote).foregroundColor(.red)
+                }
+            }
+            HStack {
+                Spacer()
+                Button("Cancel") { joining = false; joinCode = "" }
+                Button("Join") {
+                    guard let code = valid else { return }
+                    ncGroupID = code
+                    nearCast = true
+                    joining = false
+                    joinCode = ""
+                    netcastService.resume()
+                }
+                .disabled(valid == nil)
+                .keyboardShortcut(.defaultAction)
+            }
+        }
+    }
+
+    private func inGroup(_ code: String) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            SToggle("Enable Nearcast", isOn: $nearCast)
+                .onChange(of: nearCast) { on in
+                    if on { netcastService.resume() } else { netcastService.stop() }
+                }
+            Divider().opacity(0.5)
+            Text("Group Code").font(.footnote).foregroundColor(.secondary)
+            HStack(spacing: 6) {
+                Text(showCode ? code : String(code.prefix(8)) + "••••••••")
+                    .font(.system(.callout, design: .monospaced))
+                    .textSelection(.enabled)
+                    .lineLimit(1)
+                Spacer()
+                Button(action: { showCode.toggle() }) {
+                    Image(systemName: showCode ? "eye.slash" : "eye")
+                }.buttonStyle(.plain).help(showCode ? Text("Hide") : Text("Show"))
+                Button(action: { copyToClipboard(code) }) {
+                    Image(systemName: "doc.on.doc")
+                }.buttonStyle(.plain).help("Copy")
+                ShareButton(text: code).frame(width: 18, height: 18).help("Share")
+            }
+            Text("Enter this code on your other Macs with Join a Group. Don\u{2019}t share it with anyone else.")
+                .font(.footnote).foregroundColor(.secondary)
+            Divider().opacity(0.5)
+            Text("Connected Macs").font(.footnote).foregroundColor(.secondary)
+            if !nearCast {
+                Text("Nearcast is off.").font(.callout).foregroundColor(.secondary)
+            } else if service.connectedNames.isEmpty {
+                Text("No other Mac connected yet. They need to be on the same network, with Nearcast on.")
+                    .font(.callout).foregroundColor(.secondary)
+            } else {
+                ForEach(service.connectedNames, id: \.self) { name in
+                    Label(name, systemImage: "laptopcomputer").font(.callout)
+                }
+            }
+            Divider().opacity(0.5)
+            HStack {
+                Spacer()
+                if confirmLeave {
+                    Text("Nearcast stops on this Mac.").font(.footnote).foregroundColor(.secondary)
+                    Button("Cancel") { confirmLeave = false }
+                    Button("Leave") {
+                        nearCast = false
+                        netcastService.stop()
+                        ncGroupID = ""
+                        confirmLeave = false
+                        showCode = false
                     }
-                Divider().opacity(0.5)
-                HStack(spacing: 4) {
-                    SField("Group ID", text: $ncGroupID).disabled(nearCast)
-                    Button(action: {
-                        ncGroupID = Nearcast.newGroupCode()
-                    }, label: {
-                        if ncGroupID != "" {
-                            Image(systemName: "arrow.clockwise.circle")
-                                .font(.system(size: 15, weight: .light))
-                        } else {
-                            Image(systemName: "plus.circle")
-                                .font(.system(size: 15, weight: .light))
-                        }
-                    })
-                    .buttonStyle(.plain)
-                    .disabled(nearCast)
-                    Button(action: {
-                        if let code = Nearcast.normalize(ncGroupID) {
-                            ncGroupID = code
-                            copyToClipboard(code)
-                            _ = createAlert(title: "Group ID Copied".local,
-                                            message: String(format: "Group ID has been copied to the clipboard.".local, ncGroupID),
-                                            button1: "OK".local).runModal()
-                        } else {
-                            DispatchQueue.main.async { ncGroupID = "" }
-                            _ = createAlert(
-                                title: "Invalid group ID".local,
-                                message: "Please create or enter a valid Group ID before use!",
-                                button1: "OK".local
-                            ).runModal()
-                        }
-                    }, label: {
-                        Image("list.clipboard.fill.circle")
-                            .resizable().scaledToFit()
-                            .frame(width: 15, height: 15)
-                    }).buttonStyle(.plain)
-                }.frame(height: 16)
-                Divider().opacity(0.5)
-                VStack(spacing: 2) {
-                    Text("Nearcast will broadcast your battery data within the local network.")
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                    Text("Your data has been encrypted using the group id, don't share it with others.")
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
+                } else {
+                    Button("Leave Group") { confirmLeave = true }
                 }
             }
-            SGroupBox(label: "Peer Info") {
-                HStack {
-                    Text("Local ID")
-                    Spacer()
-                    Text(netcastService.transceiver.localPeerId ?? "")
-                        .font(.callout)
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-                        .foregroundColor(.secondary)
-                }
-            }
+        }
+    }
+}
+
+/// The system share menu (AirDrop, Messages…) for the group code.
+struct ShareButton: NSViewRepresentable {
+    let text: String
+
+    func makeNSView(context: Context) -> NSButton {
+        let button = NSButton(image: NSImage(systemSymbolName: "square.and.arrow.up", accessibilityDescription: "Share") ?? NSImage(),
+                              target: context.coordinator, action: #selector(Coordinator.share(_:)))
+        button.isBordered = false
+        return button
+    }
+
+    func updateNSView(_ button: NSButton, context: Context) { context.coordinator.text = text }
+
+    func makeCoordinator() -> Coordinator { Coordinator(text: text) }
+
+    final class Coordinator: NSObject {
+        var text: String
+        init(text: String) { self.text = text }
+        @objc func share(_ sender: NSButton) {
+            NSSharingServicePicker(items: [text]).show(relativeTo: sender.bounds, of: sender, preferredEdge: .minY)
         }
     }
 }
