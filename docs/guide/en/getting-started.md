@@ -12,6 +12,13 @@
 1. Download the DMG from the [releases page](https://github.com/MsieurPafi/AirBattery-Plus/releases). Each release lists the file's SHA-256 checksum.
 2. Open the DMG and drag **AirBattery Plus** to Applications.
 3. The app is not notarized by Apple: on first launch, macOS blocks it. Open **System Settings › Privacy & Security**, scroll down and click **Open Anyway** next to AirBattery Plus.
+4. So that AirBattery Plus can install its own updates later, run this once in Terminal, then relaunch the app:
+
+   ```bash
+   xattr -dr com.apple.quarantine "/Applications/AirBattery Plus.app"
+   ```
+
+   macOS keeps apps downloaded with a browser in quarantine, and that blocks the updater of an app that isn't notarized. **Settings › General › Update** reminds you of this command, with a button to copy it, as long as it's needed.
 
 ## Update
 

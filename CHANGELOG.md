@@ -2,6 +2,12 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
+## Unreleased
+
+### Fixes
+
+- **Updates on a Mac where the app was downloaded with a browser**: macOS keeps such an app in quarantine, which blocks Sparkle's installer for an app that isn't notarized ("An error occurred while running the updater"). **Settings › General › Update** now says so and gives the command to run once, with a button to copy it. The guide (installation, troubleshooting) explains it too.
+
 ## 1.14.1 — 2026-10-28 (pre-release)
 
 ### Changes

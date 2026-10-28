@@ -68,3 +68,61 @@ struct UpdaterSettingsView: View {
     }
 }
 
+/// Why Sparkle can't install updates here, if it's something the user can fix (D-030).
+/// A DMG downloaded with a browser leaves the app quarantined: "Open Anyway" approves the app,
+/// but macOS then refuses Sparkle's installer, launched in the background, because the app
+/// isn't notarized ("An error occurred while running the updater", COMPAT note 17).
+enum UpdateBlocker {
+    case quarantined
+    case translocated
+
+    static var current: UpdateBlocker? {
+        let path = Bundle.main.bundlePath
+        // Run from a read-only copy (launched from the DMG or Downloads): nothing to replace
+        if path.contains("/AppTranslocation/") { return .translocated }
+        if getxattr(path, "com.apple.quarantine", nil, 0, 0, XATTR_NOFOLLOW) >= 0 { return .quarantined }
+        return nil
+    }
+
+    static var command: String {
+        return "xattr -dr com.apple.quarantine \"\(Bundle.main.bundlePath)\""
+    }
+}
+
+/// Shown in Settings › Update when updates can't be installed, with what to do. The user runs
+/// the command: the app doesn't lift its own quarantine (D-030).
+struct UpdateBlockerNotice: View {
+    let blocker: UpdateBlocker
+    @State private var copied = false
+
+    var body: some View {
+        Divider().opacity(0.5)
+        VStack(alignment: .leading, spacing: 6) {
+            Label(blocker == .quarantined ? "Updates can\u{2019}t be installed yet" : "Updates can\u{2019}t be installed from here",
+                  systemImage: "exclamationmark.triangle")
+                .font(.callout.weight(.medium))
+                .foregroundColor(.orange)
+            if blocker == .quarantined {
+                Text("macOS keeps apps downloaded with a browser in quarantine, which blocks the updater of an app that isn\u{2019}t notarized. Run this command once in Terminal, then relaunch AirBattery Plus:")
+                    .font(.footnote).foregroundColor(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                HStack(spacing: 6) {
+                    Text(UpdateBlocker.command)
+                        .font(.system(.caption, design: .monospaced))
+                        .textSelection(.enabled)
+                        .lineLimit(2)
+                    Spacer()
+                    Button(copied ? "Copied" : "Copy") {
+                        copyToClipboard(UpdateBlocker.command)
+                        copied = true
+                    }
+                }
+            } else {
+                Text("AirBattery Plus is running from a temporary copy. Move it to the Applications folder, then open it from there.")
+                    .font(.footnote).foregroundColor(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+}
+

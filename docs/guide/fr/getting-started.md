@@ -12,6 +12,13 @@
 1. Téléchargez le DMG sur la [page des versions](https://github.com/MsieurPafi/AirBattery-Plus/releases). Chaque version indique l'empreinte SHA-256 du fichier.
 2. Ouvrez le DMG et glissez **AirBattery Plus** dans Applications.
 3. L'app n'est pas notarisée par Apple : au premier lancement, macOS la bloque. Ouvrez **Réglages Système › Confidentialité et sécurité**, faites défiler et cliquez sur **Ouvrir quand même** en face d'AirBattery Plus.
+4. Pour qu'AirBattery Plus puisse ensuite installer ses mises à jour elle-même, lancez une fois cette commande dans le Terminal, puis relancez l'app :
+
+   ```bash
+   xattr -dr com.apple.quarantine "/Applications/AirBattery Plus.app"
+   ```
+
+   macOS met en quarantaine les apps téléchargées avec un navigateur, ce qui bloque la mise à jour d'une app non notarisée. **Réglages › Général › Mise à jour** rappelle cette commande, avec un bouton pour la copier, tant qu'elle est nécessaire.
 
 ## Mise à jour
 
