@@ -3,6 +3,21 @@
     <channel>
         <title>AirBattery Plus</title>
         <item>
+            <title>1.14.2</title>
+            <pubDate>Wed, 28 Oct 2026 18:53:53 +0100</pubDate>
+            <link>https://github.com/MsieurPafi/AirBattery-Plus</link>
+            <sparkle:fullReleaseNotesLink>https://github.com/MsieurPafi/AirBattery-Plus/blob/main/CHANGELOG.md</sparkle:fullReleaseNotesLink>
+            <sparkle:version>1142</sparkle:version>
+            <sparkle:shortVersionString>1.14.2</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>12.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h3>Fixes</h3>
+<ul>
+<li><strong>Updates on a Mac where the app was downloaded with a browser</strong>: macOS keeps such an app in quarantine, which blocks Sparkle's installer for an app that isn't notarized ("An error occurred while running the updater"). <strong>Settings › General › Update</strong> now says so and gives the command to run once, with a button to copy it. The guide (installation, troubleshooting) explains it too.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/MsieurPafi/AirBattery-Plus/releases/download/v1.14.2/AirBattery-Plus-1.14.2.dmg" length="13181359" type="application/octet-stream" sparkle:edSignature="JkBt+tVCH9rEiHnaT/h/We6tFEWhCfqgDOg8PGblmAyquZiouSP1ePRjL3MSV6Yn3u3kq32OgAbcKR1SMvnEBQ=="/>
+        </item>
+        <item>
             <title>1.14.1</title>
             <pubDate>Wed, 28 Oct 2026 11:38:26 +0100</pubDate>
             <link>https://github.com/MsieurPafi/AirBattery-Plus</link>
