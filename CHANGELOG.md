@@ -2,7 +2,7 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
-## Unreleased
+## 1.14.1 — 2026-10-28 (pre-release)
 
 ### Changes
 
