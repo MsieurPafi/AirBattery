@@ -1521,3 +1521,15 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Testé sur appareil réel :** oui pour l'icône (Côme) ; la mesure porte sur les appareils de Côme.
 **Prochaine étape :** avis de Côme sur la maquette ; publication de l'issue après fusion de cette branche (le lien vers le script vise `main`) ; relancer la mesure les jours suivants.
+
+## 2026-10-30 (suite 5) — Issue `CBPowerSource` publiée, retours sur la maquette
+
+**Contexte :** macOS 27.2 (26B123), `main` @ `fdf7ce6` (PR #83 fusionnée avec l'accord de Côme, CI vert). Branche `docs/session-2026-10-30`.
+
+**Fait :**
+- **Issue [#84](https://github.com/MsieurPafi/AirBattery-Plus/issues/84)** publiée (accord de Côme), en anglais, étiquettes `enhancement` et `help wanted` : appel à mesures avec `scripts/measure-cbpowersource.sh`.
+- **Retours de Côme sur la maquette** (IDEAS) : taille du texte et liste sans carte plutôt en options ; onglet « Apparence » (avec épinglage du Mac en tête) réservé aux 2.x. Séparateurs : le retrait asymétrique de la maquette était voulu (aligné sur le texte, comme les listes macOS), Côme le trouvait décentré. Couleurs : la maquette reprenait le réglage par défaut (« Icône de batterie en couleur » désactivé, `colorfulBattery`, onglet Barre des menus et Dock), le niveau ≤ 10 % en rouge.
+- **Bouton en haut à droite du popover** (antenne, visible seulement avec Nearcast) : redemande les données des autres Mac (`refreshAll`) et recharge la liste 0,5 s après. Sans bulle d'aide ni retour visuel, d'où l'impression qu'il ne fait rien. Correctif 1.x proposé à Côme.
+
+**Testé sur appareil réel :** non.
+**Prochaine étape :** décision de Côme sur les bulles d'aide du popover ; relancer la mesure `CBPowerSource` les jours suivants.
