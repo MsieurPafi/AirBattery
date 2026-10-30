@@ -194,6 +194,9 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
     var otherAppleDevices: Set<UUID> = []
     var bleDevicesLevel: [String:UInt8] = [:]
     var bleDevicesVendor: [String:String] = [:]
+    /// Models of the iPhones and iPads read over Bluetooth, by name: the model may arrive before
+    /// the battery level, when the device isn't listed yet.
+    var iosModels: [String:String] = [:]
     var scanTimer: Timer?
     private var discoveredIOSPeripherals: [UUID: CBPeripheral] = [:]
     /// Generic BLE peripherals ("Discover more BLE devices") that turned out to have no
@@ -550,10 +553,14 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
                     // A device first read before system_profiler listed it (just reconnected)
                     // got the generic type, and kept the Bluetooth icon for good.
                     if device.deviceType == "general_bt" { device.deviceType = isIOSConnection ? iosType(deviceName) : getType(deviceName) }
+                    if isIOSConnection, device.deviceModel == nil, let model = iosModels[deviceName] {
+                        device.deviceType = iosType(deviceName)
+                        device.deviceModel = model
+                    }
                     if charging != -1 { device.isCharging = charging }
                     AirBatteryModel.updateDevice(device)
                 } else {
-                    let device = Device(deviceID: peripheral.identifier.uuidString, deviceType: isIOSConnection ? iosType(deviceName) : getType(deviceName), deviceName: deviceName, batteryLevel: level, isCharging: charging, lastUpdate: now)
+                    let device = Device(deviceID: peripheral.identifier.uuidString, deviceType: isIOSConnection ? iosType(deviceName) : getType(deviceName), deviceName: deviceName, deviceModel: isIOSConnection ? iosModels[deviceName] : nil, batteryLevel: level, isCharging: charging, lastUpdate: now)
                     AirBatteryModel.updateDevice(device)
                 }
             }
@@ -569,12 +576,15 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
                 return
             }
             // An iPhone or iPad read over Bluetooth: its model gives its type, whatever arrives
-            // first between the model and the vendor (the type stayed generic otherwise).
-            if isIOSConnection, let model = characteristic.value?.ascii(), let deviceName = peripheral.name,
-               var device = AirBatteryModel.getByName(deviceName), device.deviceModel != model {
-                device.deviceType = model.hasPrefix("iPad") ? "iPad" : "iPhone"
-                device.deviceModel = model
-                AirBatteryModel.updateDevice(device)
+            // first between the model and the vendor (the type stayed generic otherwise), and
+            // its icon. Kept when the device isn't listed yet: the battery level adds it.
+            if isIOSConnection, let model = characteristic.value?.ascii(), let deviceName = peripheral.name {
+                iosModels[deviceName] = model
+                if var device = AirBatteryModel.getByName(deviceName), device.deviceModel != model {
+                    device.deviceType = iosType(deviceName)
+                    device.deviceModel = model
+                    AirBatteryModel.updateDevice(device)
+                }
                 completeIOSRead(peripheral)
                 return
             }
@@ -724,9 +734,10 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
         return UInt8(level.replacingOccurrences(of: "%", with: "")) ?? 255
     }
     
-    /// Type of an iPhone or iPad connected over Bluetooth before its model is read: not in
-    /// system_profiler's list, so getType() gave the generic Bluetooth type (and icon).
+    /// Type of an iPhone or iPad connected over Bluetooth: from its model once read, else from
+    /// its name (it isn't in system_profiler's list, so getType() gave the generic Bluetooth type).
     func iosType(_ name: String) -> String {
+        if let model = iosModels[name] { return model.hasPrefix("iPad") ? "iPad" : "iPhone" }
         return name.lowercased().contains("ipad") ? "iPad" : "iPhone"
     }
 

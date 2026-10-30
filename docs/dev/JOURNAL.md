@@ -1496,3 +1496,15 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 - `appcast.xml` : 1.14.3 ajoutée (signature identique à `sign_update`). Copies de build désenregistrées, `build/DerivedData-release` supprimé.
 
 **Prochaine étape :** fusion de #80, accord de Côme pour publier, checklist.
+
+## 2026-10-30 (suite 3) — Modèle des iPhone lus en Bluetooth ; PR upstream #191, #164, #202
+
+**Contexte :** macOS 27.2 (26B123), 1.14.3 installée par Côme. Branche `fix/ios-ble-model` depuis `main` @ `c057e22`.
+
+**Fait :**
+- **Icône générique de l'iPhone Duo après la mise à jour** (Côme : icône d'iPhone « genre 16 ou 17 », puis la bonne) : depuis la 1.14.3 (suite 1), un iPhone lu en Bluetooth reçoit le type « iPhone » dès la création, mais l'icône exacte dépend du modèle (`getDeviceIcon` : `iphone.duo` pour `iPhone19,4`). Le niveau (`2A19`, service `180F`) et le modèle (`2A24`, service `180A`) arrivent dans un ordre non garanti : **si le modèle arrive en premier, l'appareil n'est pas encore dans la liste et le modèle était perdu** jusqu'à la lecture suivante (ou une lecture USB / Wi-Fi). Désormais gardé par nom (`iosModels`), appliqué à la création et à la mise à jour ; `iosType` en tire le type. Le `return` du chemin iOS de `2A24` appelle toujours `completeIOSRead`.
+- **PR upstream évaluées** (UPSTREAM.md) : #202 déjà couverte (`d17f054`) ; #191 rejetée (numéros d'attribut GATT `0x0011` / `0x0014` propres à la souris de l'auteur : sur ce Mac, `0x0011` porte une valeur d'un octet et `0x0014` la déclaration de `0x2A2B` ; `system_profiler` relancé à chaque lecture) ; #164 rejetée telle quelle (réécriture de `LogReader` en conflit, workflow qui pousserait sur `main`). Deux idées dans IDEAS : nom de secours `PrNm` (macOS 27.2 consigne `Nm <private>` sur les lignes « Device found », **non vérifié** sur les lignes « Battery » : aucune en 6 h), commande `abt supported`.
+- Build Debug, `scripts/ci-checks.sh` et `swift test` (32) OK. Copie de build désenregistrée, widget de `/Applications` seul enregistré.
+
+**Testé sur appareil réel :** non (il faut quitter l'app, la relancer et regarder l'icône de l'iPhone lu en Bluetooth) : checklist de la prochaine version.
+**Prochaine étape :** PR, puis choix de Côme dans la liste (IDEAS).
