@@ -89,40 +89,30 @@ enum UpdateBlocker {
     }
 }
 
-/// Shown in Settings › Update when updates can't be installed, with what to do. The user runs
-/// the command: the app doesn't lift its own quarantine (D-030).
+/// Shown in Settings › Update when updates can't be installed: one row, like the others, with
+/// the explanation behind ⓘ. A taller notice (full text and command) no longer fit in the
+/// Settings window, which then stayed blank. The user runs the command: the app doesn't lift
+/// its own quarantine (D-030).
 struct UpdateBlockerNotice: View {
     let blocker: UpdateBlocker
     @State private var copied = false
 
     var body: some View {
         Divider().opacity(0.5)
-        VStack(alignment: .leading, spacing: 6) {
-            Label(blocker == .quarantined ? "Updates can\u{2019}t be installed yet" : "Updates can\u{2019}t be installed from here",
-                  systemImage: "exclamationmark.triangle")
-                .font(.callout.weight(.medium))
-                .foregroundColor(.orange)
+        HStack(spacing: 6) {
+            Image(systemName: "exclamationmark.triangle").foregroundColor(.orange)
+            Text(blocker == .quarantined ? "Updates Blocked" : "Updates can\u{2019}t be installed from here")
+                .lineLimit(1)
+            Spacer()
+            SInfoButton(tips: blocker == .quarantined
+                ? "macOS keeps apps downloaded with a browser in quarantine, which blocks the updater of an app that isn\u{2019}t notarized. Copy the command, run it once in Terminal, then relaunch AirBattery Plus."
+                : "AirBattery Plus is running from a temporary copy. Move it to the Applications folder, then open it from there.")
             if blocker == .quarantined {
-                Text("macOS keeps apps downloaded with a browser in quarantine, which blocks the updater of an app that isn\u{2019}t notarized. Run this command once in Terminal, then relaunch AirBattery Plus:")
-                    .font(.footnote).foregroundColor(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                HStack(spacing: 6) {
-                    Text(UpdateBlocker.command)
-                        .font(.system(.caption, design: .monospaced))
-                        .textSelection(.enabled)
-                        .lineLimit(2)
-                    Spacer()
-                    Button(copied ? "Copied" : "Copy") {
-                        copyToClipboard(UpdateBlocker.command)
-                        copied = true
-                    }
+                Button(copied ? "Copied" : "Copy Command") {
+                    copyToClipboard(UpdateBlocker.command)
+                    copied = true
                 }
-            } else {
-                Text("AirBattery Plus is running from a temporary copy. Move it to the Applications folder, then open it from there.")
-                    .font(.footnote).foregroundColor(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
             }
         }
     }
 }
-

@@ -1459,3 +1459,17 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Testé sur appareil réel :** non (le correctif se vérifiera au prochain test entre deux Mac).
 **Prochaine étape :** PR ; tests de la 1.14.2 en attente (message de quarantaine, Mac d'Éléonore).
+
+## 2026-10-30 — Fenêtre des Réglages vide ; message de quarantaine sur une ligne ; description du dépôt
+
+**Contexte :** macOS **27.2 (26B123)** sur le Mac de Côme (mis à jour depuis le 28/10). 1.14.2 installée par Sparkle, sans quarantaine. Relevé des plantages : rien de nouveau. `main` @ `26352aa`. Branche `fix/settings-window-reopen`.
+
+**Fait :**
+- **Dépôt GitHub** (accord de Côme) : description « AirBattery Plus: the battery of all your devices (Mac, iPhone, iPad, Apple Watch, AirPods, Bluetooth accessories) in the menu bar, Dock and widgets. A maintained fork of AirBattery. », sujets `macos`, `battery`, `menu-bar`, `widget`, `airpods`, `apple-watch`, `swiftui`, lien vers la page des versions (au lieu de `lihaoyun6.github.io/airbattery`). Site GitHub Pages ajouté à IDEAS (plus tard).
+- **Test du message de quarantaine** : `xattr -w com.apple.quarantine "0081;…;Safari;"` sur l'app installée en cours d'exécution → rien dans Réglages (valeur lue dans `body` à la première construction de la page) ; fermer et rouvrir les Réglages → **fenêtre entièrement vide**. Marque retirée → toujours vide (la fenêtre restait cassée jusqu'au relancement).
+- Pistes : aucun message d'erreur, 0 % de CPU. Correctifs essayés sur une copie de test : `WindowAccessor` n'est plus le délégué de la fenêtre (observateurs de notifications) ; état `updateBlocker` relu à l'apparition de la page et quand une fenêtre devient active. Copie marquée → **vide dès la première ouverture** ; copie non marquée → normale à l'ouverture, après Nearcast → Général, et après fermeture/réouverture. **Cause : le message lui-même** (trop haut pour la fenêtre). COMPAT note 18.
+- Message réduit à une ligne : icône, « Mises à jour bloquées » / « Updates Blocked », ⓘ (explication dans une feuille), bouton « Copier la commande ». Test de Côme sur la copie marquée : ligne visible, fenêtre normale, explication et copie de la commande OK. Titre français d'abord tronqué (« Mises à jour bloquées p… »), raccourci. 2 chaînes retirées du catalogue, 3 ajoutées.
+- Copies de test désenregistrées et supprimées, marque retirée, 1.14.2 relancée, widget de `/Applications` seul enregistré.
+
+**Testé sur appareil réel :** oui, par Côme.
+**Prochaine étape :** PR, puis les petites corrections de la liste (icône des iPhone lus en Bluetooth, liste de blocage et délai d'expiration des appareils Nearcast).

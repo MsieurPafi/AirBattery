@@ -54,7 +54,10 @@ struct GeneralView: View {
     @AppStorage("showDebug") var showDebug: Bool = false
     @State private var debugCount: Int = 0
     @State private var cltInstalled: Bool = false
-    
+    /// Checked each time the page appears: reading it in `body` kept the value from the first
+    /// display of the window.
+    @State private var updateBlocker: UpdateBlocker?
+
     var body: some View {
         SForm {
             SGroupBox(label: "Startup") {
@@ -109,7 +112,11 @@ struct GeneralView: View {
             if updatesEnabled {
                 SGroupBox(label: "Update") {
                     UpdaterSettingsView(updater: updaterController.updater)
-                    if let blocker = UpdateBlocker.current { UpdateBlockerNotice(blocker: blocker) }
+                    if let blocker = updateBlocker { UpdateBlockerNotice(blocker: blocker) }
+                }
+                .onAppear { updateBlocker = UpdateBlocker.current }
+                .onReceive(NotificationCenter.default.publisher(for: NSWindow.didBecomeKeyNotification)) { _ in
+                    updateBlocker = UpdateBlocker.current
                 }
             }
             VStack(spacing: 8) {

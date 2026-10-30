@@ -18,7 +18,7 @@
    xattr -dr com.apple.quarantine "/Applications/AirBattery Plus.app"
    ```
 
-   macOS met en quarantaine les apps téléchargées avec un navigateur, ce qui bloque la mise à jour d'une app non notarisée. **Réglages › Général › Mise à jour** rappelle cette commande, avec un bouton pour la copier, tant qu'elle est nécessaire.
+   macOS met en quarantaine les apps téléchargées avec un navigateur, ce qui bloque la mise à jour d'une app non notarisée. Tant que c'est nécessaire, **Réglages › Général › Mise à jour** affiche **Mises à jour bloquées**, avec un bouton **Copier la commande**.
 
 ## Mise à jour
 
