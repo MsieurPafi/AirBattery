@@ -2,6 +2,12 @@
 
 Changes in this fork compared with the official [AirBattery](https://github.com/lihaoyun6/AirBattery) releases.
 
+## Unreleased
+
+### Fixes
+
+- **An iPhone read over Bluetooth shows its exact model's icon right away** (iPhone Duo, for instance): the model could arrive before the battery level and be lost, leaving the generic iPhone icon until the next read.
+
 ## 1.14.3 — 2026-10-30 (pre-release)
 
 ### Fixes
