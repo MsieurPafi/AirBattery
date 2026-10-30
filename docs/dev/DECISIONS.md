@@ -305,3 +305,14 @@ Journal des décisions du fork (ADR léger). On ajoute, on n'efface pas : une d�
 **Pourquoi :** c'est la pratique des projets dans la même situation ; B serait un contournement silencieux d'une vérification de Gatekeeper, sans précédent connu et à contre-courant d'Apple et de Homebrew.
 **Conséquences :** une étape manuelle pour qui télécharge le DMG avec un navigateur ; la vraie solution reste la notarisation (compte payant) : le passage au Developer ID est accepté par Sparkle tant que la clé EdDSA ne change pas (JOURNAL 2026-10-28 suite 4), mais une copie encore en quarantaine aura besoin de la commande une dernière fois. Les mises à jour livrées par Sparkle ne sont pas mises en quarantaine (vérifié, COMPAT note 14), donc la commande ne sert qu'une fois.
 **Validée par Côme :** oui (2026-10-28)
+
+## D-031 — Feuille de route : 1.x pour la maintenance, la Phase 3 attend la 2.0   (2026-10-30, statut : acceptée)
+**Contexte :** après la 1.14.3, liste de pistes ouvertes (IDEAS) mêlant correctifs, confort et nouvelles fonctions (Phase 3 de `CLAUDE.md` : provider, MQTT/Home Assistant, manettes, historique, PS Vita).
+**Décision (Côme) :**
+- **1.x (pre-releases) :** seulement des correctifs, du confort d'utilisation (QoL) et de la maintenance.
+- **La Phase 3 est réservée aux versions 2.x**, une fois sorti des pre-releases : c'est là que le fork ajoutera sa propre patte.
+- **Le site GitHub Pages est à faire avant la 2.0.**
+
+**Pourquoi :** stabiliser et rendre fiable l'existant avant d'élargir le périmètre ; garder une frontière claire entre « l'app d'origine, réparée » et « AirBattery Plus ».
+**Conséquences :** une piste qui ajoute une fonction (nouvelle source comme `CBPowerSource`, santé de la batterie du Mac…) reste dans IDEAS ou dans une issue jusqu'à la 2.0, sauf si elle corrige un manque constaté. Les critères de passage à la 2.0 (sortie des pre-releases) restent à définir avec Côme.
+**Validée par Côme :** oui (2026-10-30)

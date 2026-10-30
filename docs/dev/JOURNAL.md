@@ -1508,3 +1508,16 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Testé sur appareil réel :** non (il faut quitter l'app, la relancer et regarder l'icône de l'iPhone lu en Bluetooth) : checklist de la prochaine version.
 **Prochaine étape :** PR, puis choix de Côme dans la liste (IDEAS).
+
+## 2026-10-30 (suite 4) — Feuille de route (D-031), maquette d'interface, mesure de `CBPowerSource`
+
+**Contexte :** macOS 27.2 (26B123), `main` @ `daaaf81`. Branche `docs/cbpowersource-roadmap`.
+
+**Fait :**
+- **Correctif de l'icône (PR #82) testé par Côme :** l'iPhone Duo a sa bonne icône.
+- **D-031 (Côme) :** 1.x = correctifs, confort et maintenance ; Phase 3 réservée aux 2.x, après la sortie des pre-releases ; site GitHub Pages avant la 2.0. Santé de la batterie du Mac jugée hors sujet par Côme (au mieux une ligne dans les Réglages).
+- **Maquette avant/après du popover** (affichée dans la conversation, pas de fichier) : 3 à 18 appareils et une section Nearcast, chaque retouche activable (barre d'outils 18 pt sans cercle, texte 13 pt, séparateurs en retrait, sans carte). Lignes de 36 pt conservées. En attente de l'avis de Côme.
+- **`CBPowerSource` :** `scripts/measure-cbpowersource.sh` (lecture seule, noms remplacés par la catégorie sauf `--names`). Premier relevé : `samples/2026-10-30_26B123_cbpowersource.md`. `log show --last 7d` ne renvoie que ~17 h ; requête de 2 min ≈ 0,3 s de CPU (lecture actuelle des appareils tiers : 0,23 s sur 10 min) ; jusqu'à ~370 lignes par heure pour un appareil ; AirPods sous trois entrées (LE / classique, Headset / Headphone) ; signe `-` des niveaux non compris (hypothèse : décharge). Brouillon d'issue en anglais prêt, **pas publié** (accord de Côme attendu).
+
+**Testé sur appareil réel :** oui pour l'icône (Côme) ; la mesure porte sur les appareils de Côme.
+**Prochaine étape :** avis de Côme sur la maquette ; publication de l'issue après fusion de cette branche (le lien vers le script vise `main`) ; relancer la mesure les jours suivants.
