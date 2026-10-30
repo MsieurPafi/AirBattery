@@ -217,6 +217,9 @@ class AirBatteryModel {
         do {
             let jsonData = try JSONEncoder().encode(devices)
             try jsonData.write(to: getJsonURL(), options: .atomic)
+            if Bundle.main.bundleIdentifier == AppIdentifiers.app {
+                try JSONEncoder().encode(nearcastFilter()).write(to: nearcastFilterURL(), options: .atomic)
+            }
         } catch {
             Log.data.error("Write JSON error: \(String(describing: error), privacy: .public)")
         }
@@ -264,13 +267,43 @@ class AirBatteryModel {
         return []
     }
     
+    /// Settings that filter Nearcast devices, also needed by the widget: sandboxed, it can't read
+    /// the app's settings, and kept a fixed 20 min and no blocklist. The app writes them next to
+    /// the widgets' data.
+    struct NearcastFilter: Codable {
+        var disappearTime = 20
+        var blocked: [String] = []
+        var whitelistMode = false
+    }
+
+    static func nearcastFilterURL() -> URL {
+        return getJsonURL().deletingLastPathComponent().appendingPathComponent("nearcastFilter.json")
+    }
+
+    static func nearcastFilter() -> NearcastFilter {
+        if Bundle.main.bundleIdentifier == key {
+            guard let data = try? Data(contentsOf: nearcastFilterURL()) else { return NearcastFilter() }
+            return (try? JSONDecoder().decode(NearcastFilter.self, from: data)) ?? NearcastFilter()
+        }
+        return NearcastFilter(disappearTime: ud.object(forKey: "disappearTime") as? Int ?? 20,
+                              blocked: ud.object(forKey: "blockedDevices") as? [String] ?? [],
+                              whitelistMode: ud.bool(forKey: "whitelistMode"))
+    }
+
+    static func isBlocked(_ name: String, by filter: NearcastFilter) -> Bool {
+        return filter.blocked.containsDeviceName(name) != filter.whitelistMode
+    }
+
     static func ncGetAll(url: URL, fromWidget: Bool = false) -> [Device] {
-        let disappearTime = (ud.object(forKey: "disappearTime") as? Int ?? 20)
+        let filter = nearcastFilter()
         let devices = readData(url: url)
         let now = Double(Date().timeIntervalSince1970)
         var localDevices = getAll().map({ $0.deviceName })
         if fromWidget { localDevices = readData().map({ $0.deviceName }) }
-        var list = devices.filter{(now - $0.lastUpdate < Double(disappearTime * 60))}.filter({!localDevices.contains($0.deviceName)})
+        // The blocklist applies to the other Macs' devices too (AUDIT-2026-10-25, priority 4);
+        // the Mac itself stays as the section's header while one of its devices is shown.
+        var list = devices.filter { now - $0.lastUpdate < Double(filter.disappearTime) * 60 }
+            .filter { !localDevices.contains($0.deviceName) && !isBlocked($0.deviceName, by: filter) }
         if let first = devices.first { if !list.contains(first) && list.count != 0 { list.insert(first, at: 0) }}
         if let first = list.first { if list.count == 1 && !first.hasBattery { return [] }}
         return list

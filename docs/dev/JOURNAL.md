@@ -1473,3 +1473,15 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Testé sur appareil réel :** oui, par Côme.
 **Prochaine étape :** PR, puis les petites corrections de la liste (icône des iPhone lus en Bluetooth, liste de blocage et délai d'expiration des appareils Nearcast).
+
+## 2026-10-30 (suite 1) — Petites corrections : icône des iPhone en Bluetooth, filtre des appareils Nearcast
+
+**Contexte :** PR #79 fusionnée après son CI, avec l'accord de Côme (`main` @ `a7b5c26`). Branche `fix/small-fixes`.
+
+**Fait :**
+- **Icône des iPhone/iPad lus en Bluetooth** (iPhone d'Éléonore vu par Nearcast, iPhone de Côme quelques secondes au lancement) : le type venait de `getType(nom)` (liste de `system_profiler`, où l'iPhone n'est pas) → `general_bt`, puis n'était corrigé à la lecture du modèle (`2A24`) que si le fabricant (`2A29`) était déjà connu, ordre non garanti. Désormais : pour une connexion iOS, type « iPhone » (ou « iPad » si le nom le dit) dès la création, et type tiré du modèle à sa lecture, quel que soit l'ordre. Premier jet : le `return` ajouté sautait `completeIOSRead(peripheral)` en fin de fonction (la connexion serait restée ouverte jusqu'au délai) : corrigé avant tout test.
+- **Appareils Nearcast** (analyse 2026-10-25, priorité 4) : `AirBatteryModel.ncGetAll` applique la liste de blocage ou d'autorisation ; le Mac distant reste l'en-tête de sa section tant qu'un de ses appareils est affiché. Le widget, sandboxé, n'avait ni la liste ni le délai (20 min fixes) : l'app écrit `nearcastFilter.json` (délai, liste, mode autorisation) à côté de `data.json`, lu par le widget. Délai « Jamais » calculé en `Double` (pas de dépassement).
+- Build Release et `swift test` (32) OK. Copie de test lancée 15 s : aucune « Write JSON error » ; le contenu du conteneur du widget n'est pas lisible depuis le shell (« Operation not permitted », TCC). 1.14.2 relancée, widget de `/Applications` seul enregistré.
+
+**Testé sur appareil réel :** non (il faut un iPhone lu en Bluetooth et un second Mac Nearcast) : checklist de la prochaine version.
+**Prochaine étape :** PR, puis release (avec #78 et #79).

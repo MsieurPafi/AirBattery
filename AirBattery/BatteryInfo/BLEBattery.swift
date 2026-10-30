@@ -549,11 +549,11 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
                     device.lastUpdate = now
                     // A device first read before system_profiler listed it (just reconnected)
                     // got the generic type, and kept the Bluetooth icon for good.
-                    if device.deviceType == "general_bt" { device.deviceType = getType(deviceName) }
+                    if device.deviceType == "general_bt" { device.deviceType = isIOSConnection ? iosType(deviceName) : getType(deviceName) }
                     if charging != -1 { device.isCharging = charging }
                     AirBatteryModel.updateDevice(device)
                 } else {
-                    let device = Device(deviceID: peripheral.identifier.uuidString, deviceType: getType(deviceName), deviceName: deviceName, batteryLevel: level, isCharging: charging, lastUpdate: now)
+                    let device = Device(deviceID: peripheral.identifier.uuidString, deviceType: isIOSConnection ? iosType(deviceName) : getType(deviceName), deviceName: deviceName, batteryLevel: level, isCharging: charging, lastUpdate: now)
                     AirBatteryModel.updateDevice(device)
                 }
             }
@@ -566,6 +566,16 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
                 failIOSConnection(peripheral, message: "Apple Watch is not supported by iPhone / iPad Bluetooth discovery.".local)
                 nearbyIOSDevices.removeAll { $0.id == identifier }
                 centralManager.cancelPeripheralConnection(peripheral)
+                return
+            }
+            // An iPhone or iPad read over Bluetooth: its model gives its type, whatever arrives
+            // first between the model and the vendor (the type stayed generic otherwise).
+            if isIOSConnection, let model = characteristic.value?.ascii(), let deviceName = peripheral.name,
+               var device = AirBatteryModel.getByName(deviceName), device.deviceModel != model {
+                device.deviceType = model.hasPrefix("iPad") ? "iPad" : "iPhone"
+                device.deviceModel = model
+                AirBatteryModel.updateDevice(device)
+                completeIOSRead(peripheral)
                 return
             }
             if let data = characteristic.value, let model = data.ascii(), let deviceName = peripheral.name, let vendor = bleDevicesVendor[deviceName] {
@@ -714,6 +724,12 @@ class BLEBattery: NSObject, ObservableObject, CBCentralManagerDelegate, CBPeriph
         return UInt8(level.replacingOccurrences(of: "%", with: "")) ?? 255
     }
     
+    /// Type of an iPhone or iPad connected over Bluetooth before its model is read: not in
+    /// system_profiler's list, so getType() gave the generic Bluetooth type (and icon).
+    func iosType(_ name: String) -> String {
+        return name.lowercased().contains("ipad") ? "iPad" : "iPhone"
+    }
+
     func getType(_ name: String) -> String {
         let device = SPBluetoothDataModel.shared.connectedDevices.first { $0.name == name }
         return device?.info["device_minorType"] as? String ?? "general_bt"

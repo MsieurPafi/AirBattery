@@ -7,6 +7,8 @@ Changes in this fork compared with the official [AirBattery](https://github.com/
 ### Fixes
 
 - **Settings no longer show a blank window**: with the quarantine notice of 1.14.2, the General page became too tall for the window, which then stayed blank (until the app was relaunched). The notice is now a single row, with the explanation behind ⓘ and a **Copy Command** button. The Settings window is also no longer taken over by the app's window helper, which SwiftUI relies on to rebuild it.
+- **An iPhone or iPad read over Bluetooth gets its own icon** instead of the generic Bluetooth one (seen at launch, and for the iPhone of another Mac shown through Nearcast).
+- **Nearcast devices follow your blocklist** (or allowlist), and **the widgets use your "Remove Offline Device" delay** for them: they kept a fixed 20 minutes.
 - **Nearcast no longer drops messages that arrive out of order**: when two Macs connect, each sends several messages at once, and one could be refused as a replay. A message is now refused only if it was already received.
 
 ## 1.14.2 — 2026-10-28 (pre-release)

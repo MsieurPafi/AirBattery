@@ -50,7 +50,7 @@ Nearcast v2 (D-029, `docs/dev/NEARCAST-V2.md`) : protocole dans `Shared/Core/Nea
 2. `AirBatteryModel.writeData()` écrit `~/Library/Containers/<bundle-id-widget>/Data/Documents/data.json`, mais seulement si un champ affiché a changé, ou toutes les 5 min (`writeData(force: true)` pour les actions de l'utilisateur, le lancement, les URL et AppleScript).
 3. Le widget relit ce fichier quand l'app demande un rechargement : seulement après une écriture.
 4. Pour les outils locaux, l'app écrit une copie dans `~/Library/Application Support/<bundle-id-app>/` (`data.json`, et `nearcast.json` avec les appareils Nearcast déjà filtrés comme dans l'app), seulement sur demande (`writeData(force: true)`). Raison : depuis macOS 14, un processus lancé depuis un terminal ne peut plus lire le container sandboxé d'une autre app. `abtp` ouvre `<schéma>://writedata`, attend 500 ms, puis lit cette copie.
-5. Données Nearcast reçues : `…/Documents/NearcastData/*.json` (container du widget).
+5. Données Nearcast reçues : `…/Documents/NearcastData/*.json` (container du widget). Filtrées par `AirBatteryModel.ncGetAll` (délai « Retirer l'appareil hors ligne », liste de blocage ou d'autorisation) ; le widget, sandboxé, lit ces réglages dans `…/Documents/nearcastFilter.json`, écrit par l'app avec `data.json`.
 
 ## Identifiants codés en dur
 
