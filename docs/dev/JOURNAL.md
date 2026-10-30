@@ -1485,3 +1485,14 @@ Une entrée par session, en ajout seulement. Une entrée fausse n'est jamais eff
 
 **Testé sur appareil réel :** non (il faut un iPhone lu en Bluetooth et un second Mac Nearcast) : checklist de la prochaine version.
 **Prochaine étape :** PR, puis release (avec #78 et #79).
+
+## 2026-10-30 (suite 2) — Release 1.14.3 préparée
+
+**Contexte :** branche `release/1.14.3`, partie de `fix/small-fixes` (PR #80, CI en cours au moment de la préparation). Contient aussi #78 (messages Nearcast dans le désordre) et #79 (fenêtre des Réglages vide).
+
+**Fait :**
+- `64040ca` : version 1.14.3 (`CURRENT_PROJECT_VERSION` 1143). *Unreleased* → `## 1.14.3`.
+- Build Release propre, DMG `AirBattery-Plus-1.14.3.dmg`, `hdiutil verify` OK, SHA-256 `6dd540ebdddd899896b2393709db43a9558ffce050234cc9d5f2e109dd417067`. App : 1.14.3 (1143), widget 1143 (lit `nearcastFilter.json`), flux et clé du fork, `NSBonjourServices`, `codesign --verify --deep --strict` OK, exigence de signature de la 1.14.2 installée satisfaite, pas de mode démo.
+- `appcast.xml` : 1.14.3 ajoutée (signature identique à `sign_update`). Copies de build désenregistrées, `build/DerivedData-release` supprimé.
+
+**Prochaine étape :** fusion de #80, accord de Côme pour publier, checklist.

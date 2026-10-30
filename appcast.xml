@@ -3,6 +3,24 @@
     <channel>
         <title>AirBattery Plus</title>
         <item>
+            <title>1.14.3</title>
+            <pubDate>Fri, 30 Oct 2026 17:48:15 +0100</pubDate>
+            <link>https://github.com/MsieurPafi/AirBattery-Plus</link>
+            <sparkle:fullReleaseNotesLink>https://github.com/MsieurPafi/AirBattery-Plus/blob/main/CHANGELOG.md</sparkle:fullReleaseNotesLink>
+            <sparkle:version>1143</sparkle:version>
+            <sparkle:shortVersionString>1.14.3</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>12.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h3>Fixes</h3>
+<ul>
+<li><strong>Settings no longer show a blank window</strong>: with the quarantine notice of 1.14.2, the General page became too tall for the window, which then stayed blank (until the app was relaunched). The notice is now a single row, with the explanation behind ⓘ and a <strong>Copy Command</strong> button. The Settings window is also no longer taken over by the app's window helper, which SwiftUI relies on to rebuild it.</li>
+<li><strong>An iPhone or iPad read over Bluetooth gets its own icon</strong> instead of the generic Bluetooth one (seen at launch, and for the iPhone of another Mac shown through Nearcast).</li>
+<li><strong>Nearcast devices follow your blocklist</strong> (or allowlist), and <strong>the widgets use your "Remove Offline Device" delay</strong> for them: they kept a fixed 20 minutes.</li>
+<li><strong>Nearcast no longer drops messages that arrive out of order</strong>: when two Macs connect, each sends several messages at once, and one could be refused as a replay. A message is now refused only if it was already received.</li>
+</ul>
+]]></description>
+            <enclosure url="https://github.com/MsieurPafi/AirBattery-Plus/releases/download/v1.14.3/AirBattery-Plus-1.14.3.dmg" length="13206601" type="application/octet-stream" sparkle:edSignature="Nz9hEYnTuTmuNTjuOCbroAFwD6fYQO0DJAyxVC1yyzH3TZXYNRaXwMH7BukHuHnEe8Ep+AEbJuxwIolzuhP9Ag=="/>
+        </item>
+        <item>
             <title>1.14.2</title>
             <pubDate>Wed, 28 Oct 2026 18:53:53 +0100</pubDate>
             <link>https://github.com/MsieurPafi/AirBattery-Plus</link>
