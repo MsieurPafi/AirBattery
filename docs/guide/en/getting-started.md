@@ -18,7 +18,7 @@
    xattr -dr com.apple.quarantine "/Applications/AirBattery Plus.app"
    ```
 
-   macOS keeps apps downloaded with a browser in quarantine, and that blocks the updater of an app that isn't notarized. **Settings › General › Update** reminds you of this command, with a button to copy it, as long as it's needed.
+   macOS keeps apps downloaded with a browser in quarantine, and that blocks the updater of an app that isn't notarized. As long as it's needed, **Settings › General › Update** shows **Updates Blocked**, with a **Copy Command** button.
 
 ## Update
 
